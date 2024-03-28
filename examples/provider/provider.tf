@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "axwaycft" {
   # example configuration here
 }
