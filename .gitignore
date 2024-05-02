@@ -36,3 +36,7 @@ website/vendor
 .vscode
 .old
 docker_compose
+.env
+*.ignore.*
+/coverage.*
+/report.xml

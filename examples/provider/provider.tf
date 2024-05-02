@@ -1,3 +1,3 @@
-provider "axwaycft" {
+provider "xmft" {
   # example configuration here
 }

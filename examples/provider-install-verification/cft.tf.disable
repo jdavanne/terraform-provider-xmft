@@ -1,0 +1,114 @@
+provider "xmft" {
+  product = "cft"
+  alias   = "xmft1"
+  host     = "https://localhost:1768"
+  username = "admin"
+  password = "changeit"
+}
+
+provider "xmft" {
+  product = "cft"
+  alias   = "xmft2"
+  host     = "https://localhost:1769"
+  username = "admin"
+  password = "changeit"
+}
+
+data "xmft_cft_about" "about1" {
+  provider = xmft.xmft1
+}
+
+data "xmft_cft_about" "about2" {
+  provider = xmft.xmft2
+}
+output "about1" {
+  value = data.xmft_cft_about.about1
+}
+output "about2" {
+  value = data.xmft_cft_about.about2
+}
+resource "xmft_cftsend" "flow1" {
+  provider = xmft.xmft1
+  name     = "flow1"
+  exec     = ""
+  fcode    = "ASCII"
+  faction  = "NONE"
+  parm     = ""
+  preexec  = ""
+  fname    = "/tmp/remi"
+}
+
+output "sendflow1" {
+  value = xmft_cftsend.flow1
+}
+
+
+resource "xmft_cftrecv" "flow1" {
+  provider = xmft.xmft2
+  name     = "flow1"
+  exec     = ""
+  fname    = "/tmp/dinko5"
+}
+
+
+output "recvflow1" {
+  value = xmft_cftrecv.flow1
+}
+
+
+resource "xmft_cftpart" "cft2" {
+  provider = xmft.xmft1
+  name     = "cft2"
+  prot     = "PESIT"
+  sap      = "1788"
+
+  nrpart  = "CFT2"
+  nrpassw = "cft2*"
+  nspart  = "CFT1"
+  nspassw = "cft1*"
+
+  tcp = [{
+    id     = "1"
+    cnxout = "100"
+    host   = "cft2"
+  }]
+}
+
+resource "xmft_cftpart" "cft1" {
+  provider = xmft.xmft2
+  name     = "cft1"
+  prot     = "PESIT"
+  sap      = "1788"
+
+  nrpart  = "CFT1"
+  nrpassw = "cft1*"
+  nspart  = "CFT2"
+  nspassw = "cft2*"
+
+  tcp = [{
+    id     = "1"
+    cnxout = "100"
+    host   = "cft1"
+  }]
+}
+
+output "cft2part" {
+  value = xmft_cftpart.cft2
+}
+output "cft1part" {
+  value = xmft_cftpart.cft1
+}
+
+
+
+/*
+resource "xmft_cftsend" "zouzou" {
+  name    = "zouzou"
+  exec    = ""
+  fcode   = "ASCII"
+  faction = "NONE"
+  parm    = ""
+  preexec = ""
+  fname   = "/tmp/zouzou"
+}
+*/

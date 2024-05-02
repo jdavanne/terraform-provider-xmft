@@ -8,7 +8,7 @@ import (
 	"flag"
 	"log"
 
-	"terraform-provider-axway-cft/internal/provider"
+	"terraform-provider-xmft/internal/provider"
 
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
@@ -21,7 +21,7 @@ import (
 
 // Run the docs generation tool, check its repository for more information on how it works and how docs
 // can be customized.
-//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name axwaycft
+//go:generate go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs generate -provider-name xmft
 
 // these will be set by the goreleaser configuration
 // to appropriate values for the compiled binary.
@@ -41,8 +41,8 @@ func main() {
 		// Also update the tfplugindocs generate command to either remove the
 		// -provider-name flag or set its value to the updated provider name.
 		// Address: "registry.terraform.io/hashicorp/scaffolding",
-		// Address: "hashicorp.com/edu/axway-cft",
-		Address: "hashicorp.com/edu/axway-cft",
+		// Address: "hashicorp.com/edu/xmft",
+		Address: "zouzou/xco/xmft",
 		Debug:   debug,
 	}
 

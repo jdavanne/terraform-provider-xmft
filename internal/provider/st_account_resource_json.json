@@ -1,0 +1,141 @@
+{
+    "time": "2024-04-22T10:20:59.859864+02:00",
+    "level": "DEBUG",
+    "msg": "http: response",
+    "statusCode": 200,
+    "body": {
+        "accountCreationDate": 1713774059845,
+        "accountEncryptMode": "UNSPECIFIED",
+        "accountMaintenanceSettings": {
+            "accountCertificateNotified": null,
+            "accountDisabledDate": null,
+            "accountNotified": null,
+            "accountPasswordNotified": null,
+            "action": {
+                "action": null,
+                "daysDeleteDisabled": null
+            },
+            "criteria": {
+                "daysAfterCreation": null,
+                "daysOfInactivity": null
+            },
+            "emailNotificationBeforeAction": {
+                "emailTemplate": null,
+                "notifyAccount": false,
+                "notifyDays": null
+            },
+            "emailNotificationForUserCertificate": {
+                "emailTemplate": null,
+                "notifyAccount": false,
+                "notifyDays": null
+            },
+            "emailNotificationForUserPassword": {
+                "emailTemplate": null,
+                "notifyAccount": false,
+                "notifyDays": null
+            },
+            "policy": "default"
+        },
+        "accountSubmitForApprove": null,
+        "accountVerificationStatus": null,
+        "additionalAttributes": {},
+        "addressBookSettings": {
+            "contacts": [],
+            "nonAddressBookCollaborationAllowed": null,
+            "policy": "default",
+            "sources": []
+        },
+        "adhocSettings": {
+            "deliveryMethod": "DEFAULT",
+            "enrollmentTypes": [],
+            "implicitEnrollmentType": null
+        },
+        "authByEmail": false,
+        "bandwidthLimits": {
+            "inboundLimit": null,
+            "outboundLimit": null,
+            "policy": "default"
+        },
+        "businessUnit": null,
+        "contact": {
+            "email": null,
+            "phone": null
+        },
+        "disabled": false,
+        "fileArchivingPolicy": "DEFAULT",
+        "fileMaintenanceSettings": {
+            "deleteFilesDays": null,
+            "deletionNotifications": null,
+            "deletionNotificationsTemplate": null,
+            "deletionNotifyAccount": null,
+            "expirationPeriod": null,
+            "notifyDays": null,
+            "pattern": null,
+            "policy": "default",
+            "removeFolders": null,
+            "reportNotified": null,
+            "sendSentinelAlert": null,
+            "warnNotified": null,
+            "warnNotifyAccount": null,
+            "warningNotifications": null,
+            "warningNotificationsTemplate": null
+        },
+        "gid": "1000",
+        "homeFolder": "/files/account1",
+        "homeFolderAccessLevel": "PRIVATE",
+        "id": "2cd008858ee428f2018f04e4e14500fb",
+        "isUnlicensedUserAllowedToReply": true,
+        "lastModified": null,
+        "loginRestrictionPolicy": null,
+        "managedByCG": null,
+        "mappedUser": null,
+        "metadata": {
+            "links": {
+                "certificates": "https: //HOST:8444/api/v2.0/certificates?account=account1-2024-04-22_10-20-59",
+                "routes": "https://HOST:8444/api/v2.0/routes?account=account1-2024-04-22_10-20-59",
+                "sites": "https: //HOST:8444/api/v2.0/sites?account=account1-2024-04-22_10-20-59",
+                "subscriptions": "https://HOST:8444/api/v2.0/subscriptions?account=account1-2024-04-22_10-20-59",
+                "transferProfiles": "https://HOST:8444/api/v2.0/transferProfiles?account=account1-2024-04-22_10-20-59"
+            }
+        },
+        "name": "account1-2024-04-22_10-20-59",
+        "notes": null,
+        "pesitId": null,
+        "rejectReason": null,
+        "routingMode": "reject",
+        "skin": "Default HTML Template",
+        "subscriptionFolderDiscovery": "ITERATIVE",
+        "transferType": "N",
+        "transfersWebServiceAllowed": false,
+        "type": "user",
+        "uid": "1000",
+        "unlicensed": false,
+        "user": {
+            "authExternal": false,
+            "failedAuthAttempts": 0,
+            "failedAuthMaximum": 3,
+            "failedSshKeyAuthAttempts": 0,
+            "failedSshKeyAuthMaximum": 3,
+            "lastFailedAuth": null,
+            "lastFailedSshKeyAuth": null,
+            "lastLogin": null,
+            "locked": false,
+            "name": "account1-2024-04-22_10-20-59",
+            "passwordCredentials": {
+                "forcePasswordChange": false,
+                "lastOwnPasswordChange": null,
+                "lastPasswordChange": null,
+                "password": null,
+                "passwordDigest": "A/Re91oxrssYKjtoYIvJda9gJP1DQwon2JUXKdLCnlTG28pd+yWDRW3h4EimQ58N+Pg3Yk+LgA4c\r\nz5N6YMfCN7E9jyguILd4t0xdWjWaUAmJugnZTo/bJVczZNBfdYH2gtaw5Q1A+MpetvlOujA5R86e\r\nYtv4NmMeEX5q5i5mJ3YSCrreL3rIsVivlmHTf7+GDAYVEK21w4R/Lou3W/yOP82WGSqX8tCl1OsB\r\n0ApUs9b4hXx6UBWnp9va/QAkhRTWIMmn0TfjZ6YRLL4bRtbyojl8J9BMYoe5KSYYPDfcG30Fqd1H\r\nmNogiFZk9A2UJ2lOo4Gec1XIpUYiUTEIOWl6Hg==",
+                "passwordExpiryInterval": null
+            },
+            "secretQuestion": {
+                "forceSecretQuestionChange": false,
+                "secretAnswerGuessFailures": 0,
+                "secretQuestion": null
+            },
+            "successfulAuthMaximum": null,
+            "successfulLogins": 0
+        }
+    }
+}

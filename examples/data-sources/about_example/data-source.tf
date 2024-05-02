@@ -1,2 +1,2 @@
-data "axwaycft_about" "example" {
+data "xmft_about" "example" {
 }

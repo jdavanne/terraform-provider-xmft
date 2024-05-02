@@ -1,4 +1,4 @@
-resource "axwaycft_cftsend" "zoupi" {
+resource "xmft_cftsend" "zoupi" {
   name    = "ZOUP"
   exec    = ""
   fcode   = "ASCII"

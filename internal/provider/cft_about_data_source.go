@@ -4,24 +4,19 @@ import (
 	"context"
 	"fmt"
 
-	"terraform-provider-axway-cft/internal/axwaycft"
+	"terraform-provider-xmft/internal/cftapi"
+	"terraform-provider-xmft/internal/tfhelper"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
-	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
 type cftAboutDataSource struct {
-	client *axwaycft.Client
+	client *cftapi.Client
 }
 
 type cftAboutDataSourceModel struct {
-	About aboutModel `tfsdk:"about"`
-}
-
-type aboutModel struct {
 	InstanceId       types.String `tfsdk:"instance_id"`
-	Name             types.String `tfsdk:"name"`
 	Version          types.String `tfsdk:"version"`
 	Level            types.String `tfsdk:"level"`
 	MultinodeEnabled types.Bool   `tfsdk:"multinode_enabled"`
@@ -38,38 +33,12 @@ func NewAboutDataSource() datasource.DataSource {
 }
 
 func (d *cftAboutDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_about"
+	resp.TypeName = req.ProviderTypeName + "_cft_about"
 }
 
-func (d *cftAboutDataSource) Schema(_ context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		Attributes: map[string]schema.Attribute{
-			"about": schema.SingleNestedAttribute{
-				Computed: true,
-				// NestedObject: schema.NestedAttributeObject{
-				Attributes: map[string]schema.Attribute{
-					"instance_id":       schema.StringAttribute{Computed: true},
-					"name":              schema.StringAttribute{Computed: true},
-					"version":           schema.StringAttribute{Computed: true},
-					"level":             schema.StringAttribute{Computed: true},
-					"multinode_enabled": schema.BoolAttribute{Computed: true},
-					"system":            schema.StringAttribute{Computed: true},
-				},
-				//},
-				//		},
-				//
-
-			},
-		},
-	}
-}
-
-func str(v interface{}) string {
-	r, t := v.(string)
-	if !t {
-		return ""
-	}
-	return r
+func (d *cftAboutDataSource) Schema(ctx context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+	var obj cftAboutDataSourceModel
+	resp.Schema = tfhelper.DataSourceModelToSchema(ctx, "version", &obj)
 }
 
 func (d *cftAboutDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
@@ -77,13 +46,15 @@ func (d *cftAboutDataSource) Read(ctx context.Context, req datasource.ReadReques
 	about, err := d.client.About(ctx)
 	if err != nil {
 		resp.Diagnostics.AddError(
-			"Unable to Read AxwayCFT About",
+			"Unable to Read XCO CFT About",
 			err.Error(),
 		)
 		return
 	}
 
-	aboutState := aboutModel{
+	tfhelper.AttributesToResource(ctx, "About", about, &state)
+
+	/*aboutState := aboutModel{
 		InstanceId: types.StringValue(str(about["instance_id"])),
 		Name:       types.StringValue(str(about["name"])),
 		Version:    types.StringValue(str(about["version"])),
@@ -91,7 +62,7 @@ func (d *cftAboutDataSource) Read(ctx context.Context, req datasource.ReadReques
 		System:     types.StringValue(str(about["system"])),
 	}
 
-	state.About = aboutState
+	state.About = aboutState*/
 
 	// Set state
 	diags := resp.State.Set(ctx, &state)
@@ -106,11 +77,11 @@ func (d *cftAboutDataSource) Configure(_ context.Context, req datasource.Configu
 		return
 	}
 
-	client, ok := req.ProviderData.(*axwaycft.Client)
+	client, ok := req.ProviderData.(*cftapi.Client)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
-			fmt.Sprintf("Expected *axwaycft.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
+			fmt.Sprintf("Expected *cftapi.Client, got: %T. Please report this issue to the provider developers.", req.ProviderData),
 		)
 
 		return
