@@ -40,3 +40,4 @@ docker_compose
 *.ignore.*
 /coverage.*
 /report.xml
+/tmp
