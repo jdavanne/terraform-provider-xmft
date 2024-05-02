@@ -7,7 +7,7 @@ import (
 )
 
 func TestCFTPARTResource(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	// t.Setenv("TF_ACC", "1")
 	// r := time.Now().Format("-2006-01-02_15-04-05")
 	name := "cft2"
 	resource.Test(t, resource.TestCase{

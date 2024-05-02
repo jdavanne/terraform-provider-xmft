@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewSTTransferSiteResource(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	// t.Setenv("TF_ACC", "1")
 	r := time.Now().Format("-2006-01-02_15-04-05")
 	resourceType := "xmft_st_site_ssh"
 	resourceName := "ssh1"
