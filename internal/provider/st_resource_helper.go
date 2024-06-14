@@ -23,15 +23,22 @@ var (
 	_ resource.ResourceWithConfigure = &stResource{}
 )
 
+type stProviderData struct {
+	client               *stapi.Client
+	additionalAttributes types.Map
+}
+
 type stResource struct {
-	name       string
-	kind       string
-	uriCreate  string
-	uriReplace string
-	obj        interface{}
-	client     *stapi.Client
+	name         string
+	kind         string
+	uriCreate    string
+	uriReplace   string
+	obj          interface{}
+	providerData *stProviderData
+	// client       *stapi.Client
 
 	ignoreDeleteNotFoundErrors bool
+	onlyReplace                bool
 }
 
 func NewSTResource(obj interface{}, name string, kind string, uriCreate, uriReplace string) *stResource {
@@ -79,6 +86,11 @@ func (r *stResource) IgnoreDeleteNotFoundError() *stResource {
 	return r
 }
 
+func (r *stResource) OnlyReplace() *stResource {
+	r.onlyReplace = true
+	return r
+}
+
 // Schema defines the schema for the resource.
 func (r *stResource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = tfhelper.ModelToSchema(ctx, r.name, r.obj)
@@ -104,6 +116,8 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 	}
 	slog.DebugContext(ctx, "CreateOrUpdate XCO ST "+r.name+" planState", "data", fmt.Sprintf("%+v", plan))
 
+	// if provider has AddtionAttributes, merge them into plan
+
 	// name := plan.Name.ValueString()
 	m := make(map[string]interface{})
 	tfhelper.ResourceToAttributes(ctx, r.name, plan, m)
@@ -114,7 +128,7 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 
 	if create {
 		uri := tfhelper.ResolveURI(r.uriCreate, m)
-		stobject, err = r.client.CreateObject(ctx, uri, r.kind, m)
+		stobject, err = r.providerData.client.CreateObject(ctx, uri, r.kind, m)
 		if err != nil {
 			odiags.AddError(
 				"Error creating "+r.name+" Ref:"+ref,
@@ -132,7 +146,7 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 		}
 
 		uri := tfhelper.ResolveURI(r.uriReplace, m)
-		stobject, err = r.client.ReplaceObject(ctx, uri, r.kind, m)
+		stobject, err = r.providerData.client.ReplaceObject(ctx, uri, r.kind, m)
 		if err != nil {
 			odiags.AddError(
 				"Error updating "+r.name+" Ref:"+ref,
@@ -146,7 +160,7 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 	// reflect.ValueOf(plan).Elem().FieldByName("Id").Set(reflect.ValueOf(types.StringValue(str(stobject["id"]))))
 	reflect.ValueOf(plan).Elem().FieldByName("LastUpdated").Set(reflect.ValueOf(types.StringValue(time.Now().Format(time.RFC850))))
 
-	slog.DebugContext(ctx, "CreateOrUpdate XCO ST "+r.name+" Ref="+ref, "data", fmt.Sprintf("%+v", plan))
+	slog.DebugContext(ctx, "CreateOrUpdate XCO ST "+r.name+" Ref="+ref, "data", fmt.Sprintf("%+v", plan), "stobject", fmt.Sprintf("%+v", stobject))
 
 	// Set state to fully populated data
 	diags = respState.Set(ctx, plan)
@@ -158,7 +172,7 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 
 // Create creates the resource and sets the initial Terraform state.
 func (r *stResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	r.createOrUpdate(ctx, &req.Plan, nil, &resp.State, &resp.Diagnostics, true)
+	r.createOrUpdate(ctx, &req.Plan, nil, &resp.State, &resp.Diagnostics, !r.onlyReplace)
 }
 
 // Read refreshes the Terraform state with the latest data.
@@ -187,7 +201,7 @@ func (r *stResource) Read(ctx context.Context, req resource.ReadRequest, resp *r
 	m := make(map[string]interface{})
 	tfhelper.ResourceToAttributes(ctx, r.name, state, m)
 	uri := tfhelper.ResolveURI(r.uriReplace, m)
-	stobject, err := r.client.ReadObject(ctx, uri)
+	stobject, err := r.providerData.client.ReadObject(ctx, uri)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading XCO ST "+r.name,
@@ -215,6 +229,10 @@ func (r *stResource) Update(ctx context.Context, req resource.UpdateRequest, res
 
 // Delete deletes the resource and removes the Terraform state on success.
 func (r *stResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
+	if r.onlyReplace {
+		// no Delete
+		return
+	}
 	// Retrieve values from state
 	state := reflect.New(reflect.TypeOf(r.obj).Elem()).Interface()
 	diags := req.State.Get(ctx, state)
@@ -237,7 +255,7 @@ func (r *stResource) Delete(ctx context.Context, req resource.DeleteRequest, res
 	m := make(map[string]interface{})
 	tfhelper.ResourceToAttributes(ctx, r.name, state, m)
 	uri := tfhelper.ResolveURI(r.uriReplace, m)
-	err := r.client.DeleteObject(ctx, uri)
+	err := r.providerData.client.DeleteObject(ctx, uri)
 	if err != nil {
 		if e, ok := err.(*tools.HttpError); !(r.ignoreDeleteNotFoundErrors && ok && e.StatusCode == 404) {
 			resp.Diagnostics.AddError(
@@ -254,7 +272,7 @@ func (r *stResource) Configure(_ context.Context, req resource.ConfigureRequest,
 		return
 	}
 
-	client, ok := req.ProviderData.(*stapi.Client)
+	providerData, ok := req.ProviderData.(*stProviderData)
 
 	if !ok {
 		resp.Diagnostics.AddError(
@@ -265,5 +283,5 @@ func (r *stResource) Configure(_ context.Context, req resource.ConfigureRequest,
 		return
 	}
 
-	r.client = client
+	r.providerData = providerData
 }

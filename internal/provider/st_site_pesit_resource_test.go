@@ -7,25 +7,16 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestNewSTSubscriptionARResource(t *testing.T) {
+func TestNewSTTransferSitePesitResource(t *testing.T) {
 	t.Setenv("TF_ACC", "1")
 	r := time.Now().Format("-2006-01-02_15-04-05")
-	resourceType := "xmft_st_subscription_ar"
-	resourceName := "sub1"
-	name := "sub1" + r
+	resourceType := "xmft_st_site_pesit"
+	resourceName := "pesit1"
+	name := "pesit1" + r
 
 	account := "account1" + r
-	arApp := "ar1" + r
 
 	localConfig := `
-resource "xmft_st_advanced_routing_application" "ar1" {
-	provider       = xmft.st1
-	name           = "` + arApp + `"
-	type           = "AdvancedRouting"
-	notes          = "mynotes"
-	business_units = []
-}
-
 resource "xmft_st_account" "account1" {
 		provider    = xmft.st1
 		name        = "` + account + `"
@@ -50,20 +41,26 @@ resource "xmft_st_account" "account1" {
 				Config: providerConfig + localConfig + `
 					resource "` + resourceType + `" "` + resourceName + `" {
 						provider         = xmft.st1
-						#name             = "` + name + `"
+						name             = "` + name + `"
 						account 		 = xmft_st_account.account1.name
-						folder		     = "/folder"
-						application 	 = xmft_st_advanced_routing_application.ar1.name	
+						host		     = "myhost"
+						pesit_id		 = "FROMST"
+						#port		     = "22"
 					}
 					`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
 					resource "`+resourceType+`" "`+resourceName+`" {
 						#provider        = xmft.st1
-						#name             = "`+name+`"
+						name             = "`+name+`"
 						account 		 = "`+account+`"
-						folder		     = "/folder"
-						application 	 = "`+arApp+`"
+						type		     = "pesit"
+						protocol	     = "pesit"
+						host		     = "myhost"
+						port             = "1761"
+						#password	     = "mypassword"
+						#download_folder  = "/download"
+						#upload_folder    = "/upload"
 					}
 					`)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),
@@ -82,21 +79,23 @@ resource "xmft_st_account" "account1" {
 			{
 				Config: providerConfig + localConfig + `
 				resource "` + resourceType + `" "` + resourceName + `" {
-						provider         = xmft.st1
-						#name             = "` + name + `"
+					    provider         = xmft.st1
+						name             = "` + name + `"
 						account 		 = xmft_st_account.account1.name
-						folder		     = "/folder2"
-						application 	 = xmft_st_advanced_routing_application.ar1.name	
+						host		     = "myhost"
+						pesit_id		 = "FROMSTR"
+						port		     = "23"
 				}
 				`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
 					resource "`+resourceType+`" "`+resourceName+`" {
-						#provider        = xmft.st1
-						#name             = "`+name+`"
+						#provider       = xmft.st1
+						name             = "`+name+`"
 						account 		 = "`+account+`"
-						folder		     = "/folder2"
-						application 	 = "`+arApp+`"
+						host		     = "myhost"
+						pesit_id		 = "FROMSTR"
+						port		     = "23"
 					}
 					`)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),

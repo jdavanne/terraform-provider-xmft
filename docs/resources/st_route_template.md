@@ -21,6 +21,7 @@ description: |-
 
 ### Optional
 
+- `additional_attributes` (Map of String)
 - `business_units` (List of String)
 - `condition` (String)
 - `condition_type` (String)

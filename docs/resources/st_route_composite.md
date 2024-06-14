@@ -50,6 +50,17 @@ resource "xmft_st_subscription_ar" "sub1" {
   application = xmft_st_advanced_routing_application.ar1.name
 }
 
+resource "xmft_st_site_ssh" "ssh1" {
+  provider      = xmft.st1
+  name          = "ssh2"
+  account       = xmft_st_account.account1.name
+  host          = "host"
+  port          = "8022"
+  user_name     = xmft_st_account.account1.user.name
+  password      = xmft_st_account.account1.user.password_credentials.password
+  upload_folder = "/"
+}
+
 resource "xmft_st_route_simple" "simple1" {
   provider = xmft.st1
   name     = "simple1"

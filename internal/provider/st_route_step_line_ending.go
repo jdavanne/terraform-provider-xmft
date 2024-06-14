@@ -37,7 +37,7 @@ type stRouteStepLineEndingResourceModel struct {
 	Condition             types.String `tfsdk:"condition"`
 	ActionOnStepSuccess   types.String `tfsdk:"action_on_step_success"  helper:"actionOnStepSuccess,default:PROCEED"`
 	ActionOnStepFailure   types.String `tfsdk:"action_on_step_failure"  helper:"actionOnStepFailure,default:FAIL"`
-	Autostart             types.Bool   `tfsdk:"autostart"  helper:"default:false"`
+	Autostart             types.Bool   `tfsdk:"autostart"  helper:",default:false"`
 	UsePrecedingStepFiles types.Bool   `tfsdk:"use_preceding_step_files"  helper:"usePrecedingStepFiles,default:false"`
 	FileFilterExpression  types.String `tfsdk:"file_filter_expression"  helper:"fileFilterExpression"`
 }

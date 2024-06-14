@@ -7,7 +7,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func DataSourceModelToSchema(ctx context.Context, modelName string, model interface{}) schema.Schema {
@@ -40,7 +39,7 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 
 			typestr := reflectType.Field(i).Type.String()
 			kind := reflectType.Field(i).Type.Kind()
-			tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
+			// tflog.Debug(ctx, "dataSourceModelToSchema >> "+modelName+"."+fieldName+" : "+typestr+"/"+kind.String())
 
 			switch kind {
 			case reflect.Slice:
@@ -64,7 +63,6 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 							panic("unsupported slice type: " + typestr + "(" + modelName + "." + fieldName + ")")
 						}
 					} else {
-						tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
 						attrs[name] = schema.ListNestedAttribute{
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
@@ -154,7 +152,6 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 						panic("unsupported type: " + typestr + "(" + modelName + "." + fieldName + ")")
 					}
 				} else {
-					tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
 					attrs[name] = schema.SingleNestedAttribute{
 						Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
 						Required:   required,
@@ -164,7 +161,6 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 					}
 				}
 			case reflect.Ptr:
-				tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
 				attrs[name] = schema.SingleNestedAttribute{
 					Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
 					Required:   required,

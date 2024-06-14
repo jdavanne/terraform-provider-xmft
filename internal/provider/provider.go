@@ -41,6 +41,8 @@ type xmftProviderModel struct {
 	Username types.String `tfsdk:"username"`
 	Password types.String `tfsdk:"password"`
 	Product  types.String `tfsdk:"product"`
+
+	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }
 
 func (p *xmftProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -66,6 +68,10 @@ func (p *xmftProvider) Schema(ctx context.Context, req provider.SchemaRequest, r
 			"product": schema.StringAttribute{
 				Required:  true,
 				Sensitive: true,
+			},
+			"additional_attributes": schema.MapAttribute{
+				ElementType: types.StringType,
+				Optional:    true,
 			},
 		},
 	}
@@ -217,14 +223,29 @@ func (p *xmftProvider) Configure(ctx context.Context, req provider.ConfigureRequ
 			)
 			return
 		}
-		resp.DataSourceData = client
-		resp.ResourceData = client
+		prov := &stProviderData{client: client, additionalAttributes: config.AdditionalAttributes}
+		resp.DataSourceData = prov
+		resp.ResourceData = prov
 		tflog.Info(ctx, "Configured xmft client", map[string]any{"success": true})
 	}
 }
 
+var (
+	localProviderResources   []func() resource.Resource
+	localProviderDataSources []func() datasource.DataSource
+)
+
+func registerResource(f func() resource.Resource) {
+	localProviderResources = append(localProviderResources, f)
+}
+
+func registerDataSource(f func() datasource.DataSource) {
+	localProviderDataSources = append(localProviderDataSources, f)
+}
+
 func (p *xmftProvider) Resources(ctx context.Context) []func() resource.Resource {
-	return []func() resource.Resource{
+	return localProviderResources
+	/*return []func() resource.Resource{
 		NewCFTSendResource,
 		NewCFTRecvResource,
 		NewCFTPartResource,
@@ -237,15 +258,17 @@ func (p *xmftProvider) Resources(ctx context.Context) []func() resource.Resource
 		NewSTRouteSimpleResource,
 		NewSTTransferSiteSSHModelResource,
 		NewSTSubscriptionARModelResource,
-	}
+		NewSTSentinelModelResource,
+	}*/
 }
 
 func (p *xmftProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
+	return localProviderDataSources
+	/*return []func() datasource.DataSource{
 		NewAboutDataSource,
 
 		NewSTVersionDataSource,
-	}
+	}*/
 }
 
 func (p *xmftProvider) Functions(ctx context.Context) []func() function.Function {

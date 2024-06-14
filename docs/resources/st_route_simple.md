@@ -45,22 +45,219 @@ description: |-
 <a id="nestedatt--steps"></a>
 ### Nested Schema for `steps`
 
-Required:
+Optional:
 
-- `type` (String)
+- `compress` (Attributes) (see [below for nested schema](#nestedatt--steps--compress))
+- `decompress` (Attributes) (see [below for nested schema](#nestedatt--steps--decompress))
+- `pluggable` (Attributes) (see [below for nested schema](#nestedatt--steps--pluggable))
+- `publish_to_account` (Attributes) (see [below for nested schema](#nestedatt--steps--publish_to_account))
+- `pull_from_partner` (Attributes) (see [below for nested schema](#nestedatt--steps--pull_from_partner))
+- `rename` (Attributes) (see [below for nested schema](#nestedatt--steps--rename))
+- `send_to_partner` (Attributes) (see [below for nested schema](#nestedatt--steps--send_to_partner))
+
+<a id="nestedatt--steps--compress"></a>
+### Nested Schema for `steps.compress`
 
 Optional:
 
 - `action_on_step_failure` (String)
 - `action_on_step_success` (String)
+- `compression_level` (String)
+- `compression_type` (String)
+- `condition` (String)
+- `condition_type` (String)
+- `file_filter_expression` (String)
+- `file_filter_expression_type` (String)
+- `post_transformation_action_rename_as_expression` (String)
+- `single_archive_enabled` (Boolean)
+- `single_archive_name` (String)
+- `status` (String)
+- `type` (String)
+- `zip_password` (String)
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--decompress"></a>
+### Nested Schema for `steps.decompress`
+
+Optional:
+
+- `action_on_step_failure` (String)
+- `action_on_step_success` (String)
+- `condition` (String)
+- `condition_type` (String)
+- `file_filter_expression` (String)
+- `file_filter_expression_type` (String)
+- `filename_collision_resolution_type` (String)
+- `post_transformation_action_rename_as_expression` (String)
+- `status` (String)
+- `type` (String)
+- `zip_password` (String)
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--pluggable"></a>
+### Nested Schema for `steps.pluggable`
+
+Required:
+
+- `custom_properties` (Map of String)
+
+Optional:
+
+- `action_on_step_failure` (String)
+- `action_on_step_success` (String)
+- `condition` (String)
+- `condition_type` (String)
+- `status` (String)
+- `type` (String)
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--publish_to_account"></a>
+### Nested Schema for `steps.publish_to_account`
+
+Required:
+
+- `target_account_expression` (String)
+
+Optional:
+
+- `action_on_step_failure` (String)
+- `action_on_step_success` (String)
+- `condition` (String)
+- `condition_type` (String)
+- `disable_auto_create_target_folder` (Boolean)
+- `file_filter_expression` (String)
+- `file_filter_expression_type` (String)
+- `filename_collision_resolution_type` (String)
+- `post_routing_action_rename_expression` (String)
+- `post_routing_action_type` (String)
+- `publish_file_as` (String)
+- `status` (String)
+- `target_account_expression_type` (String)
+- `target_folder_expression` (String)
+- `target_folder_expression_type` (String)
+- `trigger_subscription` (Boolean)
+- `type` (String)
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--pull_from_partner"></a>
+### Nested Schema for `steps.pull_from_partner`
+
+Required:
+
+- `target_account_expression` (String)
+- `transfer_site_expression` (String)
+
+Optional:
+
+- `action_on_step_failure` (String)
+- `action_on_step_success` (String)
+- `condition` (String)
+- `condition_type` (String)
+- `local_file_name_expression` (String)
+- `local_file_name_expression_type` (String)
+- `local_folder_path_expression` (String)
+- `local_folder_path_expression_type` (String)
+- `remote_file_name_expression` (String)
+- `remote_file_name_expression_type` (String)
+- `remote_folder_path_expression` (String)
+- `remote_folder_path_expression_type` (String)
+- `status` (String)
+- `target_account_expression_type` (String)
+- `transfer_site_expression_type` (String)
+- `type` (String)
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--rename"></a>
+### Nested Schema for `steps.rename`
+
+Required:
+
+- `output_file_name` (String)
+
+Optional:
+
+- `action_on_step_failure` (String)
+- `action_on_step_success` (String)
+- `condition` (String)
+- `condition_type` (String)
 - `file_filter_expression` (String)
 - `file_filter_expression_type` (String)
 - `status` (String)
+- `type` (String)
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--send_to_partner"></a>
+### Nested Schema for `steps.send_to_partner`
+
+Optional:
+
+- `action_on_step_failure` (String)
+- `action_on_step_success` (String)
+- `archive_policy_on_failure` (String)
+- `archive_policy_on_success` (String)
+- `condition` (String)
+- `condition_type` (String)
+- `data_encoding` (String)
+- `file_filter_expression` (String)
+- `file_filter_expression_type` (String)
+- `file_label` (String)
+- `final_destination` (String)
+- `max_number_of_retries` (Number)
+- `max_parallel_clients` (Number)
+- `originator` (String)
+- `post_routing_action_rename_expression` (String)
+- `post_routing_action_type` (String)
+- `record_format` (String)
+- `record_length` (String)
+- `route_file_as` (String)
+- `sleep_between_retries` (Number)
+- `sleep_increment_between_retries` (Number)
+- `status` (String)
+- `store_and_forward_mode` (String)
 - `target_account_expression` (String)
 - `target_account_expression_type` (String)
+- `transfer_profile_expression` (String)
+- `transfer_profile_expression_type` (String)
 - `transfer_site_expression` (String)
 - `transfer_site_expression_type` (String)
+- `trigger_file_content` (String)
+- `trigger_file_for_each` (Boolean)
+- `trigger_file_name` (String)
+- `trigger_target_account_expression` (String)
+- `trigger_target_account_expression_type` (String)
+- `trigger_transfer_profile_expression` (String)
+- `trigger_transfer_profile_expression_type` (String)
+- `trigger_transfer_site_expression` (String)
+- `trigger_transfer_site_expression_type` (String)
+- `trigger_upload_folder` (String)
+- `type` (String)
 - `upload_folder` (String)
+- `user_message` (String)
+- `virtual_filename` (String)
 
 Read-Only:
 

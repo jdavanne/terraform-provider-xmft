@@ -115,9 +115,9 @@ type stTransferSiteSSHModel struct {
 	BufferSize                               types.Int64  `tfsdk:"buffer_size" helper:"bufferSize,default:32768"`
 	BlockSize                                types.Int64  `tfsdk:"block_size" helper:"blockSize,default:32768"`
 	TcpNoDelay                               types.Bool   `tfsdk:"tcp_no_delay" helper:"tcpNoDelay,default:true"`
-	ClientCertificate                        types.String `tfsdk:"client_certificate" helper:"clientCertificate,default"`
+	ClientCertificate                        types.String `tfsdk:"client_certificate" helper:"clientCertificate,emptyIsNull,default:"`
 	CipherSuites                             types.String `tfsdk:"cipher_suites" helper:"cipherSuites,computed,optional"`
-	Protocols                                types.String `tfsdk:"protocols" helper:"protocols,default"`
+	Protocols                                types.String `tfsdk:"protocols" helper:"protocols,default:"`
 	AllowedMacs                              types.String `tfsdk:"allowed_macs" helper:"allowedMacs,computed,optional"`
 	KeyExchangeAlgorithms                    types.String `tfsdk:"key_exchange_algorithms" helper:"keyExchangeAlgorithms,computed,optional"`
 	PublicKeys                               types.String `tfsdk:"public_keys" helper:"publicKeys,computed,optional"`
@@ -142,9 +142,13 @@ type stTransferSiteSSHModel struct {
 		Position types.Int64  `tfsdk:"position" helper:",required"`
 	} `tfsdk:"alternative_addresses" helper:"alternativeAddresses"`
 
-	// AdditionalAttributes types.Object   `tfsdk:"additional_attributes" helper:"additionalAttributes"`
+	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }
 
 func NewSTTransferSiteSSHModelResource() resource.Resource {
 	return NewSTResource(&stTransferSiteSSHModel{}, "st_site_ssh", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}")
+}
+
+func init() {
+	registerResource(NewSTTransferSiteSSHModelResource)
 }

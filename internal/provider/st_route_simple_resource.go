@@ -34,9 +34,15 @@ type stRouteSimpleResourceModel struct {
 		StepId types.String `tfsdk:"step_id"`
 		Status types.String `tfsdk:"status"`
 	} `tfsdk:"step_statuses"`*/
-	Steps types.List `tfsdk:"steps" helper:"steps,fold,elementtype:stRouteStepSendToPartnerResourceModel,optional"`
+	//Steps types.List `tfsdk:"steps" helper:"steps,fold,elementtype:stRouteStepSendToPartnerResourceModel,optional"`
+	//Steps types.List `tfsdk:"steps" helper:"steps,fold:type,elementtype:stRouteSimpleSteps,optional"`
+	Steps []stRouteSimpleSteps `tfsdk:"steps" helper:"steps,fold:type,optional"`
 }
 
 func NewSTRouteSimpleResource() resource.Resource {
 	return NewSTResource(&stRouteSimpleResourceModel{}, "st_route_simple", "", "/api/v2.0/routes", "/api/v2.0/routes/{id}").IgnoreDeleteNotFoundError()
+}
+
+func init() {
+	registerResource(NewSTRouteSimpleResource)
 }

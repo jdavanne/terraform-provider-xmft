@@ -29,3 +29,7 @@ type cftTcpResourceModel struct {
 func NewCFTTcpResource() resource.Resource {
 	return NewCFTResource(&cftTcpResourceModel{}, "cfttcp", "cfttcp", "/cft/api/v1/objects/cftpart/{name}/tcp", "/cft/api/v1/objects/cftpart/{name}/tcp/1")
 }
+
+func init() {
+	registerResource(NewCFTTcpResource)
+}

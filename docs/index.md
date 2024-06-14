@@ -48,5 +48,6 @@ provider "xmft" {
 
 ### Optional
 
+- `additional_attributes` (Map of String)
 - `password` (String, Sensitive)
 - `username` (String)

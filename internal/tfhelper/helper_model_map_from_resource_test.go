@@ -74,10 +74,32 @@ func TestResourceToAttributes(t *testing.T) {
 		"additionalProp1": types.StringValue("value1"),
 		"additionalProp2": types.StringValue("value2"),
 	}))
-	v.Poly = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
-		"sub_sub_str":  types.StringValue("SubSubStr789"),
+	v.Object = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
+		"sub_sub_str":  types.StringValue("SubSubStr567"),
 		"sub_sub_bool": types.BoolValue(true),
 	}))
+	v.PolyPtr.T2 = &TestResourceModelSubSub{
+		SubSubStr:  types.StringValue("SubSubStr56734"),
+		SubSubBool: types.BoolValue(true),
+	}
+	v.ListPolyPtr = append(v.ListPolyPtr, TestResourceModelPolyPtr{
+		T2: &TestResourceModelSubSub{
+			SubSubStr:  types.StringValue("SubSubStr56734"),
+			SubSubBool: types.BoolValue(true),
+		},
+	}, TestResourceModelPolyPtr{
+		T1: &TestResourceModelSubSub2{
+			SubSubStr:  types.StringValue("SubSubStr534"),
+			SubSubInt:  types.Int64Value(452),
+			SubSubBool: types.BoolValue(false),
+		},
+	})
+
+	/*v.Poly.T1 = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub2"), map[string]attr.Value{
+		"sub_sub_str":  types.StringValue("SubSubStr23"),
+		"sub_sub_int":  types.Int64Value(4523),
+		"sub_sub_bool": types.BoolValue(true),
+	}))*/
 
 	attrs := make(map[string]interface{})
 	// Call the GenerateToSchema function
@@ -122,7 +144,18 @@ func TestResourceToAttributes(t *testing.T) {
 			"additionalProp1": "value1",
 			"additionalProp2": "value2",
 		},
-		"poly": map[string]interface{}{"subSubStr": "SubSubStr789", "sub_sub_bool": true},
+		"object": map[string]interface{}{
+			"subSubStr":    "SubSubStr567",
+			"sub_sub_bool": true,
+		},
+		/*"poly": map[string]interface{}{
+			"subSubStr": "SubSubStr56734", "sub_sub_bool": true,
+		},*/
+		"poly_ptr": map[string]interface{}{"subSubStr": "SubSubStr56734", "sub_sub_bool": true},
+		"list_poly_ptr": []interface{}{
+			map[string]interface{}{"subSubStr": "SubSubStr56734", "sub_sub_bool": true},
+			map[string]interface{}{"subSubStr": "SubSubStr534", "sub_sub_int": int64(452), "sub_sub_bool": false},
+		},
 	}
 
 	// Check proper map from ResourceModel to Attributes map

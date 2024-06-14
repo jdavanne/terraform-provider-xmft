@@ -125,10 +125,66 @@ func TestGenerateToDataSourceSchema(t *testing.T) {
 				ElementType: types.StringType,
 				Optional:    true,
 			},
-			"poly": schema.SingleNestedAttribute{
+			"object": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"sub_sub_str":  schema.StringAttribute{Optional: true},
 					"sub_sub_bool": schema.BoolAttribute{Optional: true},
+				},
+				Optional: true,
+			},
+			"poly_ptr": schema.SingleNestedAttribute{
+				Attributes: map[string]schema.Attribute{
+					"t1": schema.SingleNestedAttribute{
+						Attributes: map[string]schema.Attribute{
+							"sub_sub_str":  schema.StringAttribute{Optional: true},
+							"sub_sub_bool": schema.BoolAttribute{Optional: true},
+							"sub_sub_int":  schema.Int64Attribute{Optional: true},
+						},
+						Optional: true,
+					},
+					"t2": schema.SingleNestedAttribute{
+						Attributes: map[string]schema.Attribute{
+							"sub_sub_str":  schema.StringAttribute{Optional: true},
+							"sub_sub_bool": schema.BoolAttribute{Optional: true},
+						},
+						Optional: true,
+					},
+					"t3": schema.SingleNestedAttribute{
+						Attributes: map[string]schema.Attribute{
+							"sub_sub_str":  schema.StringAttribute{Optional: true},
+							"sub_sub_bool": schema.BoolAttribute{Optional: true},
+						},
+						Optional: true,
+					},
+				},
+				Optional: true,
+			},
+			"list_poly_ptr": schema.ListNestedAttribute{
+				NestedObject: schema.NestedAttributeObject{
+					Attributes: map[string]schema.Attribute{
+						"t1": schema.SingleNestedAttribute{
+							Attributes: map[string]schema.Attribute{
+								"sub_sub_str":  schema.StringAttribute{Optional: true},
+								"sub_sub_bool": schema.BoolAttribute{Optional: true},
+								"sub_sub_int":  schema.Int64Attribute{Optional: true},
+							},
+							Optional: true,
+						},
+						"t2": schema.SingleNestedAttribute{
+							Attributes: map[string]schema.Attribute{
+								"sub_sub_str":  schema.StringAttribute{Optional: true},
+								"sub_sub_bool": schema.BoolAttribute{Optional: true},
+							},
+							Optional: true,
+						},
+						"t3": schema.SingleNestedAttribute{
+							Attributes: map[string]schema.Attribute{
+								"sub_sub_str":  schema.StringAttribute{Optional: true},
+								"sub_sub_bool": schema.BoolAttribute{Optional: true},
+							},
+							Optional: true,
+						},
+					},
 				},
 				Optional: true,
 			},

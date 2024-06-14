@@ -24,6 +24,59 @@ type cftTcpResourceModelSub struct {
 	Host types.String `tfsdk:"host" helper:",optional"`
 }
 
+/*
+	{
+	      "type": "cftpart",
+	      "id": "CFT2",
+	      "attributes": {
+	        "commut": "YES",
+	        "ctrlpart": "IGNORE",
+	        "imaxtime": "23595999",
+	        "imintime": "00000000",
+	        "nack": " ",
+	        "nrpart": "CFT2",
+	        "nrpassw": "<CFT_PASSWORD>e96t69lGgYEtYCrbEIwFbssdW7Q70Oe7",
+	        "nspart": "CFT1",
+	        "nspassw": "<CFT_PASSWORD>o+PWhYx5WJ8pIKDT2ORtJBTlVEcd6o9Z",
+	        "omaxtime": "23595999",
+	        "omintime": "00000000",
+	        "origin": "DESIGNER",
+	        "prot": [
+	          "PESIT"
+	        ],
+	        "rauth": "*",
+	        "sap": [
+	          "1788"
+	        ],
+	        "sauth": "*",
+	        "state": "ACTIVEBOTH",
+	        "trk": "UNDEFINED",
+	        "syst": "UNIX",
+	        "tcp": [
+	          {
+	            "type": "cfttcp",
+	            "id": "1",
+	            "attributes": {
+	              "cnxin": "2",
+	              "cnxinout": "4",
+	              "cnxout": "100",
+	              "imaxtime": "23595999",
+	              "imintime": "00000000",
+	              "omaxtime": "23595999",
+	              "omintime": "00000000",
+	              "origin": "DESIGNER",
+	              "retrym": "12",
+	              "retryn": "4",
+	              "retryw": "1",
+	              "host": [
+	                "cft2"
+	              ],
+	              "verify": "0"
+	            }
+	          }
+	        ]
+	      }
+*/
 type cftPartResourceModel struct {
 	Id          types.String `tfsdk:"id" helper:",computed,state,nowrite"`
 	Name        types.String `tfsdk:"name" helper:",required,noread,nowrite"`
@@ -53,9 +106,15 @@ type cftPartResourceModel struct {
 	Trk   types.String `tfsdk:"trk"  helper:",computed,optional"`
 	Syst  types.String `tfsdk:"syst"  helper:",computed,optional"`
 
+	Comment types.String `tfsdk:"comment" helper:",optional,default"`
+
 	Tcp []cftTcpResourceModelSub `tfsdk:"tcp"`
 }
 
 func NewCFTPartResource() resource.Resource {
 	return NewCFTResource(&cftPartResourceModel{}, "cftpart", "cftpart", "/cft/api/v1/objects/cftpart", "/cft/api/v1/objects/cftpart/{name}")
+}
+
+func init() {
+	registerResource(NewCFTPartResource)
 }

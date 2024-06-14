@@ -111,3 +111,7 @@ type cftRecvResourceModel struct {
 func NewCFTRecvResource() resource.Resource {
 	return NewCFTResource(&cftRecvResourceModel{}, "cftrecv", "cftrecv", "/cft/api/v1/objects/cftrecv", "/cft/api/v1/objects/cftrecv/{name}")
 }
+
+func init() {
+	registerResource(NewCFTRecvResource)
+}

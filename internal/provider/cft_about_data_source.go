@@ -28,6 +28,10 @@ var (
 	_ datasource.DataSourceWithConfigure = &cftAboutDataSource{}
 )
 
+func init() {
+	registerDataSource(NewAboutDataSource)
+}
+
 func NewAboutDataSource() datasource.DataSource {
 	return &cftAboutDataSource{}
 }

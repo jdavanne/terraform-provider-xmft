@@ -7,12 +7,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestNewSTAdvancedRoutingApplicationResource(t *testing.T) {
+func TestStBusinessUnitResource(t *testing.T) {
 	t.Setenv("TF_ACC", "1")
 	r := time.Now().Format("-2006-01-02_15-04-05")
-	resourceType := "xmft_st_advanced_routing_application"
-	resourceName := "ar1"
-	name := "AR1" + r
+	resourceType := "xmft_st_business_unit"
+	resourceName := "bu1"
+	name := "bu1" + r
 
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -20,22 +20,19 @@ func TestNewSTAdvancedRoutingApplicationResource(t *testing.T) {
 			// Create and Read testing
 			{
 				Config: providerConfig + `
-					resource "` + resourceType + `" "` + resourceName + `" {
-						provider       = xmft.st1
-						name           = "` + name + `"
-						notes          = "mynotes"
-						business_units = []
-					}
-					`,
+				resource "` + resourceType + `" "` + resourceName + `" {
+		provider    = xmft.st1
+		name        = "` + name + `"
+		base_folder = "/files/bu1"
+}
+`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
-						resource "`+resourceType+`" "`+resourceName+`" {
-							name        = "`+name+`"
-							type        = "AdvancedRouting"
-							notes       = "mynotes"
-							#business_units = []
-						}
-						`)),
+					resource "`+resourceType+`" "`+resourceName+`" {
+	name        = "`+name+`"
+	base_folder = "/files/bu1"
+}
+`)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),
 				),
 			},
@@ -51,21 +48,19 @@ func TestNewSTAdvancedRoutingApplicationResource(t *testing.T) {
 			// Update and Read testing
 			{
 				Config: providerConfig + `
-					resource "` + resourceType + `" "` + resourceName + `" {
-						provider       = xmft.st1
-						name           = "` + name + `"
-						notes          = "mynotes2"
-						business_units = []
-					}`,
+				resource "` + resourceType + `" "` + resourceName + `" {
+	provider    = xmft.st1
+	name        = "` + name + `"
+	base_folder = "/files/bu2"
+}
+`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
-						resource "`+resourceType+`" "`+resourceName+`" {
-							name        = "`+name+`"
-							type        = "AdvancedRouting"
-							notes       = "mynotes2"
-							#business_units = []
-						}
-						`)),
+					resource "`+resourceType+`" "`+resourceName+`" {
+	name        = "`+name+`"
+	base_folder = "/files/bu2"
+}
+`)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),
 				),
 			},

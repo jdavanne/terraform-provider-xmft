@@ -33,6 +33,9 @@ const (
 	username = "admin"
 	password = "admin*"
 	host     = "https://ci8.jda.axwaytest.net:8444"
+	additional_attributes = {
+	  Env = "test"
+	}
   }
   `
 )

@@ -23,12 +23,29 @@ description: |-
 
 ### Optional
 
+- `account_encrypt_mode` (String)
+- `additional_attributes` (Map of String)
+- `auth_by_email` (Boolean)
+- `business_unit` (String)
+- `disabled` (Boolean)
 - `gid` (String)
+- `is_unlicensed_user_allowed_to_reply` (Boolean)
+- `login_restriction_policy` (String)
+- `managed_by_cg` (String)
+- `mapped_user` (String)
+- `notes` (String)
+- `pesit_id` (String)
+- `routing_mode` (String)
+- `skin` (String)
+- `subscription_folder_discovery` (String)
+- `transfer_type` (String)
+- `transfers_web_service_allowed` (Boolean)
 - `type` (String)
 - `uid` (String)
 
 ### Read-Only
 
+- `account_creation_date` (Number)
 - `id` (String) The ID of this resource.
 - `last_updated` (String)
 

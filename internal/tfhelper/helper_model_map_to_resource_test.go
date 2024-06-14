@@ -47,7 +47,16 @@ func TestAttributeToResource(t *testing.T) {
 		"sub_list_object": []interface{}{
 			map[string]interface{}{"subSubStr": "SubSubStr2", "sub_sub_bool": false},
 		},
-		"poly": map[string]interface{}{"subSubStr": "SubSubStr1234", "sub_sub_bool": false},
+		"object": map[string]interface{}{"subSubStr": "SubSubStr5672", "sub_sub_bool": false},
+		//"poly":   map[string]interface{}{"kind": "t1", "subSubStr": "SubSubStr23", "sub_sub_int": 4523, "sub_sub_bool": true},
+		/*"poly_list": []interface{}{
+			map[string]interface{}{"kind": "t1", "subSubStr": "SubSubStr23", "sub_sub_int": 4523, "sub_sub_bool": true},
+		},*/
+		"poly_ptr": map[string]interface{}{"kind": "t2", "subSubStr": "SubSubStr56734", "sub_sub_bool": true},
+		"list_poly_ptr": []interface{}{
+			map[string]interface{}{"kind": "t2", "subSubStr": "SubSubStr567343", "sub_sub_bool": true},
+			// map[string]interface{}{"kind": "t1", "subSubStr": "SubSubStr23", "sub_sub_int": 4523, "sub_sub_bool": true},
+		},
 	}
 
 	var v TestResourceModel
@@ -104,10 +113,39 @@ func TestAttributeToResource(t *testing.T) {
 			})),
 		},
 	))
-	v.Poly = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
-		"sub_sub_str":  types.StringValue("SubSubStr1234"),
+	v.Object = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
+		"sub_sub_str":  types.StringValue("SubSubStr5672"),
 		"sub_sub_bool": types.BoolValue(false),
 	}))
+
+	v.PolyPtr.T2 = &TestResourceModelSubSub{
+		SubSubStr:  types.StringValue("SubSubStr56734"),
+		SubSubBool: types.BoolValue(true),
+	}
+
+	v.ListPolyPtr = append(v.ListPolyPtr, TestResourceModelPolyPtr{
+		T2: &TestResourceModelSubSub{
+			SubSubStr:  types.StringValue("SubSubStr567343"),
+			SubSubBool: types.BoolValue(true),
+		},
+		T1: nil,
+	})
+
+	/*v.Poly.T1 = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub2"), map[string]attr.Value{
+		"sub_sub_str":  types.StringValue("SubSubStr23"),
+		"sub_sub_int":  types.Int64Value(4523),
+		"sub_sub_bool": types.BoolValue(true),
+	}))*/
+
+	/*v.PolyList = PO(types.ListValue(types.ObjectType{}.WithAttributeTypes(structNameToTFType("TestResourceModelSubSub2")),
+		[]attr.Value{
+			PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub2"), map[string]attr.Value{
+				"sub_sub_str":  types.StringValue("SubSubStr23"),
+				"sub_sub_int":  types.Int64Value(4523),
+				"sub_sub_bool": types.BoolValue(true),
+			})),
+		},
+	))*/
 
 	var v2 TestResourceModel
 	AttributesToResource(ctx, "testresource", attrsRead, &v2)

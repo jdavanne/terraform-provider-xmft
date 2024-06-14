@@ -1,6 +1,6 @@
 locals {
   host = "ci8.jda.axwaytest.net"
-  rnd  = "8"
+  rnd  = "21"
 }
 
 provider "xmft" {

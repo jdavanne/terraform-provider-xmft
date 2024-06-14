@@ -7,12 +7,12 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestNewSTAdvancedRoutingApplicationResource(t *testing.T) {
+func TestNewBasicSTBasicApplicationResource(t *testing.T) {
 	t.Setenv("TF_ACC", "1")
 	r := time.Now().Format("-2006-01-02_15-04-05")
-	resourceType := "xmft_st_advanced_routing_application"
-	resourceName := "ar1"
-	name := "AR1" + r
+	resourceType := "xmft_st_basic_application"
+	resourceName := "basic1"
+	name := "Basic1" + r
 
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
@@ -24,16 +24,23 @@ func TestNewSTAdvancedRoutingApplicationResource(t *testing.T) {
 						provider       = xmft.st1
 						name           = "` + name + `"
 						notes          = "mynotes"
-						business_units = []
+						#business_units = []
+
+						additional_attributes = {
+							"userVars.additionalProp1" = "val1"
+						}
 					}
 					`,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
 						resource "`+resourceType+`" "`+resourceName+`" {
 							name        = "`+name+`"
-							type        = "AdvancedRouting"
+							type        = "Basic"
 							notes       = "mynotes"
 							#business_units = []
+							additional_attributes = {
+								"userVars.additionalProp1" = "val1"
+							}
 						}
 						`)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),
@@ -61,7 +68,7 @@ func TestNewSTAdvancedRoutingApplicationResource(t *testing.T) {
 					checkResources([]byte(`
 						resource "`+resourceType+`" "`+resourceName+`" {
 							name        = "`+name+`"
-							type        = "AdvancedRouting"
+							type        = "Basic"
 							notes       = "mynotes2"
 							#business_units = []
 						}

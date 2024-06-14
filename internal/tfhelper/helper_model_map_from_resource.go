@@ -8,7 +8,6 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 // ResourceToAttributes converts the fields in the Terraform resource to the corresponding attributes in the XCO MFT object.
@@ -18,6 +17,22 @@ import (
 func ResourceToAttributes(ctx context.Context, modelName string, model interface{}, attrs map[string]interface{}) {
 	value := reflect.ValueOf(model).Elem()
 	_resourceValueToAttributes(ctx, modelName, value, attrs)
+}
+
+func foldObject(ctx context.Context, fold bool, modelName string, attrs2 map[string]interface{}) map[string]interface{} {
+	if fold {
+		var attrs3 map[string]interface{}
+		for k, v := range attrs2 {
+			// tflog.Info(ctx, "folding "+modelName+"."+k, map[string]interface{}{"v": v})
+			var ok bool
+			attrs3, ok = v.(map[string]interface{})
+			if !ok {
+				panic("folding error: " + modelName + "." + k + " is not a map[string]interface{}")
+			}
+		}
+		return attrs3
+	}
+	return attrs2
 }
 
 func _resourceValueToAttributes(ctx context.Context, modelName string, value reflect.Value, attrs map[string]interface{}) {
@@ -31,21 +46,25 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 			fieldName := reflectType.Field(i).Name
 			// fieldType := reflectType.Field(i).Type
 			fieldTypeStr := reflectType.Field(i).Type.String()
-			fieldTypeKind := reflectType.Field(i).Type.Kind()
+			// fieldTypeKind := reflectType.Field(i).Type.Kind()
 
 			tag := reflectType.Field(i).Tag
 			tfsdk := tag.Get(tfsdkTagName)
 			flags := tag.Get(helperTagName)
 			name := FlagsHelperName(tfsdk, flags)
 			nowrite := FlagsHas(flags, "nowrite")
+			fold := FlagsHas(flags, "fold")
+			//_, fold := FlagsGet(flags, "fold")
 			// required := Has(flags, "required")
 			// noread := FlagsHas(flags, "noread")
 			// readmap := FlagsHas(flags, "readmap")
+			_, deftok := FlagsGet(flags, "default")
+			emptyIsNull := FlagsHas(flags, "emptyIsNull")
 
 			elementtype, _ := FlagsGet(flags, "elementtype")
 			fieldValue := reflectValue.Field(i)
 			fieldValKind := fieldValue.Kind()
-			tflog.Info(ctx, ">>"+fieldName+" : "+fieldTypeStr+"/"+fieldTypeKind.String())
+			// tflog.Info(ctx, ">>"+fieldName+" : "+fieldTypeStr+"/"+fieldTypeKind.String())
 
 			switch fieldValKind {
 			case reflect.Slice:
@@ -61,7 +80,9 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 							for i := 0; i < fieldValue.Len(); i++ {
 								slice = append(slice, fieldValue.Index(i).Interface().(basetypes.StringValue).ValueString())
 							}
-							attrs[name] = slice
+							if len(slice) > 0 {
+								attrs[name] = slice
+							}
 						default:
 							panic("unsupported slice type: " + eltypestr + "(" + modelName + "." + fieldName + ")")
 						}
@@ -70,9 +91,12 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 						for i := 0; i < fieldValue.Len(); i++ {
 							attrs2 := make(map[string]interface{})
 							_resourceValueToAttributes(ctx, modelName+"."+fieldName, fieldValue.Index(i), attrs2)
+							attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
 							slice = append(slice, attrs2)
 						}
-						attrs[name] = slice
+						if len(slice) > 0 {
+							attrs[name] = slice
+						}
 					}
 				default:
 					panic("unsupported: Slice" + elkind.String() + " (" + modelName + "." + fieldName + ")")
@@ -105,11 +129,23 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 						if diags.HasError() {
 							panic("error: " + fmt.Sprint(diags))
 						}
-						attrs2 := make(map[string]interface{})
+
 						if !bval.IsNull() {
+							attrs2 := make(map[string]interface{})
 							_resourceValueToAttributes(ctx, modelName+"."+fieldName, reflect.ValueOf(val).Elem().Elem(), attrs2)
+							attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
+							attrs[name] = attrs2
+
+							/*tflog.Info(ctx, "folding? "+modelName+"."+fieldName+" -> "+name, map[string]interface{}{"fold": fold, "flags": flags})
+							if fold {
+								for k, v := range attrs2 {
+									tflog.Info(ctx, "folding "+modelName+"."+fieldName+"."+k, map[string]interface{}{"v": v})
+									attrs[name] = v
+								}
+							} else {
+								attrs[name] = attrs2
+							}*/
 						}
-						attrs[name] = attrs2
 
 					case "basetypes.ListValue":
 						bval := val.(basetypes.ListValue)
@@ -123,7 +159,9 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 							for _, v := range elements {
 								attrs2 = append(attrs2, v.ValueString())
 							}
-							attrs[name] = attrs2
+							if len(attrs2) > 0 {
+								attrs[name] = attrs2
+							}
 						} else {
 							list := make([]interface{}, len(bval.Elements()))
 							for i, v := range bval.Elements() {
@@ -133,38 +171,45 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 								switch v := v.(type) {
 								case types.Object:
 									val := newRegisteredType(elementtype)
-									diags := v.As(ctx, val, basetypes.ObjectAsOptions{})
+									diags := v.As(ctx, val, basetypes.ObjectAsOptions{UnhandledUnknownAsEmpty: true, UnhandledNullAsEmpty: true})
 									if diags.HasError() {
 										panic("error: " + fmt.Sprint(diags))
 									}
 
 									_resourceValueToAttributes(ctx, modelName+"."+fieldName, reflect.ValueOf(val).Elem().Elem(), attrs2)
+									attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
 								default:
 									panic("unsupported type: " + t.String() + "(" + modelName + "." + fieldName + ")")
 								}
 								list[i] = attrs2
 							}
-							attrs[name] = list
+							if len(list) > 0 {
+								attrs[name] = list
+							}
 
 							// panic("unsupported type: " + elementtype + "(" + modelName + "." + fieldName + ")")
 						}
 					case "basetypes.StringValue":
 						bval := val.(basetypes.StringValue)
 						val := bval.ValueString()
-						if val != "" && !nowrite {
-							attrs[name] = val
+						if (val != "" || deftok) && !nowrite && !bval.IsNull() {
+							if val != "" || !emptyIsNull {
+								attrs[name] = val
+							}
 						}
 					case "basetypes.BoolValue":
 						bval := val.(basetypes.BoolValue)
 						val := bval.ValueBool()
-						if !nowrite {
+						if !nowrite && !bval.IsNull() {
 							attrs[name] = val
 						}
 					case "basetypes.Int64Value":
 						bval := val.(basetypes.Int64Value)
 						val := bval.ValueInt64()
-						if !nowrite {
-							attrs[name] = val
+						if !nowrite && !bval.IsNull() {
+							if val != 0 || !emptyIsNull {
+								attrs[name] = val
+							}
 						}
 					default:
 						panic("unsupported type: " + fieldTypeStr + "(" + modelName + "." + fieldName + ")")
@@ -172,12 +217,14 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 				} else {
 					attrs2 := make(map[string]interface{})
 					_resourceValueToAttributes(ctx, modelName+"."+fieldName, fieldValue, attrs2)
+					attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
 					attrs[name] = attrs2
 				}
 			case reflect.Ptr:
 				if !fieldValue.IsNil() {
 					attrs2 := make(map[string]interface{})
 					_resourceValueToAttributes(ctx, modelName+"."+fieldName, fieldValue.Elem(), attrs2)
+					attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
 					attrs[name] = attrs2
 				}
 			default:

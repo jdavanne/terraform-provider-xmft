@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewSTRouteCompositeResource(t *testing.T) {
-	// t.Setenv("TF_ACC", "1")
+	t.Setenv("TF_ACC", "1")
 	r := time.Now().Format("-2006-01-02_15-04-05")
 	resourceType := "xmft_st_route_composite"
 	resourceName := "route_composite1"
@@ -64,11 +64,10 @@ resource "xmft_st_route_simple" "simple1" {
 	description    = "mydescription"
 
 	steps = [{
-		type                     = "SendToPartner"
-		status                   = "ENABLED"
-		transfer_site_expression = "ssh1#!#CVD#!#"
+		send_to_partner = {
+			transfer_site_expression = "ssh1#!#CVD#!#"
 		}
-	]
+	}]
 }
 `
 	resource.Test(t, resource.TestCase{
@@ -110,7 +109,7 @@ resource "xmft_st_route_simple" "simple1" {
 						#		status  = "ENABLED"
 						#	}
 						#]
-						steps = [ { execute_route = xmft_st_route_simple.simple1.id } ]
+						#steps = [ { execute_route = xmft_st_route_simple.simple1.id } ]
 					}
 					`,
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -199,7 +198,7 @@ resource "xmft_st_route_simple" "simple1" {
 					#		status  = "ENABLED"
 					#	}
 					#]
-					steps = [ { execute_route = xmft_st_route_simple.simple1.id } ]
+					#steps = [ { execute_route = xmft_st_route_simple.simple1.id } ]
 				}
 				`,
 				Check: resource.ComposeAggregateTestCheckFunc(

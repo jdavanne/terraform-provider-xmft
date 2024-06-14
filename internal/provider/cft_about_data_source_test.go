@@ -7,7 +7,7 @@ import (
 )
 
 func TestCFTAboutDataSource(t *testing.T) {
-	// t.Setenv("TF_ACC", "1")
+	t.Setenv("TF_ACC", "1")
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
@@ -17,7 +17,7 @@ func TestCFTAboutDataSource(t *testing.T) {
 					provider = xmft.cft1 
 				}`,
 				Check: resource.ComposeAggregateTestCheckFunc(
-					resource.TestCheckResourceAttr("data.xmft_cft_about.test", "instance_id", "docker0_cft"),
+					resource.TestCheckResourceAttr("data.xmft_cft_about.test", "instance_id", "cft_docker_01"),
 					// resource.TestCheckResourceAttr("data.xmft_about.test", "name", ""),
 					resource.TestCheckResourceAttr("data.xmft_cft_about.test", "version", "3.10"),
 					resource.TestCheckResourceAttr("data.xmft_cft_about.test", "level", "2209"),

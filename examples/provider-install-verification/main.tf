@@ -1,7 +1,8 @@
 terraform {
   required_providers {
     xmft = {
-      source = "zouzou/xco/xmft"
+      source  = "jdavanne/xmft"
+      version = "0.0.4"
     }
     #random = {
     #  source  = "hashicorp/random"

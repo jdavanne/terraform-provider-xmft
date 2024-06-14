@@ -135,7 +135,19 @@ func HttpJSONRequest(ctx context.Context, xTraceID string, client *http.Client, 
 	}
 
 	timeStart := time.Now()
+	done := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-time.After(1 * time.Second):
+				slog.WarnContext(ctx, "http: "+method+" "+url+" - slow", "time", time.Since(timeStart).String())
+			case <-done:
+				return
+			}
+		}
+	}()
 	resp, err := client.Do(req)
+	done <- struct{}{}
 	if err != nil {
 		slog.ErrorContext(ctx, "http: "+method+" "+url+" - request error", "error", err)
 		return nil, nil, err

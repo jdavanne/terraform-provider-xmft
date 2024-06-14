@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"terraform-provider-xmft/internal/stapi"
 	"terraform-provider-xmft/internal/tfhelper"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -12,7 +11,7 @@ import (
 )
 
 type stVersionDataSource struct {
-	client *stapi.Client
+	providerData *stProviderData
 }
 
 /*
@@ -80,7 +79,7 @@ func (d *stVersionDataSource) Schema(ctx context.Context, _ datasource.SchemaReq
 
 func (d *stVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
 	var state stVersionDataSourceModel
-	stobject, err := d.client.ReadObject(ctx, "/api/v2.0/version")
+	stobject, err := d.providerData.client.ReadObject(ctx, "/api/v2.0/version")
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Unable to Read xmft About",
@@ -104,7 +103,7 @@ func (d *stVersionDataSource) Configure(_ context.Context, req datasource.Config
 		return
 	}
 
-	client, ok := req.ProviderData.(*stapi.Client)
+	providerData, ok := req.ProviderData.(*stProviderData)
 	if !ok {
 		resp.Diagnostics.AddError(
 			"Unexpected Data Source Configure Type",
@@ -114,5 +113,9 @@ func (d *stVersionDataSource) Configure(_ context.Context, req datasource.Config
 		return
 	}
 
-	d.client = client
+	d.providerData = providerData
+}
+
+func init() {
+	registerDataSource(NewSTVersionDataSource)
 }

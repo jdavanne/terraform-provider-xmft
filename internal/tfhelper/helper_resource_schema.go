@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/booldefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/defaults"
@@ -15,7 +16,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
 func ModelToSchema(ctx context.Context, modelName string, model interface{}) schema.Schema {
@@ -58,7 +58,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 			// typ := reflectType.Field(i).Type.
 			typestr := reflectType.Field(i).Type.String()
 			kind := reflectType.Field(i).Type.Kind()
-			tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
+			// tflog.Debug(ctx, "ResourceModelToSchema >> "+modelName+"."+fieldName+" : "+typestr+"/"+kind.String())
 
 			switch kind {
 			case reflect.Slice:
@@ -71,18 +71,32 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 					if strings.HasPrefix(typestr, "basetypes.") {
 						switch typestr {
 						case "basetypes.StringValue":
+							var d defaults.List
+							if defok && def == "" {
+								f, _ := types.ListValue(types.StringType, make([]attr.Value, 0))
+								d = listdefault.StaticValue(f)
+							} else if defok {
+								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+							}
 							attrs[name] = schema.ListAttribute{
 								ElementType: types.StringType,
 								Required:    required,
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
+								Default:     d,
 							}
 						default:
 							panic("unsupported slice type: " + typestr + "(" + modelName + "." + fieldName + ")")
 						}
 					} else {
-						tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
+						var d defaults.List
+						if defok && def == "" {
+							f, _ := types.ListValue(types.ObjectType{}, make([]attr.Value, 0))
+							d = listdefault.StaticValue(f)
+						} else if defok {
+							panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+						}
 						attrs[name] = schema.ListNestedAttribute{
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
@@ -91,6 +105,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							Optional:  optional,
 							Computed:  computed,
 							Sensitive: sensitive,
+							Default:   d,
 						}
 					}
 				default:
@@ -117,14 +132,28 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 						if elementModel == nil {
 							panic("unsupported element type: '" + elementtype + "' (" + modelName + "." + fieldName + ")")
 						}
-						elementAttrs := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
+						// el := reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface())
+						// elementAttrs := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
+
+						/*
+							elementAttrs := structNameToTFType(elementtype)
+							attrs[name] = schema.ObjectAttribute{
+								AttributeTypes: elementAttrs,
+								Required:       required,
+								Optional:       optional,
+								Computed:       computed,
+								Sensitive:      sensitive,
+							}*/
+
+						elementAttrs2 := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 						attrs[name] = schema.SingleNestedAttribute{
-							Attributes: elementAttrs,
+							Attributes: elementAttrs2,
 							Required:   required,
 							Optional:   optional,
 							Computed:   computed,
 							Sensitive:  sensitive,
 						}
+
 					case "basetypes.ListValue":
 						if elementtype == "string" {
 							var d defaults.List
@@ -231,17 +260,24 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 						panic("unsupported type: " + typestr + "(" + modelName + "." + fieldName + ")")
 					}
 				} else {
-					tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
+					/*var d defaults.Object
+					if defok && def != "" {
+						panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+					}
+					if defok && def == "" {
+						d = defaults.Object{}
+					}*/
+
 					attrs[name] = schema.SingleNestedAttribute{
 						Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
 						Required:   required,
 						Optional:   optional,
 						Computed:   computed,
 						Sensitive:  sensitive,
+						// Default:    d,
 					}
 				}
 			case reflect.Ptr:
-				tflog.Info(ctx, ">>"+fieldName+" : "+typestr+"/"+kind.String())
 				attrs[name] = schema.SingleNestedAttribute{
 					Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
 					Required:   required,

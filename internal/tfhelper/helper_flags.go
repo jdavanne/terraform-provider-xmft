@@ -23,7 +23,24 @@ const (
 //   state
 //   nope
 
-var supportedAttributes = []string{"required", "computed", "sensitive", "state", "optional", "noread", "nowrite", "fold", "readmap", "default", "default:", "elementtype:"}
+var supportedAttributes = []string{
+	"required",
+	"computed",
+	"sensitive",
+	"state",
+	"optional",
+	"noread",
+	"nowrite",
+	"fold", "fold:",
+	"readmap",
+	"default", "default:",
+	"elementtype:",
+	"enum:",
+	"emptyIsNull",
+	"testazerty", "testazerty:",
+}
+
+const DEBUG_FLAGS = true
 
 func checkSupportedAttribute(flag string) bool {
 	for _, v := range supportedAttributes {
@@ -57,21 +74,44 @@ func mustCheckSupportedAttributes(location, flags string) {
 	}
 }
 
+// Contains prefix flag
+func ContainsPrefix(s []string, prefix string) bool {
+	for _, v := range s {
+		if strings.HasPrefix(v, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
 func FlagsHas(flags, flag string) bool {
+	if DEBUG_FLAGS && !checkSupportedAttribute(flag) {
+		panic("unsupported flag (FlagsHas): '" + flag + "'")
+	}
+
 	f := strings.Split(flags, ",")
-	return slices.Contains(f, flag)
+	return slices.Contains(f, flag) || ContainsPrefix(f, flag+":")
 }
 
 func FlagsGet(flags, flag string) (string, bool) {
+	if DEBUG_FLAGS && !checkSupportedAttribute(flag+":") {
+		panic("unsupported flag (FlagsGet): '" + flag + "'")
+	}
+
 	f := strings.Split(flags, ",")
-	for _, v := range f {
+	for i, v := range f {
+		if i == 0 {
+			continue // First item is not a flag
+		}
 		if strings.HasPrefix(v, flag) {
 			if strings.HasPrefix(v, flag+":") {
 				val := strings.Split(v, ":")[1]
 				return val, true
-			} else {
+			} else if v == flag {
 				val := ""
 				return val, true
+			} else {
+				panic("invalid flag value:" + v + " for flag:" + flag + " in flags:" + flags + " (FlagsGet)")
 			}
 		}
 	}

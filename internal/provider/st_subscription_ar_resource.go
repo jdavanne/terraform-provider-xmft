@@ -122,7 +122,7 @@ type stSubscriptionModel struct {
 	Application                types.String `tfsdk:"application" helper:",required"`
 	MaxParallelSitPulls        types.Int64  `tfsdk:"max_parallel_sit_pulls" helper:"maxParallelSitPulls,default:0"`
 	FlowAttrsMergeMode         types.String `tfsdk:"flow_attrs_merge_mode" helper:"flowAttrsMergeMode,default:preserve"`
-	FolderMonitorScheduleCheck types.String `tfsdk:"folder_monitor_schedule_check" helper:"folderMonitorScheduleCheck,default"`
+	FolderMonitorScheduleCheck types.String `tfsdk:"folder_monitor_schedule_check" helper:"folderMonitorScheduleCheck,default:"`
 	FlowName                   types.String `tfsdk:"flow_name" helper:"flowName,default"`
 	ScheduledFolderMonitor     types.String `tfsdk:"scheduled_folder_monitor" helper:"scheduledFolderMonitor,default"`
 	SubscriptionEncryptMode    types.String `tfsdk:"subscription_encrypt_mode" helper:"subscriptionEncryptMode,default:DEFAULT"`
@@ -213,4 +213,8 @@ type stSubscriptionModel struct {
 
 func NewSTSubscriptionARModelResource() resource.Resource {
 	return NewSTResource(&stSubscriptionModel{}, "st_subscription_ar", "", "/api/v2.0/subscriptions", "/api/v2.0/subscriptions/{id}")
+}
+
+func init() {
+	registerResource(NewSTSubscriptionARModelResource)
 }

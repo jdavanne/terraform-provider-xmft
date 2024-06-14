@@ -6,7 +6,6 @@
 - dependencies on fields / bool enabled
 
 # ST API issues
-
 - /api/v2.0/version : schema/example error string vs bool
 - /api/v2.0/sites 
   - example: ssh maxConcurrent : unsupported parameter  -> maxConcurrentConnection
@@ -19,53 +18,20 @@
   - routeComposite vs routePackage !!!!
   - simpleRoute lifecycle is inconsistent : create independly but removed by composite/template !!!
 
+- /api/v2.0/sites (ssh) - "clientCertificate": "" : Error "message" : "Id cannot be null or empty",
+- /api/v2.0/sites (pesit)
+  - "Id cannot be null or empty" on missing certificate
+  - pesit.Protocols : PreconnectionPartnerId / PreconnectionServerId : not used but require something and sendback empty !! *workaround* noread
+  - 
+
+- inconsistence between null and "" ? 
+  - account.businessUnit null -> return "", "" is not allowed 
+- choose between default, computed/optional vs default emptyIsNull
+
+- businessUnit : no id ???? (*inconsistency*)
+- sentinel.host : bad host resolution : cannot configure
+
 # CFT API issues
 - cftpart/cfttcp logic
 
-
-# ST gaps
-
-- version (datasource)
-- account : user
-- route_template : ???
-- route_composite
-- application : advanced_routing
-- site : ssh
-- subscriptions
-- route_simple (+ steps)
-
-- site : ftp
-- site : http
-- site : pesit
-- transferProfiles
-- site : as/2
-- businessUnits
-- certificates
-- zones
-- administrators
-- configurations / options
-- configurations / fileArchiving
-- configurations / loginSettings
-- configurations / sentinel
-- icapServers
-- ldapDomains
-- loginRestrictionPolicies
-- mailTemplates
-- siteTemplates
-- userClasses
-
-# CFT gaps
-
-- cftpart/cfttcp
-- cftsend
-- cftrecv
-
-- cftsendi
-- cftssl
-- cftssh
-- pki...
-- 
-- cftprot
-- cftauth
-- cft
 

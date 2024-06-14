@@ -28,15 +28,20 @@ type stRouteTemplateResourceModel struct {
 	TriggeringEmailTemplate     types.String   `tfsdk:"triggering_email_template" helper:"triggeringEmailTemplate,optional,computed"`
 	TriggeringEmailName         types.String   `tfsdk:"triggering_email_name" helper:"triggeringEmailName,optional,computed"`
 	//Subscriptions               []types.String `tfsdk:"subscriptions"`
-	//AdditionalAttributes        types.Object   `tfsdk:"additional_attributes" helper:"additionalAttributes"`
 	/*StepStatuses                []struct {
 		Id     types.String `tfsdk:"id"`
 		StepId types.String `tfsdk:"step_id"`
 		Status types.String `tfsdk:"status"`
 	} `tfsdk:"step_statuses"`*/
 	//Steps []types.Object `tfsdk:"steps"`
+
+	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }
 
 func NewSTRouteTemplateResource() resource.Resource {
 	return NewSTResource(&stRouteTemplateResourceModel{}, "st_route_template", "", "/api/v2.0/routes", "/api/v2.0/routes/{id}")
+}
+
+func init() {
+	registerResource(NewSTRouteTemplateResource)
 }

@@ -77,12 +77,12 @@ func TestFlagsGet(t *testing.T) {
 		{name: "ok-multiple-middle-bool-false", args: args{flags: ",optional,default:false,computed", flag: "default"}, want: "false", want1: true},
 		{name: "ok-multiple-middle-string", args: args{flags: ",optional,default:zou,computed", flag: "default"}, want: "zou", want1: true},
 
-		{name: "ko-unknown-flag", args: args{flags: ",optional", flag: "zouzou"}, want: "", want1: false},
-		{name: "ko-unknown-flag", args: args{flags: ",optional,default", flag: "zouzou"}, want: "", want1: false},
-		{name: "ko-unknown-flag-with-name-1", args: args{flags: "anyname,zou", flag: "zouzou"}, want: "", want1: false},
-		{name: "ko-unknown-flag-with-name-2", args: args{flags: "anyname,optional,zou", flag: "zouzou"}, want: "", want1: false},
-		{name: "ko-unknown-flag-with-name-3", args: args{flags: "anyname,optional,required,zou", flag: "zouzou"}, want: "", want1: false},
-		{name: "ko-unknown-flag-with-name-2", args: args{flags: "anyname,optional,zou:", flag: "zouzou"}, want: "", want1: false},
+		{name: "ko-unknown-flag", args: args{flags: ",optional", flag: "testazerty"}, want: "", want1: false},
+		{name: "ko-unknown-flag", args: args{flags: ",optional,default", flag: "testazerty"}, want: "", want1: false},
+		{name: "ko-unknown-flag-with-name-1", args: args{flags: "anyname,wri", flag: "testazerty"}, want: "", want1: false},
+		{name: "ko-unknown-flag-with-name-2", args: args{flags: "anyname,optional,zou", flag: "testazerty"}, want: "", want1: false},
+		{name: "ko-unknown-flag-with-name-3", args: args{flags: "anyname,optional,required,zou", flag: "testazerty"}, want: "", want1: false},
+		{name: "ko-unknown-flag-with-name-2", args: args{flags: "anyname,optional,zou:", flag: "testazerty"}, want: "", want1: false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -92,6 +92,10 @@ func TestFlagsGet(t *testing.T) {
 			}
 			if got1 != tt.want1 {
 				t.Errorf("FlagsGet() got1 = %v, want %v", got1, tt.want1)
+			}
+			got1 = FlagsHas(tt.args.flags, tt.args.flag)
+			if got1 != tt.want1 {
+				t.Errorf("FlagsHas() got1 = %v, want %v", got1, tt.want1)
 			}
 		})
 	}

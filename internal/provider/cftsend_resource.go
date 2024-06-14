@@ -138,3 +138,7 @@ func NewCFTSendResource() resource.Resource {
 	return NewCFTResource(&cftSendResourceModel{}, "cftsend", "cftsendno", "/cft/api/v1/objects/cftsend/implno", "/cft/api/v1/objects/cftsend/implno/{name}")
 	// return &cftSendResource{}
 }
+
+func init() {
+	registerResource(NewCFTSendResource)
+}

@@ -25,6 +25,7 @@ description: |-
 ### Optional
 
 - `access_level` (String)
+- `additional_attributes` (Map of String)
 - `allowed_macs` (String)
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
 - `block_size` (Number)
