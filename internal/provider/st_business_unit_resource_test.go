@@ -23,14 +23,14 @@ func TestStBusinessUnitResource(t *testing.T) {
 				resource "` + resourceType + `" "` + resourceName + `" {
 		provider    = xmft.st1
 		name        = "` + name + `"
-		base_folder = "/files/bu1"
+		base_folder = "/files/bu1` + r + `"
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
 					resource "`+resourceType+`" "`+resourceName+`" {
 	name        = "`+name+`"
-	base_folder = "/files/bu1"
+	base_folder = "/files/bu1`+r+`"
 }
 `)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),
@@ -51,14 +51,14 @@ func TestStBusinessUnitResource(t *testing.T) {
 				resource "` + resourceType + `" "` + resourceName + `" {
 	provider    = xmft.st1
 	name        = "` + name + `"
-	base_folder = "/files/bu2"
+	base_folder = "/files/bu2` + r + `"
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(
 					checkResources([]byte(`
 					resource "`+resourceType+`" "`+resourceName+`" {
 	name        = "`+name+`"
-	base_folder = "/files/bu2"
+	base_folder = "/files/bu2`+r+`"
 }
 `)),
 					resource.TestCheckResourceAttrSet(resourceType+"."+resourceName, "last_updated"),
