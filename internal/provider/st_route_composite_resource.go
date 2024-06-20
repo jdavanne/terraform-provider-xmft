@@ -34,7 +34,7 @@ type stRouteCompositeResourceModel struct {
 		StepId types.String `tfsdk:"step_id"`
 		Status types.String `tfsdk:"status"`
 	} `tfsdk:"step_statuses"`*/
-	Steps types.List `tfsdk:"steps" helper:"steps,fold:type,elementtype:stRouteStepExecuteRouteResourceModel,optional"`
+	Steps []stRouteStepExecuteRouteResourceModel `tfsdk:"steps" helper:"steps,optional"`
 }
 
 func NewSTRouteCompositeResource() resource.Resource {

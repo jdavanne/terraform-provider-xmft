@@ -20,7 +20,6 @@ description: |-
 - `account` (String)
 - `host` (String)
 - `name` (String)
-- `pesit_id` (String)
 
 ### Optional
 
@@ -44,6 +43,7 @@ description: |-
 - `originator` (String)
 - `partner_certificate` (String)
 - `partner_password` (String)
+- `pesit_id` (String)
 - `port` (String)
 - `preconnection_partner_id` (String)
 - `preconnection_partner_password` (String)

@@ -84,26 +84,26 @@ type stTransferSitePesitModel struct {
 	Default                             types.Bool   `tfsdk:"default" helper:",default:false"`
 	AccessLevel                         types.String `tfsdk:"access_level" helper:"accessLevel,default:PRIVATE"`
 	Account                             types.String `tfsdk:"account" helper:",required"`
-	PesitId                             types.String `tfsdk:"pesit_id" helper:"pesitId,required"`
+	PesitId                             types.String `tfsdk:"pesit_id" helper:"pesitId,default:"`
 	Host                                types.String `tfsdk:"host" helper:",required"`
 	Port                                types.String `tfsdk:"port" helper:",default:1761"`
 	Dmz                                 types.String `tfsdk:"dmz" helper:",emptyIsNull,default"`
 	ConfigurePreconnection              types.Bool   `tfsdk:"configure_preconnection" helper:"configurePreconnection,default:false"`
-	PreconnectionPartnerId              types.String `tfsdk:"preconnection_partner_id" helper:"preconnectionPartnerId,noread,default:none"`
-	UsePreconnectionPartnerPassword     types.Bool   `tfsdk:"use_preconnection_partner_password" helper:"usePreconnectionPartnerPassword,default:false"`
+	PreconnectionPartnerId              types.String `tfsdk:"preconnection_partner_id" helper:"preconnectionPartnerId,noread,default:"`
+	UsePreconnectionPartnerPassword     types.Bool   `tfsdk:"use_preconnection_partner_password" helper:"usePreconnectionPartnerPassword,noread,default:false"`
 	UsePreconnectionPartnerPasswordExpr types.Bool   `tfsdk:"use_preconnection_partner_password_expr" helper:"usePreconnectionPartnerPasswordExpr,default:false"`
-	PreconnectionPartnerPassword        types.String `tfsdk:"preconnection_partner_password" helper:"preconnectionPartnerPassword,emptyIsNull,default"`
-	PreconnectionServerId               types.String `tfsdk:"preconnection_server_id" helper:"preconnectionServerId,noread,default:none"`
+	PreconnectionPartnerPassword        types.String `tfsdk:"preconnection_partner_password" helper:"preconnectionPartnerPassword,noread,,emptyIsNull,default"`
+	PreconnectionServerId               types.String `tfsdk:"preconnection_server_id" helper:"preconnectionServerId,noread,default:"`
 	UsePreconnectionServerPassword      types.Bool   `tfsdk:"use_preconnection_server_password" helper:"usePreconnectionServerPassword,default:false"`
 	UsePreconnectionServerPasswordExpr  types.Bool   `tfsdk:"use_preconnection_server_password_expr" helper:"usePreconnectionServerPasswordExpr,default:false"`
 	PreconnectionServerPassword         types.String `tfsdk:"preconnection_server_password" helper:"preconnectionServerPassword,default:"`
 	UseServerPassword                   types.Bool   `tfsdk:"use_server_password" helper:"useServerPassword,default:false"`
 	UseServerPasswordExpr               types.Bool   `tfsdk:"use_server_password_expr" helper:"useServerPasswordExpr,default:false"`
-	ServerPassword                      types.String `tfsdk:"server_password" helper:"serverPassword,emptyIsNull,default"`
+	ServerPassword                      types.String `tfsdk:"server_password" helper:"serverPassword,emptyIsNull,noread,default"`
 	UsePartnerPassword                  types.Bool   `tfsdk:"use_partner_password" helper:"usePartnerPassword,default:false"`
 	UsePartnerPasswordExpr              types.Bool   `tfsdk:"use_partner_password_expr" helper:"usePartnerPasswordExpr,default:false"`
-	PartnerPassword                     types.String `tfsdk:"partner_password" helper:"partnerPassword,emptyIsNull,default"`
-	Compression                         types.String `tfsdk:"compression" helper:"compression,default:none"`
+	PartnerPassword                     types.String `tfsdk:"partner_password" helper:"partnerPassword,noread,emptyIsNull,default"`
+	Compression                         types.String `tfsdk:"compression" helper:"compression,enum:/none/vertical/horizontal/both,default:none"`
 	ResyncAllowed                       types.Bool   `tfsdk:"resync_allowed" helper:"resyncAllowed,default:false"`
 	CheckpointInterval                  types.Int64  `tfsdk:"checkpoint_interval" helper:"checkpointInterval,default:1024"`
 	CheckpointWindow                    types.Int64  `tfsdk:"checkpoint_window" helper:"checkpointWindow,default:4"`
@@ -118,7 +118,7 @@ type stTransferSitePesitModel struct {
 	PtcpPacketSize                      types.Int64  `tfsdk:"ptcp_packet_size" helper:"ptcpPacketSize,default:3000"`
 	SocketSendReceiveBuffersize         types.Int64  `tfsdk:"socket_send_receive_buffersize" helper:"socketSendReceiveBuffersize,default:65536"`
 	PtcpConnectRetryCount               types.Int64  `tfsdk:"ptcp_connect_retry_count" helper:"ptcpConnectRetryCount,default:10"`
-	IsSecure                            types.Bool   `tfsdk:"is_secure" helper:"isSecure,default:true"`
+	IsSecure                            types.Bool   `tfsdk:"is_secure" helper:"isSecure,default:false"`
 	VerifyCert                          types.Bool   `tfsdk:"verify_cert" helper:"verifyCert,default:false"`
 	CftCompatibleSslMode                types.Bool   `tfsdk:"cft_compatible_ssl_mode" helper:"cftCompatibleSslMode,default:false"`
 	LoginCertificate                    types.String `tfsdk:"login_certificate" helper:"loginCertificate,emptyIsNull,default"`

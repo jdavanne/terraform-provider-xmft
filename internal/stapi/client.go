@@ -53,6 +53,7 @@ func (c *Client) Call(ctx context.Context, method, uri string, dataIn interface{
 			"Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte((c.Login + ":" + c.Password))),
 		},
 	}
+
 	rawdata, header, err := tools.HttpJSONRequest(ctx, "xxxxx", client, method, c.Url, uri, options, data, dataOut)
 	tflog.Info(ctx, "xxxCall "+method+" uri="+uri+" data="+data)
 	return rawdata, header, err
@@ -81,7 +82,7 @@ func (c *Client) CreateObject(ctx context.Context, uri string, typ string, dataI
 	return data, err
 }
 
-func (c *Client) ReplaceObject(ctx context.Context, uri string, typ string, dataIn map[string]interface{}) (StObject, error) {
+func (c *Client) ReplaceObject(ctx context.Context, uri string, uri2 string, typ string, dataIn map[string]interface{}) (StObject, error) {
 	var data StObject
 
 	// obj.Attributes["origin"] = "terraform"
@@ -89,7 +90,7 @@ func (c *Client) ReplaceObject(ctx context.Context, uri string, typ string, data
 	if err != nil {
 		return data, err
 	}
-	_, _, err = c.Call(ctx, "GET", uri, nil, &data)
+	_, _, err = c.Call(ctx, "GET", uri2, nil, &data)
 	tflog.Info(ctx, "UpdateObject :"+fmt.Sprint(data))
 
 	// stObjectFlatten(ctx, data.Data)

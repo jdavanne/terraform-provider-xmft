@@ -35,9 +35,13 @@ var supportedAttributes = []string{
 	"readmap",
 	"default", "default:",
 	"elementtype:",
-	"enum:",
 	"emptyIsNull",
 	"testazerty", "testazerty:",
+	"enum:",
+	"max", "max:",
+	"min", "min:",
+	"length", "length:",
+	"regex", "regex:",
 }
 
 const DEBUG_FLAGS = true

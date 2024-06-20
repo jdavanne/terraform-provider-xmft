@@ -6,6 +6,7 @@ package provider
 import (
 	"encoding/json"
 	"fmt"
+	"os"
 	"testing"
 
 	"github.com/genelet/determined/convert"
@@ -111,4 +112,8 @@ func checkResources(bs []byte) resource.TestCheckFunc {
 		funcs = append(funcs, resource.TestCheckResourceAttr(r.Type+"."+r.Name, r.Key, r.Value))
 	}
 	return resource.ComposeAggregateTestCheckFunc(funcs...)
+}
+
+func init() {
+	os.Setenv("TF_ACC", "1")
 }

@@ -124,8 +124,11 @@ func HttpJSONRequest(ctx context.Context, xTraceID string, client *http.Client, 
 
 	if req.Header.Get("content-type") == "" {
 		req.Header.Add("content-type", "application/json")
-		// req.Header.Add("accept", "application/json")
-		req.Header.Add("accept", "*/*")
+	}
+
+	if req.Header.Get("accept") == "" {
+		req.Header.Add("accept", "application/json")
+		// req.Header.Add("accept", "*/*")
 	}
 
 	httpSetCorrelationId(req.Header, HttpChildCorrelationID(xTraceID, ""))

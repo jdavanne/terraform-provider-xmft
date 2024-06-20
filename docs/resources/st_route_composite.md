@@ -128,7 +128,7 @@ resource "xmft_st_route_composite" "route_composite1" {
 
 Required:
 
-- `execute_route` (String)
+- `execute_route_id` (String)
 
 Optional:
 

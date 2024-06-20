@@ -7,7 +7,7 @@ import (
 )
 
 func TestCFTAboutDataSource(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
+	t.Parallel()
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{

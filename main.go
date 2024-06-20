@@ -46,6 +46,7 @@ func main() {
 		Debug: debug,
 	}
 
+	// fmt.Println("Starting provider server: zouzou")
 	err := providerserver.Serve(context.Background(), provider.New(version), opts)
 	if err != nil {
 		log.Fatal(err.Error())

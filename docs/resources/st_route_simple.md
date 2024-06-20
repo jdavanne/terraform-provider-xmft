@@ -49,6 +49,7 @@ Optional:
 
 - `compress` (Attributes) (see [below for nested schema](#nestedatt--steps--compress))
 - `decompress` (Attributes) (see [below for nested schema](#nestedatt--steps--decompress))
+- `execute_route` (Attributes) (see [below for nested schema](#nestedatt--steps--execute_route))
 - `pluggable` (Attributes) (see [below for nested schema](#nestedatt--steps--pluggable))
 - `publish_to_account` (Attributes) (see [below for nested schema](#nestedatt--steps--publish_to_account))
 - `pull_from_partner` (Attributes) (see [below for nested schema](#nestedatt--steps--pull_from_partner))
@@ -100,6 +101,19 @@ Optional:
 Read-Only:
 
 - `id` (String)
+
+
+<a id="nestedatt--steps--execute_route"></a>
+### Nested Schema for `steps.execute_route`
+
+Required:
+
+- `execute_route_id` (String)
+
+Optional:
+
+- `status` (String)
+- `type` (String)
 
 
 <a id="nestedatt--steps--pluggable"></a>

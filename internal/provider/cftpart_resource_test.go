@@ -7,8 +7,8 @@ import (
 )
 
 func TestCFTPARTResource(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
-	// r := time.Now().Format("-2006-01-02_15-04-05")
+	t.Parallel()
+	// r := time.Now().Format("-2006-01-02_15-04-05") + "-" + fmt.Sprint(time.Now().UnixNano())
 	name := "cft2"
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,

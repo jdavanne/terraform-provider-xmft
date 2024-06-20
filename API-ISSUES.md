@@ -31,6 +31,19 @@
 - businessUnit : no id ???? (*inconsistency*)
 - sentinel.host : bad host resolution : cannot configure
 
+- /transferProfiles : sudden error: "Incorrect Accept header. Allowed values are application/json and multipart/mixed"
+- inconsistency of enums : UPPERCASE vs Lowercase vs camelCase vs pascal case
+  - Proposal : add options with choosen case, and deprecate others (???)
+
+- references by name vs id : rename may break or not the links
+  - rename account : 
+    -  site
+    -  profile
+    -  route
+    -  subscription
+    -  application
+ -  rename business unit
+    -  
 # CFT API issues
 - cftpart/cfttcp logic
 

@@ -19,7 +19,7 @@ type stRouteStepExecuteRouteResourceModel struct {
 	// Id           types.String `tfsdk:"id" helper:",computed,state"`
 	Type         types.String `tfsdk:"type" helper:",default:ExecuteRoute"`
 	Status       types.String `tfsdk:"status" helper:",default:ENABLED"`
-	ExecuteRoute types.String `tfsdk:"execute_route" helper:"executeRoute,required"`
+	ExecuteRoute types.String `tfsdk:"execute_route_id" helper:"executeRoute,required"`
 }
 
 func init() {

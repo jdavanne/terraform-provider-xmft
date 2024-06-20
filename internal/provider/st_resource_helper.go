@@ -97,6 +97,7 @@ func (r *stResource) Schema(ctx context.Context, _ resource.SchemaRequest, resp 
 }
 
 func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqState *tfsdk.State, respState *tfsdk.State, odiags *diag.Diagnostics, create bool) {
+	uri := ""
 	// Retrieve values from plan
 	plan := reflect.New(reflect.TypeOf(r.obj).Elem()).Interface()
 	// plan := r.obj
@@ -107,6 +108,11 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 			return
 		}
 		slog.DebugContext(ctx, "CreateOrUpdate XCO ST "+r.name+" requestState", "data", fmt.Sprintf("%+v", plan))
+
+		// Useful to support renames
+		m := make(map[string]interface{})
+		tfhelper.ResourceToAttributes(ctx, r.name, plan, m)
+		uri = tfhelper.ResolveURI(r.uriReplace, m)
 	}
 
 	diags := pland.Get(ctx, plan)
@@ -145,8 +151,12 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 			return
 		}
 
-		uri := tfhelper.ResolveURI(r.uriReplace, m)
-		stobject, err = r.providerData.client.ReplaceObject(ctx, uri, r.kind, m)
+		// Useful to support renames
+		uri2 := tfhelper.ResolveURI(r.uriReplace, m)
+		if uri == "" {
+			uri = uri2 // except when create is actually a PUT
+		}
+		stobject, err = r.providerData.client.ReplaceObject(ctx, uri, uri2, r.kind, m)
 		if err != nil {
 			odiags.AddError(
 				"Error updating "+r.name+" Ref:"+ref,

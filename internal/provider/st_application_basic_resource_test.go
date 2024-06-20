@@ -1,6 +1,7 @@
 package provider
 
 import (
+	"fmt"
 	"testing"
 	"time"
 
@@ -8,8 +9,8 @@ import (
 )
 
 func TestNewBasicSTBasicApplicationResource(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
-	r := time.Now().Format("-2006-01-02_15-04-05")
+	t.Parallel()
+	r := time.Now().Format("-2006-01-02_15-04-05") + "-" + fmt.Sprint(time.Now().UnixNano())
 	resourceType := "xmft_st_basic_application"
 	resourceName := "basic1"
 	name := "Basic1" + r

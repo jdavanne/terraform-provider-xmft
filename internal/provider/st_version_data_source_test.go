@@ -7,7 +7,6 @@ import (
 )
 
 func TestSTVersionDataSource(t *testing.T) {
-	t.Setenv("TF_ACC", "1")
 	resource.Test(t, resource.TestCase{
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
