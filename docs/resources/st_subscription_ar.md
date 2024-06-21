@@ -23,15 +23,15 @@ description: |-
 
 ### Optional
 
-- `file_retention_period` (Number)
-- `flow_attrs_merge_mode` (String)
-- `flow_name` (String)
-- `folder_monitor_schedule_check` (String)
-- `max_parallel_sit_pulls` (Number)
-- `scheduled_folder_monitor` (String)
+- `file_retention_period` (Number) default:0
+- `flow_attrs_merge_mode` (String) default:preserve
+- `flow_name` (String) default:''
+- `folder_monitor_schedule_check` (String) default:''
+- `max_parallel_sit_pulls` (Number) default:0
+- `scheduled_folder_monitor` (String) default:''
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
-- `subscription_encrypt_mode` (String)
-- `type` (String)
+- `subscription_encrypt_mode` (String) default:DEFAULT
+- `type` (String) default:AdvancedRouting
 
 ### Read-Only
 

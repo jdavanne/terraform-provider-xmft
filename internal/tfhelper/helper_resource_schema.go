@@ -85,6 +85,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								Computed:    computed,
 								Sensitive:   sensitive,
 								Default:     d,
+								Description: flagsDescription(flags, "[]"),
 							}
 						default:
 							panic("unsupported slice type: " + typestr + "(" + modelName + "." + fieldName + ")")
@@ -101,11 +102,12 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
 							},
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
-							Default:   d,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Default:     d,
+							Description: flagsDescription(flags, "[]"),
 						}
 					}
 				default:
@@ -123,6 +125,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
+								Description: flagsDescription(flags, "{}"),
 							}
 						} else {
 							panic("unsupported element type: '" + elementtype + "' (" + modelName + "." + fieldName + ")")
@@ -147,11 +150,12 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 
 						elementAttrs2 := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 						attrs[name] = schema.SingleNestedAttribute{
-							Attributes: elementAttrs2,
-							Required:   required,
-							Optional:   optional,
-							Computed:   computed,
-							Sensitive:  sensitive,
+							Attributes:  elementAttrs2,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "{}"),
 						}
 
 					case "basetypes.ListValue":
@@ -170,6 +174,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								Computed:    computed,
 								Sensitive:   sensitive,
 								Default:     d,
+								Description: flagsDescription(flags, "[]"),
 							}
 						} else {
 							elementModel := registeredTypes[elementtype]
@@ -189,11 +194,12 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: elementAttrs,
 								},
-								Required:  required,
-								Optional:  optional,
-								Computed:  computed,
-								Sensitive: sensitive,
-								Default:   d,
+								Required:    required,
+								Optional:    optional,
+								Computed:    computed,
+								Sensitive:   sensitive,
+								Default:     d,
+								Description: flagsDescription(flags, "[]"),
 							}
 						}
 					/*case "basetypes.ObjectValue":
@@ -216,6 +222,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							Computed:      computed,
 							Sensitive:     sensitive,
 							Default:       d,
+							Description:   flagsDescription(flags, "''"),
 							PlanModifiers: s,
 						}
 					case "basetypes.BoolValue":
@@ -232,11 +239,12 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							d = booldefault.StaticBool(false)
 						}
 						attrs[name] = schema.BoolAttribute{
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
-							Default:   d,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Default:     d,
+							Description: flagsDescription(flags, "false"),
 						}
 					case "basetypes.Int64Value":
 						var d defaults.Int64
@@ -250,11 +258,12 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							d = int64default.StaticInt64(0)
 						}
 						attrs[name] = schema.Int64Attribute{
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
-							Default:   d,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Default:     d,
+							Description: flagsDescription(flags, "0"),
 						}
 					default:
 						panic("unsupported type: " + typestr + "(" + modelName + "." + fieldName + ")")
@@ -269,21 +278,23 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 					}*/
 
 					attrs[name] = schema.SingleNestedAttribute{
-						Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
-						Required:   required,
-						Optional:   optional,
-						Computed:   computed,
-						Sensitive:  sensitive,
+						Attributes:  _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
+						Required:    required,
+						Optional:    optional,
+						Computed:    computed,
+						Sensitive:   sensitive,
+						Description: flagsDescription(flags, "{}"),
 						// Default:    d,
 					}
 				}
 			case reflect.Ptr:
 				attrs[name] = schema.SingleNestedAttribute{
-					Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
-					Required:   required,
-					Optional:   optional,
-					Computed:   computed,
-					Sensitive:  sensitive,
+					Attributes:  _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
+					Required:    required,
+					Optional:    optional,
+					Computed:    computed,
+					Sensitive:   sensitive,
+					Description: flagsDescription(flags, "{}"),
 				}
 			default:
 				panic("unsupported: type" + kind.String() + " (" + modelName + "." + fieldName + ")")

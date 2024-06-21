@@ -23,25 +23,25 @@ description: |-
 
 ### Optional
 
-- `account_encrypt_mode` (String)
+- `account_encrypt_mode` (String) enum:/UNSPECIFIED/ENABLED, default:UNSPECIFIED
 - `additional_attributes` (Map of String)
-- `auth_by_email` (Boolean)
-- `business_unit` (String)
-- `disabled` (Boolean)
-- `gid` (String)
-- `is_unlicensed_user_allowed_to_reply` (Boolean)
-- `login_restriction_policy` (String)
-- `managed_by_cg` (String)
-- `mapped_user` (String)
-- `notes` (String)
-- `pesit_id` (String)
-- `routing_mode` (String)
-- `skin` (String)
-- `subscription_folder_discovery` (String)
-- `transfer_type` (String)
-- `transfers_web_service_allowed` (Boolean)
-- `type` (String)
-- `uid` (String)
+- `auth_by_email` (Boolean) default:false
+- `business_unit` (String) default:''
+- `disabled` (Boolean) default:false
+- `gid` (String) default:1000
+- `is_unlicensed_user_allowed_to_reply` (Boolean) default:true
+- `login_restriction_policy` (String) default:''
+- `managed_by_cg` (String) default:''
+- `mapped_user` (String) default:''
+- `notes` (String) default:''
+- `pesit_id` (String) default:''
+- `routing_mode` (String) enum:/accept/reject/ignore, default:reject
+- `skin` (String) default:"Default HTML Template"
+- `subscription_folder_discovery` (String) enum:/ITERATIVE/RECURSIVE, default:ITERATIVE
+- `transfer_type` (String) enum:/N/Y, default:N
+- `transfers_web_service_allowed` (Boolean) default:false
+- `type` (String) default:user
+- `uid` (String) default:1000
 
 ### Read-Only
 

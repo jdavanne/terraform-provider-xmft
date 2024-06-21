@@ -58,6 +58,7 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
+								Description: flagsDescription(flags, "[]"),
 							}
 						default:
 							panic("unsupported slice type: " + typestr + "(" + modelName + "." + fieldName + ")")
@@ -67,10 +68,11 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 							NestedObject: schema.NestedAttributeObject{
 								Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
 							},
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "[]"),
 						}
 					}
 				default:
@@ -87,6 +89,7 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 							Optional:    optional,
 							Computed:    computed,
 							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "{}"),
 						}
 					case "basetypes.ObjectValue":
 						elementModel := registeredTypes[elementtype]
@@ -95,11 +98,12 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 						}
 						elementAttrs := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 						attrs[name] = schema.SingleNestedAttribute{
-							Attributes: elementAttrs,
-							Required:   required,
-							Optional:   optional,
-							Computed:   computed,
-							Sensitive:  sensitive,
+							Attributes:  elementAttrs,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "{}"),
 						}
 					case "basetypes.ListValue":
 						if elementtype == "string" {
@@ -109,6 +113,7 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
+								Description: flagsDescription(flags, "[]"),
 							}
 						} else {
 							elementModel := registeredTypes[elementtype]
@@ -121,52 +126,58 @@ func _model2ToAttributes(ctx context.Context, modelName string, value reflect.Ty
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: elementAttrs,
 								},
-								Required:  required,
-								Optional:  optional,
-								Computed:  computed,
-								Sensitive: sensitive,
+								Required:    required,
+								Optional:    optional,
+								Computed:    computed,
+								Sensitive:   sensitive,
+								Description: flagsDescription(flags, "[]"),
 							}
 						}
 					case "basetypes.StringValue":
 						attrs[name] = schema.StringAttribute{
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "''"),
 						}
 					case "basetypes.BoolValue":
 						attrs[name] = schema.BoolAttribute{
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "false"),
 						}
 					case "basetypes.Int64Value":
 						attrs[name] = schema.Int64Attribute{
-							Required:  required,
-							Optional:  optional,
-							Computed:  computed,
-							Sensitive: sensitive,
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(flags, "0"),
 						}
 					default:
 						panic("unsupported type: " + typestr + "(" + modelName + "." + fieldName + ")")
 					}
 				} else {
 					attrs[name] = schema.SingleNestedAttribute{
-						Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
-						Required:   required,
-						Optional:   optional,
-						Computed:   computed,
-						Sensitive:  sensitive,
+						Attributes:  _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
+						Required:    required,
+						Optional:    optional,
+						Computed:    computed,
+						Sensitive:   sensitive,
+						Description: flagsDescription(flags, "{}"),
 					}
 				}
 			case reflect.Ptr:
 				attrs[name] = schema.SingleNestedAttribute{
-					Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
-					Required:   required,
-					Optional:   optional,
-					Computed:   computed,
-					Sensitive:  sensitive,
+					Attributes:  _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
+					Required:    required,
+					Optional:    optional,
+					Computed:    computed,
+					Sensitive:   sensitive,
+					Description: flagsDescription(flags, "{}"),
 				}
 			default:
 				panic("unsupported: type" + kind.String() + " (" + modelName + "." + fieldName + ")")

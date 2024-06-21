@@ -22,10 +22,10 @@ description: |-
 ### Optional
 
 - `additional_attributes` (Map of String)
-- `business_units` (List of String)
-- `managed_by_cg` (Boolean)
+- `business_units` (List of String) default:[]
+- `managed_by_cg` (Boolean) default:false
 - `notes` (String)
-- `type` (String)
+- `type` (String) default:Basic
 
 ### Read-Only
 

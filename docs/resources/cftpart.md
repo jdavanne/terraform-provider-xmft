@@ -21,7 +21,7 @@ description: |-
 
 ### Optional
 
-- `comment` (String)
+- `comment` (String) default:''
 - `commut` (String)
 - `imaxtime` (String)
 - `imintime` (String)

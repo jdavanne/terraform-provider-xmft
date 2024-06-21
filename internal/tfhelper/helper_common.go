@@ -3,6 +3,7 @@ package tfhelper
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
 	"github.com/hashicorp/terraform-plugin-framework/types"
@@ -142,4 +143,27 @@ func structToObjectValue(modelName string, model interface{}) (types.Object, map
 	}
 
 	return obj, typs
+}
+
+func flagsDescription(flags string, def string) string {
+	k := []string{"enum", "min", "max", "default", "regex", "length"}
+	var description []string
+	for _, v := range k {
+		s, ok := FlagsGet(flags, v)
+		if ok {
+			if strings.Contains(s, " ") {
+				s = "\"" + s + "\""
+			}
+			if s == "" {
+				s = def
+			}
+			description = append(description, v+":"+s)
+		}
+	}
+
+	desc, _ := FlagsGet(flags, "desc")
+	if desc == "" {
+		return strings.Join(description, ", ")
+	}
+	return strings.Join([]string{strings.Join(description, ", "), desc}, "")
 }

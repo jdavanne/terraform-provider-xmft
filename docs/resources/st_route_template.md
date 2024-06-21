@@ -23,8 +23,8 @@ description: |-
 
 - `additional_attributes` (Map of String)
 - `business_units` (List of String)
-- `condition` (String)
-- `condition_type` (String)
+- `condition` (String) default:''
+- `condition_type` (String) default:MATCH_ALL
 - `description` (String)
 - `failure_email_name` (String)
 - `failure_email_notification` (Boolean)
@@ -36,7 +36,7 @@ description: |-
 - `triggering_email_name` (String)
 - `triggering_email_notification` (Boolean)
 - `triggering_email_template` (String)
-- `type` (String)
+- `type` (String) default:TEMPLATE
 
 ### Read-Only
 

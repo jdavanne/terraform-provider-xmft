@@ -23,12 +23,12 @@ description: |-
 ### Optional
 
 - `additional_attributes` (Map of String)
-- `base_folder_modifying_allowed` (Boolean)
-- `dmz` (String)
-- `enabled_icap_servers` (List of String)
-- `home_folder_modifying_allowed` (Boolean)
-- `managed_by_cg` (Boolean)
-- `parent` (String)
+- `base_folder_modifying_allowed` (Boolean) default:false
+- `dmz` (String) default:''
+- `enabled_icap_servers` (List of String) default:[]
+- `home_folder_modifying_allowed` (Boolean) default:false
+- `managed_by_cg` (Boolean) default:false
+- `parent` (String) default:''
 - `shared_folders_collaboration_allowed` (Boolean)
 
 ### Read-Only

@@ -23,8 +23,8 @@ description: |-
 
 - `additional_attributes` (Map of String)
 - `condition` (String)
-- `condition_type` (String)
-- `description` (String)
+- `condition_type` (String) default:ALWAYS
+- `description` (String) default:''
 - `failure_email_name` (String)
 - `failure_email_notification` (Boolean)
 - `failure_email_template` (String)
@@ -35,7 +35,7 @@ description: |-
 - `triggering_email_name` (String)
 - `triggering_email_notification` (Boolean)
 - `triggering_email_template` (String)
-- `type` (String)
+- `type` (String) default:SIMPLE
 
 ### Read-Only
 
@@ -61,20 +61,20 @@ Optional:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
-- `compression_level` (String)
-- `compression_type` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `file_filter_expression` (String)
-- `file_filter_expression_type` (String)
-- `post_transformation_action_rename_as_expression` (String)
-- `single_archive_enabled` (Boolean)
-- `single_archive_name` (String)
-- `status` (String)
-- `type` (String)
-- `zip_password` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `compression_level` (String) default:STORE
+- `compression_type` (String) enum:/ZIP/JAR/TAR/GZIP, default:ZIP
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) default:GLOB
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `single_archive_enabled` (Boolean) default:false
+- `single_archive_name` (String) default:''
+- `status` (String) default:ENABLED
+- `type` (String) default:Compress
+- `zip_password` (String) default:''
 
 Read-Only:
 
@@ -86,17 +86,17 @@ Read-Only:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `file_filter_expression` (String)
-- `file_filter_expression_type` (String)
-- `filename_collision_resolution_type` (String)
-- `post_transformation_action_rename_as_expression` (String)
-- `status` (String)
-- `type` (String)
-- `zip_password` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) default:GLOB
+- `filename_collision_resolution_type` (String) enum:/RENAME_OLD/OVERWRITE/FAIL, default:OVERWRITE
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `status` (String) default:ENABLED
+- `type` (String) default:Decompress
+- `zip_password` (String) default:''
 
 Read-Only:
 
@@ -112,8 +112,8 @@ Required:
 
 Optional:
 
-- `status` (String)
-- `type` (String)
+- `status` (String) default:ENABLED
+- `type` (String) default:ExecuteRoute
 
 
 <a id="nestedatt--steps--pluggable"></a>
@@ -125,12 +125,12 @@ Required:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `status` (String)
-- `type` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `status` (String) default:ENABLED
+- `type` (String) default:Pluggable
 
 Read-Only:
 
@@ -146,23 +146,23 @@ Required:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `disable_auto_create_target_folder` (Boolean)
-- `file_filter_expression` (String)
-- `file_filter_expression_type` (String)
-- `filename_collision_resolution_type` (String)
-- `post_routing_action_rename_expression` (String)
-- `post_routing_action_type` (String)
-- `publish_file_as` (String)
-- `status` (String)
-- `target_account_expression_type` (String)
-- `target_folder_expression` (String)
-- `target_folder_expression_type` (String)
-- `trigger_subscription` (Boolean)
-- `type` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `disable_auto_create_target_folder` (Boolean) default:false
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `filename_collision_resolution_type` (String) enum:/RENAME_OLD/OVERWRITE/FAIL, default:OVERWRITE
+- `post_routing_action_rename_expression` (String) default:''
+- `post_routing_action_type` (String) default:d
+- `publish_file_as` (String) default:''
+- `status` (String) default:ENABLED
+- `target_account_expression_type` (String) enum:/NAME/EXPRESSION, default:NAME
+- `target_folder_expression` (String) default:/
+- `target_folder_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE
+- `trigger_subscription` (Boolean) default:false
+- `type` (String) default:Publish
 
 Read-Only:
 
@@ -179,22 +179,22 @@ Required:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `local_file_name_expression` (String)
-- `local_file_name_expression_type` (String)
-- `local_folder_path_expression` (String)
-- `local_folder_path_expression_type` (String)
-- `remote_file_name_expression` (String)
-- `remote_file_name_expression_type` (String)
-- `remote_folder_path_expression` (String)
-- `remote_folder_path_expression_type` (String)
-- `status` (String)
-- `target_account_expression_type` (String)
-- `transfer_site_expression_type` (String)
-- `type` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `local_file_name_expression` (String) default:''
+- `local_file_name_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE
+- `local_folder_path_expression` (String) default:''
+- `local_folder_path_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE
+- `remote_file_name_expression` (String) default:''
+- `remote_file_name_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `remote_folder_path_expression` (String) default:''
+- `remote_folder_path_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE
+- `status` (String) default:ENABLED
+- `target_account_expression_type` (String) enum:/NAME/EXPRESSION, default:NAME
+- `transfer_site_expression_type` (String) enum:/LIST, default:LIST
+- `type` (String) default:PullFromPartner
 
 Read-Only:
 
@@ -210,14 +210,14 @@ Required:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `file_filter_expression` (String)
-- `file_filter_expression_type` (String)
-- `status` (String)
-- `type` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `status` (String) default:ENABLED
+- `type` (String) default:Rename
 
 Read-Only:
 
@@ -229,49 +229,49 @@ Read-Only:
 
 Optional:
 
-- `action_on_step_failure` (String)
-- `action_on_step_success` (String)
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
 - `archive_policy_on_failure` (String)
 - `archive_policy_on_success` (String)
-- `condition` (String)
-- `condition_type` (String)
-- `data_encoding` (String)
-- `file_filter_expression` (String)
-- `file_filter_expression_type` (String)
-- `file_label` (String)
-- `final_destination` (String)
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `data_encoding` (String) default:''
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `file_label` (String) default:''
+- `final_destination` (String) default:''
 - `max_number_of_retries` (Number)
 - `max_parallel_clients` (Number)
-- `originator` (String)
+- `originator` (String) default:''
 - `post_routing_action_rename_expression` (String)
-- `post_routing_action_type` (String)
-- `record_format` (String)
-- `record_length` (String)
-- `route_file_as` (String)
+- `post_routing_action_type` (String) enum:/DELETE/RENAME, default:''
+- `record_format` (String) default:''
+- `record_length` (String) default:''
+- `route_file_as` (String) default:''
 - `sleep_between_retries` (Number)
 - `sleep_increment_between_retries` (Number)
-- `status` (String)
-- `store_and_forward_mode` (String)
-- `target_account_expression` (String)
-- `target_account_expression_type` (String)
-- `transfer_profile_expression` (String)
+- `status` (String) default:ENABLED
+- `store_and_forward_mode` (String) default:''
+- `target_account_expression` (String) default:''
+- `target_account_expression_type` (String) enum:/NAME/EXPRESSION, default:''
+- `transfer_profile_expression` (String) default:''
 - `transfer_profile_expression_type` (String)
-- `transfer_site_expression` (String)
-- `transfer_site_expression_type` (String)
+- `transfer_site_expression` (String) default:''
+- `transfer_site_expression_type` (String) enum:/LIST/EXPRESSION_WILDCARD, default:LIST
 - `trigger_file_content` (String)
 - `trigger_file_for_each` (Boolean)
-- `trigger_file_name` (String)
-- `trigger_target_account_expression` (String)
+- `trigger_file_name` (String) default:''
+- `trigger_target_account_expression` (String) default:''
 - `trigger_target_account_expression_type` (String)
 - `trigger_transfer_profile_expression` (String)
 - `trigger_transfer_profile_expression_type` (String)
-- `trigger_transfer_site_expression` (String)
-- `trigger_transfer_site_expression_type` (String)
+- `trigger_transfer_site_expression` (String) default:''
+- `trigger_transfer_site_expression_type` (String) enum:/LIST/EXPRESSION_WILDCARD, default:''
 - `trigger_upload_folder` (String)
-- `type` (String)
-- `upload_folder` (String)
-- `user_message` (String)
-- `virtual_filename` (String)
+- `type` (String) default:SendToPartner
+- `upload_folder` (String) default:/
+- `user_message` (String) default:''
+- `virtual_filename` (String) default:''
 
 Read-Only:
 

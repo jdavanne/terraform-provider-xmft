@@ -24,7 +24,7 @@ description: |-
 - `additional_attributes` (Map of String)
 - `business_units` (List of String)
 - `notes` (String)
-- `type` (String)
+- `type` (String) default:AdvancedRouting
 
 ### Read-Only
 

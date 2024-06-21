@@ -19,21 +19,21 @@ description: |-
 
 - `enabled` (Boolean)
 - `event_states` (Map of String)
-- `fips_enabled` (Boolean)
-- `heartbeat_delay` (Number)
-- `heartbeat_enabled` (Boolean)
-- `heartbeat_time_unit` (String)
+- `fips_enabled` (Boolean) default:false
+- `heartbeat_delay` (Number) default:10
+- `heartbeat_enabled` (Boolean) default:false
+- `heartbeat_time_unit` (String) default:seconds
 - `host` (String)
 - `mapping_rules` (Map of String)
-- `name` (String)
+- `name` (String) default:sentinel
 - `overflow_file_path` (String)
-- `overflow_file_policy` (String)
-- `overflow_file_size` (Number)
-- `overflow_file_threshold` (Number)
+- `overflow_file_policy` (String) default:ignore
+- `overflow_file_size` (Number) default:1
+- `overflow_file_threshold` (Number) default:94
 - `port` (Number)
-- `should_persist_link_data` (Boolean)
-- `should_verify_cert` (Boolean)
-- `use_secure_connection` (Boolean)
+- `should_persist_link_data` (Boolean) default:false
+- `should_verify_cert` (Boolean) default:false
+- `use_secure_connection` (Boolean) default:false
 
 ### Read-Only
 

@@ -102,7 +102,7 @@ resource "xmft_st_route_composite" "route_composite1" {
 - `account` (String)
 - `additional_attributes` (Map of String)
 - `condition` (String)
-- `condition_type` (String)
+- `condition_type` (String) default:MATCH_ALL
 - `description` (String)
 - `failure_email_name` (String)
 - `failure_email_notification` (Boolean)
@@ -116,7 +116,7 @@ resource "xmft_st_route_composite" "route_composite1" {
 - `triggering_email_name` (String)
 - `triggering_email_notification` (Boolean)
 - `triggering_email_template` (String)
-- `type` (String)
+- `type` (String) default:COMPOSITE
 
 ### Read-Only
 
@@ -132,5 +132,5 @@ Required:
 
 Optional:
 
-- `status` (String)
-- `type` (String)
+- `status` (String) default:ENABLED
+- `type` (String) default:ExecuteRoute

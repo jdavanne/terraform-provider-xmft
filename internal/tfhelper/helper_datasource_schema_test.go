@@ -41,12 +41,12 @@ func TestGenerateToDataSourceSchema(t *testing.T) {
 			"bool_false":         schema.BoolAttribute{Optional: true},
 			"bool_true":          schema.BoolAttribute{Optional: true},
 			"bool":               schema.BoolAttribute{Optional: true},
-			"bool_default":       schema.BoolAttribute{Optional: true},
-			"bool_default_true":  schema.BoolAttribute{Optional: true},
-			"bool_default_false": schema.BoolAttribute{Optional: true},
+			"bool_default":       schema.BoolAttribute{Optional: true, Description: "default:false"},
+			"bool_default_true":  schema.BoolAttribute{Optional: true, Description: "default:true"},
+			"bool_default_false": schema.BoolAttribute{Optional: true, Description: "default:false"},
 			"int64":              schema.Int64Attribute{Optional: true},
-			"int64_default":      schema.Int64Attribute{Optional: true},
-			"int64_default_val":  schema.Int64Attribute{Optional: true},
+			"int64_default":      schema.Int64Attribute{Optional: true, Description: "default:0"},
+			"int64_default_val":  schema.Int64Attribute{Optional: true, Description: "default:1234"},
 
 			"str_list": schema.ListAttribute{
 				ElementType: types.StringType,

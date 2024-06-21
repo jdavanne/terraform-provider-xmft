@@ -42,6 +42,7 @@ var supportedAttributes = []string{
 	"min", "min:",
 	"length", "length:",
 	"regex", "regex:",
+	"desc:",
 }
 
 const DEBUG_FLAGS = true

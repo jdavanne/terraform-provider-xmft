@@ -23,54 +23,54 @@ description: |-
 
 ### Optional
 
-- `access_level` (String)
+- `access_level` (String) default:PRIVATE
 - `additional_attributes` (Map of String)
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
-- `buffer_size` (Number)
-- `cft_compatible_ssl_mode` (Boolean)
-- `checkpoint_interval` (Number)
-- `checkpoint_window` (Number)
+- `buffer_size` (Number) default:8192
+- `cft_compatible_ssl_mode` (Boolean) default:false
+- `checkpoint_interval` (Number) default:1024
+- `checkpoint_window` (Number) default:4
 - `cipher_suites` (String)
-- `compression` (String)
-- `configure_preconnection` (Boolean)
-- `connection_timeout` (Number)
-- `default` (Boolean)
-- `dmz` (String)
-- `final_destination` (String)
-- `is_secure` (Boolean)
-- `login_certificate` (String)
-- `max_concurrent_connection` (Number)
-- `originator` (String)
-- `partner_certificate` (String)
-- `partner_password` (String)
-- `pesit_id` (String)
-- `port` (String)
-- `preconnection_partner_id` (String)
-- `preconnection_partner_password` (String)
-- `preconnection_server_id` (String)
-- `preconnection_server_password` (String)
-- `protocol` (String)
+- `compression` (String) enum:/none/vertical/horizontal/both, default:none
+- `configure_preconnection` (Boolean) default:false
+- `connection_timeout` (Number) default:60
+- `default` (Boolean) default:false
+- `dmz` (String) default:''
+- `final_destination` (String) default:''
+- `is_secure` (Boolean) default:false
+- `login_certificate` (String) default:''
+- `max_concurrent_connection` (Number) default:0
+- `originator` (String) default:''
+- `partner_certificate` (String) default:''
+- `partner_password` (String) default:''
+- `pesit_id` (String) default:''
+- `port` (String) default:1761
+- `preconnection_partner_id` (String) default:''
+- `preconnection_partner_password` (String) default:''
+- `preconnection_server_id` (String) default:''
+- `preconnection_server_password` (String) default:''
+- `protocol` (String) default:pesit
 - `protocols` (String)
-- `ptcp_connect_retry_count` (Number)
-- `ptcp_connections` (Number)
-- `ptcp_packet_size` (Number)
-- `receive_message` (String)
-- `resync_allowed` (Boolean)
-- `send_message` (String)
-- `server_password` (String)
-- `socket_send_receive_buffersize` (Number)
-- `store_and_forward_mode` (String)
-- `transfer_type` (String)
-- `type` (String)
-- `use_partner_password` (Boolean)
-- `use_partner_password_expr` (Boolean)
-- `use_preconnection_partner_password` (Boolean)
-- `use_preconnection_partner_password_expr` (Boolean)
-- `use_preconnection_server_password` (Boolean)
-- `use_preconnection_server_password_expr` (Boolean)
-- `use_server_password` (Boolean)
-- `use_server_password_expr` (Boolean)
-- `verify_cert` (Boolean)
+- `ptcp_connect_retry_count` (Number) default:10
+- `ptcp_connections` (Number) default:1
+- `ptcp_packet_size` (Number) default:3000
+- `receive_message` (String) default:''
+- `resync_allowed` (Boolean) default:false
+- `send_message` (String) default:''
+- `server_password` (String) default:''
+- `socket_send_receive_buffersize` (Number) default:65536
+- `store_and_forward_mode` (String) default:START_NEW
+- `transfer_type` (String) default:internal
+- `type` (String) default:pesit
+- `use_partner_password` (Boolean) default:false
+- `use_partner_password_expr` (Boolean) default:false
+- `use_preconnection_partner_password` (Boolean) default:false
+- `use_preconnection_partner_password_expr` (Boolean) default:false
+- `use_preconnection_server_password` (Boolean) default:false
+- `use_preconnection_server_password_expr` (Boolean) default:false
+- `use_server_password` (Boolean) default:false
+- `use_server_password_expr` (Boolean) default:false
+- `verify_cert` (Boolean) default:false
 
 ### Read-Only
 

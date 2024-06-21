@@ -23,16 +23,16 @@ description: |-
 ### Optional
 
 - `additional_attributes` (Map of String)
-- `default` (Boolean)
-- `file_label_option` (String)
-- `multi_select` (Boolean)
-- `padding_strip_enabled` (Boolean)
-- `receive_mapping` (String)
-- `record_format` (String)
-- `record_length` (Number)
-- `send_mapping` (String)
-- `sending_acknowledgment_enabled` (Boolean)
-- `transfer_mode` (String)
+- `default` (Boolean) default:false
+- `file_label_option` (String) enum:/DONT_SEND/SEND_FILENAME/SEND_FILENAME_AND_PATH, default:DONT_SEND
+- `multi_select` (Boolean) default:false
+- `padding_strip_enabled` (Boolean) default:false
+- `receive_mapping` (String) default:/${pesit.fileLabel}
+- `record_format` (String) enum:/Variable/Fixed, default:Variable
+- `record_length` (Number) max:32767, default:32767
+- `send_mapping` (String) default:/*
+- `sending_acknowledgment_enabled` (Boolean) default:false
+- `transfer_mode` (String) enum:/BINARY/ASCII/EBCDIC/EBCDIC_NATIVE, default:BINARY
 
 ### Read-Only
 
