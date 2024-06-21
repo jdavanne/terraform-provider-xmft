@@ -3,8 +3,8 @@
 ### accounts
 
 - [~] account-user
-- [ ] account-template
-- [ ] account-service
+- [~] account-template
+- [~] account-service
 - [ ] roles
 - [x] route_template : ???
 - [x] route-composite AKA route package
@@ -58,7 +58,6 @@
 - [ ] site : http
 - [x] site : pesit
 - [ ] site : as/2
-- [ ] transferProfiles
   
 ### AR Steps
 - [x] step: send-to-partner
@@ -78,7 +77,7 @@
 - [ ] step: line-ending
 - [ ] step: line-folding
 - [ ] step: line-padding
-- [ ] step: line-truncateing
+- [ ] step: line-truncating
   
 ### Connectors
 - [ ] connector-site : s3 connector
@@ -99,6 +98,8 @@
 
 ## Application
 - [x] application: advanced-routing
+- [x] application: basic-application
+- [ ] application: shared-folder
 - [ ] application: audit-log-maintenance
 - [ ] application: log-entry-amintenance
 - [ ] application: package-retention-maintenance
@@ -107,8 +108,7 @@
 - [ ] application: human-to-system
 - [ ] application: standard-router
 - [ ] application: site-mailbox
-- [ ] application: shared-folder
-- [x] application: basic-application
+
 - [ ] application: archive maintenance
 - [ ] application: axway-transfer-cft
 - [ ] application: file-transfer-via-file-service-interface

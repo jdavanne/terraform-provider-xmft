@@ -1,4 +1,9 @@
 
+## 0.0.6
+
+FEATURES:
+- st_certificate support
+- add better description in documentation 
 
 ## 0.0.5
 
