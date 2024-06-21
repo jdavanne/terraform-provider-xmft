@@ -12,8 +12,8 @@
 - [x] account-subscriptions
 - [~] business-unit
 - [ ] administrators
-- [ ] account-certificates
-- [ ] transfer-profile
+- [x] account-certificates
+- [x] transfer-profile
 
 ### administration
 
@@ -23,7 +23,7 @@
 
 ### setup
 
-- [ ] certificates
+- [x] certificates
 - (ftp)
 - (as2)
 - [ ] admin
@@ -70,10 +70,10 @@
 - 
 - [ ] step: pgp-decryption
 - [ ] step: pgp-encryption
-- [ ] step: pluggable
+- [x] step: pluggable
 - [ ] step: character-replace
 - [ ] step: encoding-conversion
-- [ ] step: execute-route
+- [x] step: execute-route
 - [ ] step: external-script
 - [ ] step: line-ending
 - [ ] step: line-folding
@@ -102,7 +102,7 @@
 - [ ] application: audit-log-maintenance
 - [ ] application: log-entry-amintenance
 - [ ] application: package-retention-maintenance
-- [ ] application: setinel-link-data
+- [ ] application: sentinel-link-data
 - [ ] application: transfer-log-maintenance
 - [ ] application: human-to-system
 - [ ] application: standard-router
@@ -143,5 +143,5 @@
 - [ ] cftrole
 - [ ] cftpriv
 - [ ] cftexit
-- [ ] 
+  
 

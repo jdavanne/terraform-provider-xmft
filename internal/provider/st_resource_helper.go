@@ -39,6 +39,7 @@ type stResource struct {
 
 	ignoreDeleteNotFoundErrors bool
 	onlyReplace                bool
+	alwaysRecreate             bool
 }
 
 func NewSTResource(obj interface{}, name string, kind string, uriCreate, uriReplace string) *stResource {
@@ -91,6 +92,11 @@ func (r *stResource) OnlyReplace() *stResource {
 	return r
 }
 
+func (r *stResource) AlwaysRecreate() *stResource {
+	r.alwaysRecreate = true
+	return r
+}
+
 // Schema defines the schema for the resource.
 func (r *stResource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
 	resp.Schema = tfhelper.ModelToSchema(ctx, r.name, r.obj)
@@ -101,6 +107,7 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 	// Retrieve values from plan
 	plan := reflect.New(reflect.TypeOf(r.obj).Elem()).Interface()
 	// plan := r.obj
+	prev := make(map[string]interface{})
 	if reqState != nil {
 		diags := reqState.Get(ctx, plan)
 		odiags.Append(diags...)
@@ -110,9 +117,23 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 		slog.DebugContext(ctx, "CreateOrUpdate XCO ST "+r.name+" requestState", "data", fmt.Sprintf("%+v", plan))
 
 		// Useful to support renames
-		m := make(map[string]interface{})
-		tfhelper.ResourceToAttributes(ctx, r.name, plan, m)
-		uri = tfhelper.ResolveURI(r.uriReplace, m)
+		tfhelper.ResourceToAttributes(ctx, r.name, plan, prev)
+		uri = tfhelper.ResolveURI(r.uriReplace, prev)
+	}
+	if reqState != nil && r.alwaysRecreate {
+		ref := GetRef(plan)
+
+		err := r.providerData.client.DeleteObject(ctx, uri)
+		if err != nil {
+			if e, ok := err.(*tools.HttpError); !(r.ignoreDeleteNotFoundErrors && ok && e.StatusCode == 404) {
+				odiags.AddError(
+					"Error Deleting XCO ST "+r.name+" ref="+ref+fmt.Sprint(" ignore=", r.ignoreDeleteNotFoundErrors, " ok=", ok, " statusCode=", e.StatusCode),
+					"Could not delete "+r.name+"ref="+ref+" - unexpected error: "+err.Error(),
+				)
+				return
+			}
+		}
+		create = true
 	}
 
 	diags := pland.Get(ctx, plan)
@@ -123,7 +144,6 @@ func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqS
 	slog.DebugContext(ctx, "CreateOrUpdate XCO ST "+r.name+" planState", "data", fmt.Sprintf("%+v", plan))
 
 	// if provider has AddtionAttributes, merge them into plan
-
 	// name := plan.Name.ValueString()
 	m := make(map[string]interface{})
 	tfhelper.ResourceToAttributes(ctx, r.name, plan, m)
