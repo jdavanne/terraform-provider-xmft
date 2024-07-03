@@ -124,27 +124,29 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 						}
 					case "basetypes.ObjectValue":
 						bval := val.(basetypes.ObjectValue)
-						val := newRegisteredType(elementtype)
-						diags := bval.As(ctx, val, basetypes.ObjectAsOptions{})
-						if diags.HasError() {
-							panic("error: " + fmt.Sprint(diags))
-						}
+						if !bval.IsUnknown() {
+							val := newRegisteredType(elementtype)
+							diags := bval.As(ctx, val, basetypes.ObjectAsOptions{})
+							if diags.HasError() {
+								panic("error: " + fmt.Sprint(diags))
+							}
 
-						if !bval.IsNull() {
-							attrs2 := make(map[string]interface{})
-							_resourceValueToAttributes(ctx, modelName+"."+fieldName, reflect.ValueOf(val).Elem().Elem(), attrs2)
-							attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
-							attrs[name] = attrs2
-
-							/*tflog.Info(ctx, "folding? "+modelName+"."+fieldName+" -> "+name, map[string]interface{}{"fold": fold, "flags": flags})
-							if fold {
-								for k, v := range attrs2 {
-									tflog.Info(ctx, "folding "+modelName+"."+fieldName+"."+k, map[string]interface{}{"v": v})
-									attrs[name] = v
-								}
-							} else {
+							if !bval.IsNull() {
+								attrs2 := make(map[string]interface{})
+								_resourceValueToAttributes(ctx, modelName+"."+fieldName, reflect.ValueOf(val).Elem().Elem(), attrs2)
+								attrs2 = foldObject(ctx, fold, modelName+"."+fieldName, attrs2)
 								attrs[name] = attrs2
-							}*/
+
+								/*tflog.Info(ctx, "folding? "+modelName+"."+fieldName+" -> "+name, map[string]interface{}{"fold": fold, "flags": flags})
+								if fold {
+									for k, v := range attrs2 {
+										tflog.Info(ctx, "folding "+modelName+"."+fieldName+"."+k, map[string]interface{}{"v": v})
+										attrs[name] = v
+									}
+								} else {
+									attrs[name] = attrs2
+								}*/
+							}
 						}
 
 					case "basetypes.ListValue":

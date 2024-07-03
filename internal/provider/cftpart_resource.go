@@ -108,7 +108,7 @@ type cftPartResourceModel struct {
 
 	Comment types.String `tfsdk:"comment" helper:",optional,default"`
 
-	Tcp []cftTcpResourceModelSub `tfsdk:"tcp"`
+	Tcp []cftTcpResourceModelSub `tfsdk:"tcp" helper:",optional"`
 }
 
 func NewCFTPartResource() resource.Resource {

@@ -5,13 +5,13 @@
 - [~] account-user
 - [~] account-template
 - [~] account-service
-- [ ] roles
+- [x] roles
 - [x] route_template : ???
 - [x] route-composite AKA route package
 - [x] route-simple
 - [x] account-subscriptions
 - [~] business-unit
-- [ ] administrators
+- [x] administrators
 - [x] account-certificates
 - [x] transfer-profile
 
@@ -19,7 +19,7 @@
 
 - [ ] loginRestrictionPolicies
 - [ ] siteTemplates
-- [ ] userClasses
+- [x] userClasses
 
 ### setup
 
@@ -45,7 +45,7 @@
 - [ ] misc bandwidth limit
 - [ ] icap servers
 - [ ] tm setting
-- [ ] file archiving
+- [x] file archiving
 - [ ] network-zone
 - [ ] http-setting
 
@@ -58,6 +58,9 @@
 - [ ] site : http
 - [x] site : pesit
 - [ ] site : as/2
+- [x] site : folder monitoring
+- [ ] site : connect direct
+- [ ] site : synchony
   
 ### AR Steps
 - [x] step: send-to-partner

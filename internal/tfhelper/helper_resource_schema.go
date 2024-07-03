@@ -12,6 +12,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/defaults"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/objectdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
@@ -147,6 +148,12 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								Computed:       computed,
 								Sensitive:      sensitive,
 							}*/
+						var d defaults.Object
+						if defok && def == "" {
+							// var v types.Object
+							v, _ := structToObjectValue(elementtype, elementModel)
+							d = objectdefault.StaticValue(v)
+						}
 
 						elementAttrs2 := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 						attrs[name] = schema.SingleNestedAttribute{
@@ -155,6 +162,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							Optional:    optional,
 							Computed:    computed,
 							Sensitive:   sensitive,
+							Default:     d,
 							Description: flagsDescription(flags, "{}"),
 						}
 

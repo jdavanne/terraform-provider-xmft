@@ -1,4 +1,14 @@
 
+# 0.0.7
+
+FEATURES:
+- support arm64 architecture
+- add st_site_folder_monitoring resource
+- add st_admin_role resource
+- add st_user_class resource
+- add st_admin resource
+- add st_file_archiving resource
+
 ## 0.0.6
 
 FEATURES:

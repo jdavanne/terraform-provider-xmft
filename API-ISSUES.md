@@ -42,8 +42,10 @@
     -  route
     -  subscription
     -  application
- -  rename business unit
-    -  
+   -  rename business unit
+  
+-  inconsistent glob "case"
+
 # CFT API issues
 - cftpart/cfttcp logic
 

@@ -1,6 +1,8 @@
 package provider
 
 import (
+	"terraform-provider-xmft/internal/tfhelper"
+
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
@@ -111,6 +113,39 @@ import (
 }
 */
 
+type stSubscriptionPostTransmissionActions struct {
+	MoveOverwrite                                     types.Bool   `tfsdk:"move_overwrite" helper:"moveOverwrite,default:false"`
+	PtaOnTempfailInDoDelete                           types.Bool   `tfsdk:"pta_on_tempfail_in_do_delete" helper:"ptaOnTempfailInDoDelete,default:false"`
+	PtaOnTempfailInDoMove                             types.String `tfsdk:"pta_on_tempfail_in_do_move" helper:"ptaOnTempfailInDoMove,default:"`
+	PtaOnPermfailInDoDelete                           types.Bool   `tfsdk:"pta_on_permfail_in_do_delete" helper:"ptaOnPermfailInDoDelete,default:"`
+	PtaOnPermfailInDoMove                             types.String `tfsdk:"pta_on_permfail_in_do_move" helper:"ptaOnPermfailInDoMove,default:"`
+	PtaOnPermfailDoAdvancedRouting                    types.Bool   `tfsdk:"pta_on_permfail_do_advanced_routing" helper:"ptaOnPermfailDoAdvancedRouting,default:"`
+	PtaOnPermfailInDoAdvancedRoutingFailedFile        types.Bool   `tfsdk:"pta_on_permfail_in_do_advanced_routing_failed_file" helper:"ptaOnPermfailInDoAdvancedRoutingFailedFile,default:"`
+	PtaOnPermfailInDoAdvancedRoutingWildcardPull      types.Bool   `tfsdk:"pta_on_permfail_in_do_advanced_routing_wildcard_pull" helper:"ptaOnPermfailInDoAdvancedRoutingWildcardPull,default:"`
+	PtaOnTempfailInDoAdvancedRouting                  types.Bool   `tfsdk:"pta_on_tempfail_in_do_advanced_routing" helper:"ptaOnTempfailInDoAdvancedRouting,default:"`
+	PtaOnTempfailInDoAdvancedRoutingProcessFailedFile types.Bool   `tfsdk:"pta_on_tempfail_in_do_advanced_routing_process_failed_file" helper:"ptaOnTempfailInDoAdvancedRoutingProcessFailedFile,default:"`
+	PtaOnTempfailInDoAdvancedRoutingWildcardPull      types.Bool   `tfsdk:"pta_on_tempfail_in_do_advanced_routing_wildcard_pull" helper:"ptaOnTempfailInDoAdvancedRoutingWildcardPull,default:"`
+	PtaOnSuccessDoInAdvancedRoutingWildcardPull       types.Bool   `tfsdk:"pta_on_success_do_in_advanced_routing_wildcard_pull" helper:"ptaOnSuccessDoInAdvancedRoutingWildcardPull,default:"`
+	PtaOnSuccessTriggerRouteExecutionOnPeSITAck       types.Bool   `tfsdk:"pta_on_success_trigger_route_execution_on_pesit_ack" helper:"ptaOnSuccessTriggerRouteExecutionOnPeSITAck,default:"`
+	PtaOnSuccessInDoDelete                            types.Bool   `tfsdk:"pta_on_success_in_do_delete" helper:"ptaOnSuccessInDoDelete,default:"`
+	PtaOnSuccessInDoMove                              types.String `tfsdk:"pta_on_success_in_do_move" helper:"ptaOnSuccessInDoMove,default:"`
+	PtaOnSuccessInDoMoveOverwrite                     types.Bool   `tfsdk:"pta_on_success_in_do_move_overwrite" helper:"ptaOnSuccessInDoMoveOverwrite,default:"`
+	PtaOnPermfailOutDoDelete                          types.Bool   `tfsdk:"pta_on_permfail_out_do_delete" helper:"ptaOnPermfailOutDoDelete,default:"`
+	PtaOnPermfailOutDoMove                            types.String `tfsdk:"pta_on_permfail_out_do_move" helper:"ptaOnPermfailOutDoMove,default:"`
+	PtaOnSuccessOutDoDelete                           types.Bool   `tfsdk:"pta_on_success_out_do_delete" helper:"ptaOnSuccessOutDoDelete,default:"`
+	PtaOnSuccessOutDoMove                             types.String `tfsdk:"pta_on_success_out_do_move" helper:"ptaOnSuccessOutDoMove,default:"`
+	PtaOnSuccessOutDoMoveOverwrite                    types.Bool   `tfsdk:"pta_on_success_out_do_move_overwrite" helper:"ptaOnSuccessOutDoMoveOverwrite,default:"`
+	PtaOnTempfailOutDoDelete                          types.Bool   `tfsdk:"pta_on_tempfail_out_do_delete" helper:"ptaOnTempfailOutDoDelete,default:"`
+	PtaOnTempfailOutDoMove                            types.String `tfsdk:"pta_on_tempfail_out_do_move" helper:"ptaOnTempfailOutDoMove,default:"`
+	TriggerOnConditionEnabled                         types.Bool   `tfsdk:"trigger_on_condition_enabled" helper:"triggerOnConditionEnabled,default:"`
+	TriggerOnConditionExpression                      types.String `tfsdk:"trigger_on_condition_expression" helper:"triggerOnConditionExpression,default:"`
+	TriggerOnSuccessfulWildcardPull                   types.Bool   `tfsdk:"trigger_on_successful_wildcard_pull" helper:"triggerOnSuccessfulWildcardPull,default:"`
+	SubmitFilterType                                  types.String `tfsdk:"submit_filter_type" helper:"submitFilterType,default:"`
+	SubmitFilenamePatternExpression                   types.String `tfsdk:"submit_filename_pattern_expression" helper:"submitFilenamePatternExpression,default:"`
+	TriggerFileOption                                 types.String `tfsdk:"trigger_file_option" helper:"triggerFileOption,default:"`
+	TriggerFileRetriesNumber                          types.Int64  `tfsdk:"trigger_file_retries_number" helper:"triggerFileRetriesNumber,default:"`
+	TriggerFileRetryDelay                             types.Int64  `tfsdk:"trigger_file_retry_delay" helper:"triggerFileRetryDelay,default:"`
+}
 type stSubscriptionModel struct {
 	Id types.String `tfsdk:"id" helper:",computed,state"`
 	// Name        types.String `tfsdk:"name" helper:",required"`
@@ -176,39 +211,7 @@ type stSubscriptionModel struct {
 		PpaOnSuccessInDoMove   types.String `tfsdk:"ppa_on_success_in_do_move" helper:"ppaOnSuccessInDoMove"`
 	} `tfsdk:"post_processing_actions" helper:"postProcessingActions"`*/
 
-	/*PostTransmissionActions *struct {
-		MoveOverwrite                                     types.Bool   `tfsdk:"move_overwrite" helper:"moveOverwrite"`
-		PtaOnTempfailInDoDelete                           types.Bool   `tfsdk:"pta_on_tempfail_in_do_delete" helper:"ptaOnTempfailInDoDelete"`
-		PtaOnTempfailInDoMove                             types.String `tfsdk:"pta_on_tempfail_in_do_move" helper:"ptaOnTempfailInDoMove"`
-		PtaOnPermfailInDoDelete                           types.Bool   `tfsdk:"pta_on_permfail_in_do_delete" helper:"ptaOnPermfailInDoDelete"`
-		PtaOnPermfailInDoMove                             types.String `tfsdk:"pta_on_permfail_in_do_move" helper:"ptaOnPermfailInDoMove"`
-		PtaOnPermfailDoAdvancedRouting                    types.Bool   `tfsdk:"pta_on_permfail_do_advanced_routing" helper:"ptaOnPermfailDoAdvancedRouting"`
-		PtaOnPermfailInDoAdvancedRoutingFailedFile        types.Bool   `tfsdk:"pta_on_permfail_in_do_advanced_routing_failed_file" helper:"ptaOnPermfailInDoAdvancedRoutingFailedFile"`
-		PtaOnPermfailInDoAdvancedRoutingWildcardPull      types.Bool   `tfsdk:"pta_on_permfail_in_do_advanced_routing_wildcard_pull" helper:"ptaOnPermfailInDoAdvancedRoutingWildcardPull"`
-		PtaOnTempfailInDoAdvancedRouting                  types.Bool   `tfsdk:"pta_on_tempfail_in_do_advanced_routing" helper:"ptaOnTempfailInDoAdvancedRouting"`
-		PtaOnTempfailInDoAdvancedRoutingProcessFailedFile types.Bool   `tfsdk:"pta_on_tempfail_in_do_advanced_routing_process_failed_file" helper:"ptaOnTempfailInDoAdvancedRoutingProcessFailedFile"`
-		PtaOnTempfailInDoAdvancedRoutingWildcardPull      types.Bool   `tfsdk:"pta_on_tempfail_in_do_advanced_routing_wildcard_pull" helper:"ptaOnTempfailInDoAdvancedRoutingWildcardPull"`
-		PtaOnSuccessDoInAdvancedRoutingWildcardPull       types.Bool   `tfsdk:"pta_on_success_do_in_advanced_routing_wildcard_pull" helper:"ptaOnSuccessDoInAdvancedRoutingWildcardPull"`
-		PtaOnSuccessTriggerRouteExecutionOnPeSITAck       types.Bool   `tfsdk:"pta_on_success_trigger_route_execution_on_pesit_ack" helper:"ptaOnSuccessTriggerRouteExecutionOnPeSITAck"`
-		PtaOnSuccessInDoDelete                            types.Bool   `tfsdk:"pta_on_success_in_do_delete" helper:"ptaOnSuccessInDoDelete"`
-		PtaOnSuccessInDoMove                              types.String `tfsdk:"pta_on_success_in_do_move" helper:"ptaOnSuccessInDoMove"`
-		PtaOnSuccessInDoMoveOverwrite                     types.Bool   `tfsdk:"pta_on_success_in_do_move_overwrite" helper:"ptaOnSuccessInDoMoveOverwrite"`
-		PtaOnPermfailOutDoDelete                          types.Bool   `tfsdk:"pta_on_permfail_out_do_delete" helper:"ptaOnPermfailOutDoDelete"`
-		PtaOnPermfailOutDoMove                            types.String `tfsdk:"pta_on_permfail_out_do_move" helper:"ptaOnPermfailOutDoMove"`
-		PtaOnSuccessOutDoDelete                           types.Bool   `tfsdk:"pta_on_success_out_do_delete" helper:"ptaOnSuccessOutDoDelete"`
-		PtaOnSuccessOutDoMove                             types.String `tfsdk:"pta_on_success_out_do_move" helper:"ptaOnSuccessOutDoMove"`
-		PtaOnSuccessOutDoMoveOverwrite                    types.Bool   `tfsdk:"pta_on_success_out_do_move_overwrite" helper:"ptaOnSuccessOutDoMoveOverwrite"`
-		PtaOnTempfailOutDoDelete                          types.Bool   `tfsdk:"pta_on_tempfail_out_do_delete" helper:"ptaOnTempfailOutDoDelete"`
-		PtaOnTempfailOutDoMove                            types.String `tfsdk:"pta_on_tempfail_out_do_move" helper:"ptaOnTempfailOutDoMove"`
-		TriggerOnConditionEnabled                         types.Bool   `tfsdk:"trigger_on_condition_enabled" helper:"triggerOnConditionEnabled"`
-		TriggerOnConditionExpression                      types.String `tfsdk:"trigger_on_condition_expression" helper:"triggerOnConditionExpression"`
-		TriggerOnSuccessfulWildcardPull                   types.Bool   `tfsdk:"trigger_on_successful_wildcard_pull" helper:"triggerOnSuccessfulWildcardPull"`
-		SubmitFilterType                                  types.String `tfsdk:"submit_filter_type" helper:"submitFilterType"`
-		SubmitFilenamePatternExpression                   types.String `tfsdk:"submit_filename_pattern_expression" helper:"submitFilenamePatternExpression"`
-		TriggerFileOption                                 types.String `tfsdk:"trigger_file_option" helper:"triggerFileOption"`
-		TriggerFileRetriesNumber                          types.Int64  `tfsdk:"trigger_file_retries_number" helper:"triggerFileRetriesNumber"`
-		TriggerFileRetryDelay                             types.Int64  `tfsdk:"trigger_file_retry_delay" helper:"triggerFileRetryDelay"`
-	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions"`*/
+	// PostTransmissionActions types.Object `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,elementtype:stSubscriptionPostTransmissionActions,default:"`
 }
 
 func NewSTSubscriptionARModelResource() resource.Resource {
@@ -217,4 +220,5 @@ func NewSTSubscriptionARModelResource() resource.Resource {
 
 func init() {
 	registerResource(NewSTSubscriptionARModelResource)
+	tfhelper.RegisterType("stSubscriptionPostTransmissionActions", &stSubscriptionPostTransmissionActions{})
 }

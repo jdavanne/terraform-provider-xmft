@@ -82,7 +82,7 @@ func (r *cftResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, sta
 
 	// FIXME: hack for cftpart (part1) : should be moved in client
 	var attr2l []interface{}
-	if r.name == "cftpart" {
+	if r.name == "cftpart" && m["tcp"] != nil {
 		attr2l = m["tcp"].([]interface{})
 		delete(m, "tcp")
 	}

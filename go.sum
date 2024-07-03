@@ -47,6 +47,10 @@ github.com/frankban/quicktest v1.14.3 h1:FJKSZTDHjyhriyC81FLQ0LY93eSai0ZyR/ZIkd3
 github.com/frankban/quicktest v1.14.3/go.mod h1:mgiwOwqx65TmIk1wJ6Q7wvnVMocbUorkibMOrVTHZps=
 github.com/genelet/determined v1.11.1 h1:UcZl4DEyo69p3RtPrVmcG9dN2+XT75mdGeyTlONA+4w=
 github.com/genelet/determined v1.11.1/go.mod h1:nA0Qx/VJHjupfJfi9/EWSxTHve+/Li5Xlbr4ez665J0=
+github.com/genelet/determined v1.11.2 h1:JI7sX3Nn0627KbmcAHpGoMA6TIi9BUmusBJcGS9PR5c=
+github.com/genelet/determined v1.11.2/go.mod h1:nA0Qx/VJHjupfJfi9/EWSxTHve+/Li5Xlbr4ez665J0=
+github.com/genelet/determined v1.11.4 h1:F2jzH+SsD8nzPsp2HUex+pNGpL2a2DYSi185BakPUUs=
+github.com/genelet/determined v1.11.4/go.mod h1:nA0Qx/VJHjupfJfi9/EWSxTHve+/Li5Xlbr4ez665J0=
 github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+zs/tPmkDkHx3U66DAb0lQFJrpS6731Oaa12ikc+DiI=
 github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376/go.mod h1:an3vInlBmSxCcxctByoQdvwPiA7DTK7jaaFDBTtu0ic=
 github.com/go-git/go-billy/v5 v5.5.0 h1:yEY4yhzCDuMGSv83oGxiBotRzhwhNr8VZyphhiu+mTU=
