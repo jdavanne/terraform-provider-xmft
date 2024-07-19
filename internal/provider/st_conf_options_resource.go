@@ -21,7 +21,7 @@ type stConfigurationOptionsModel struct {
 	// Id          types.String `tfsdk:"id" helper:",computed,state"`
 	LastUpdated types.String `tfsdk:"last_updated" helper:",computed,noread,nowrite"`
 	Name        types.String `tfsdk:"name" helper:",required"`
-	Value       types.String `tfsdk:"value" helper:",required"`
+	Value       types.String `tfsdk:"value" helper:",required,fieldMapOnRead:values.0"`
 }
 
 func NewSTConfigurationOptionsModelResource() resource.Resource {

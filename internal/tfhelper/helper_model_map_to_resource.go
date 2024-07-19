@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
@@ -33,6 +34,50 @@ func unfold(ctx context.Context, fold bool, foldStr string, modelName string, at
 		return attrs3
 	}
 	return attrs2
+}
+
+func ReadArrayFromPath(path []string, attrs []interface{}) (interface{}, bool) {
+	index, err := strconv.Atoi(path[0])
+	if err != nil {
+		panic("unsupported type for: " + path[0] + " : " + fmt.Sprint(attrs))
+	}
+	if index < 0 || index >= len(attrs) {
+		return nil, false
+	}
+	if len(path) == 1 {
+		return attrs[index], true
+	}
+	switch v := attrs[index].(type) {
+	case map[string]interface{}:
+		return ReadMapFromPath(path[1:], v)
+	case []interface{}:
+		return ReadArrayFromPath(path[1:], v)
+	default:
+		panic("unsupported type for: " + path[0] + " : " + fmt.Sprint(attrs[index]))
+	}
+}
+
+func ReadMapFromPath(path []string, attrs map[string]interface{}) (interface{}, bool) {
+	value, ok := attrs[path[0]]
+	if !ok {
+		return nil, false
+	}
+	if len(path) == 1 {
+		return value, true
+	}
+	switch v := value.(type) {
+	case map[string]interface{}:
+		return ReadMapFromPath(path[1:], v)
+	case []interface{}:
+		return ReadArrayFromPath(path[1:], v)
+	default:
+		panic("unsupported type for: " + path[0] + " : " + fmt.Sprint(value))
+	}
+}
+
+func ReadFromPath(path string, attrs map[string]interface{}) (interface{}, bool) {
+	parts := strings.Split(path, ".")
+	return ReadMapFromPath(parts, attrs)
 }
 
 // AttributesToResource converts the attributes from the XCO MFT object to the corresponding fields in the Terraform resource.
@@ -68,10 +113,13 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 
 			elementtype, _ := FlagsGet(flags, "elementtype")
 			// sensitive := Has(flags, "sensitive")
-			if fieldMapOnReadOk {
-				name = fieldMapOnRead
-			}
 			attrValue, ok := attrs[name]
+
+			if fieldMapOnReadOk {
+				// name = fieldMapOnRead
+				attrValue, ok = ReadFromPath(fieldMapOnRead, attrs)
+			}
+
 			// tflog.Info(ctx, "AttributesToResource : "+fmt.Sprint(modelName, ".", name, "=", attrValue, " attrs=", attrs, "hasValue=", ok))
 			if !noread && ok {
 				/*if attrValue == nil {
