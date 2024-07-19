@@ -1,4 +1,10 @@
 
+# 0.0.9
+
+FEATURES:
+
+- add st_conf_option resource (single value only)
+
 # 0.0.8
 
 FEATURES:

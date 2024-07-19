@@ -11,19 +11,6 @@ import (
 func TestNewSTTransferSiteCustomResource(t *testing.T) {
 	t.Parallel()
 
-	providerConfig := `
-	  provider "xmft" {
-		product = "st"
-		alias = "st1"
-		username = "admin"
-		password = "admin"
-		host     = "https://10.128.57.198:8444"
-		additional_attributes = {
-		Env = "test"
-		}
-}
-	`
-
 	r := time.Now().Format("-2006-01-02_15-04-05") + "-" + fmt.Sprint(time.Now().UnixNano())
 	resourceType := "xmft_st_site_custom"
 	resourceName := "ssh1"

@@ -20,11 +20,12 @@
 - [ ] loginRestrictionPolicies
 - [ ] siteTemplates
 - [x] userClasses
+- [x] server configuration
 
 ### setup
 
 - [x] certificates
-- (ftp)
+- [-] (ftp)
 - (as2)
 - [ ] admin
 - [ ] admin-ui

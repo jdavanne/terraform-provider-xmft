@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/textproto"
+	"strings"
 
 	"terraform-provider-xmft/internal/tools"
 
@@ -43,7 +44,15 @@ func (c *Client) Call(ctx context.Context, method, uri string, dataIn map[string
 	data := ""
 	contentType := ""
 
-	if uri == "/api/v2.0/certificates" && method == "POST" {
+	if strings.HasPrefix(uri, "/api/v2.0/configurations/options/") && method == "PUT" {
+		method = "PATCH"
+		data = `[{ 
+			"op" :"replace",
+			"path": "/values",
+			"value": [ "` + dataIn["value"].(string) + `"]
+		}]
+		`
+	} else if uri == "/api/v2.0/certificates" && method == "POST" {
 		content, ok := dataIn["content"].(string)
 		if !ok {
 			return nil, nil, fmt.Errorf("/api/v2.0/certificates : content is not a string")
