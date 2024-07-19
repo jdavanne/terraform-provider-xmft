@@ -84,10 +84,8 @@ type cftPartResourceModel struct {
 
 	Nrpart  types.String `tfsdk:"nrpart" helper:",computed,optional"`
 	Nrpassw types.String `tfsdk:"nrpassw" helper:",noread"`
-	// Nrpasswe types.String `tfsdk:"nrpasswe" helper:"computed,nowrite,readmap"`
 	Nspart  types.String `tfsdk:"nspart" helper:",computed,optional"`
 	Nspassw types.String `tfsdk:"nspassw" helper:",noread"`
-	// Nspasswe types.String `tfsdk:"nspasswe" helper:"computed,nowrite,readmap"`
 
 	Omaxtime types.String `tfsdk:"omaxtime"  helper:",computed,optional"`
 	Omintime types.String `tfsdk:"omintime"  helper:",computed,optional"`

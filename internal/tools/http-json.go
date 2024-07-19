@@ -96,7 +96,7 @@ func HttpJSONRequest(ctx context.Context, xTraceID string, client *http.Client, 
 			slog.ErrorContext(ctx, "http: "+method+" "+url+" - error decoding generic json input", "err", err, "body", dataIn)
 			// return nil, nil, err
 		}
-		slog.DebugContext(ctx, "http: "+method+" "+url+" - request body", "dataIn", dataIn2)
+		slog.DebugContext(ctx, "http: "+method+" "+url+" - request body", "dataIn-decoded", dataIn2, "dataIn-reader", dataIn)
 		reader = bytes.NewBuffer([]byte(dataIn))
 	}
 
