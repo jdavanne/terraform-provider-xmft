@@ -57,7 +57,7 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 			//_, fold := FlagsGet(flags, "fold")
 			// required := Has(flags, "required")
 			// noread := FlagsHas(flags, "noread")
-			// readmap := FlagsHas(flags, "readmap")
+			//fieldMapOnRead, fieldMapOnReadOk := FlagsGet(flags, "fieldMapOnRead")
 			_, deftok := FlagsGet(flags, "default")
 			emptyIsNull := FlagsHas(flags, "emptyIsNull")
 
@@ -108,20 +108,24 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 					switch fieldValueTypeStr {
 					case "basetypes.MapValue":
 						bval := val.(basetypes.MapValue)
+
 						if elementtype == "string" {
-							elements := make(map[string]types.String, len(bval.Elements()))
-							v2 := bval.ElementsAs(ctx, &elements, false)
-							if v2.HasError() {
-								panic("error: " + fmt.Sprint(v2))
+							if !bval.IsUnknown() {
+								elements := make(map[string]types.String, len(bval.Elements()))
+								v2 := bval.ElementsAs(ctx, &elements, false)
+								if v2.HasError() {
+									panic("error: " + fmt.Sprint(v2))
+								}
+								attrs2 := make(map[string]interface{})
+								for k, v := range elements {
+									attrs2[k] = v.ValueString()
+								}
+								attrs[name] = attrs2
 							}
-							attrs2 := make(map[string]interface{})
-							for k, v := range elements {
-								attrs2[k] = v.ValueString()
-							}
-							attrs[name] = attrs2
 						} else {
 							panic("unsupported type: " + elementtype + "(" + modelName + "." + fieldName + ")")
 						}
+
 					case "basetypes.ObjectValue":
 						bval := val.(basetypes.ObjectValue)
 						if !bval.IsUnknown() {
@@ -194,6 +198,7 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 					case "basetypes.StringValue":
 						bval := val.(basetypes.StringValue)
 						val := bval.ValueString()
+						// slog.DebugContext(ctx, "AttributesToResource", "name", name, "val", val, "bval", fmt.Sprintf("%+v", bval))
 						if (val != "" || deftok) && !nowrite && !bval.IsNull() {
 							if val != "" || !emptyIsNull {
 								attrs[name] = val

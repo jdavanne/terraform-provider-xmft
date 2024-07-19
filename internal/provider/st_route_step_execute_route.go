@@ -17,8 +17,9 @@ import (
 
 type stRouteStepExecuteRouteResourceModel struct {
 	// Id           types.String `tfsdk:"id" helper:",computed,state"`
-	Type         types.String `tfsdk:"type" helper:",default:ExecuteRoute"`
-	Status       types.String `tfsdk:"status" helper:",default:ENABLED"`
+	Type   types.String `tfsdk:"type" helper:",default:ExecuteRoute"`
+	Status types.String `tfsdk:"status" helper:",default:ENABLED"`
+	// PrecedingStep types.String `tfsdk:"preceding_step" helper:"precedingStep,optional"`
 	ExecuteRoute types.String `tfsdk:"execute_route_id" helper:"executeRoute,required"`
 }
 

@@ -39,8 +39,8 @@ func TestNewSTRouteSimpleResource(t *testing.T) {
 						condition      = ""
 						steps = [
 							{
-								send_to_partner = { 
-									transfer_site_expression = "ssh1#!#CVD#!#"
+								characters_replace = {
+									find_character_sequence = "zou"
 								}
 							},
 							{
@@ -53,6 +53,42 @@ func TestNewSTRouteSimpleResource(t *testing.T) {
 									
 								}
 							},
+							{
+								encoding_conversion = {}
+							},
+							{
+								external_script = {
+									script_path = "zou"
+								},
+							},
+							/*{
+								line_ending = {}
+							},*/
+							{
+								line_folding = {}
+							},
+							/*{
+								line_padding = {}
+							},*/
+							{
+								line_truncating = {}
+							},
+							{
+								pgp_encryption = {
+									encrypt_key_expression = "zou"
+									encrypt_key_owner_expression = "zou"
+									encrypt_key_owner_expression_type = "NAME"
+								}
+							},
+							{
+								pgp_decryption = {}	
+							},
+							/*{
+								pluggable = {
+									custom_properties={}
+								}
+							},*/
+
 							{
 								publish_to_account = {
 									target_account_expression = "zou"
@@ -67,6 +103,11 @@ func TestNewSTRouteSimpleResource(t *testing.T) {
 							{
 								rename = {
 									output_file_name = "zou"
+								}
+							},
+							{
+								send_to_partner = { 
+									transfer_site_expression = "ssh1#!#CVD#!#"
 								}
 							},
 

@@ -41,7 +41,7 @@ type stRouteStepCompressResourceModel struct {
 	// Autostart                                  types.Bool   `tfsdk:"autostart" helper:",default:false"`
 	// UsePrecedingStepFiles                      types.Bool   `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,noread,nowrite"`
 	FileFilterExpression                       types.String `tfsdk:"file_filter_expression" helper:"fileFilterExpression,default:*"`
-	FileFilterExpressionType                   types.String `tfsdk:"file_filter_expression_type" helper:"fileFilterExpressionType,default:GLOB"`
+	FileFilterExpressionType                   types.String `tfsdk:"file_filter_expression_type" helper:"fileFilterExpressionType,enum:/GLOB/REGEXP/TEXT_FILES,default:GLOB"`
 	SingleArchiveEnabled                       types.Bool   `tfsdk:"single_archive_enabled" helper:"singleArchiveEnabled,default:false"`
 	CompressionType                            types.String `tfsdk:"compression_type" helper:"compressionType,enum:/ZIP/JAR/TAR/GZIP,default:ZIP"`
 	ZipPassword                                types.String `tfsdk:"zip_password" helper:"zipPassword,emptyIsNull,default:"`

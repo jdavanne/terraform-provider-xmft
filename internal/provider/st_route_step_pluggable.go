@@ -34,10 +34,11 @@ type stRouteStepPluggableResourceModel struct {
 	ActionOnStepSuccess types.String `tfsdk:"action_on_step_success" helper:"actionOnStepSuccess,enum:/PROCEED/STOP,default:PROCEED"`
 	ActionOnStepFailure types.String `tfsdk:"action_on_step_failure" helper:"actionOnStepFailure,enum:/FAIL/PROCEED,default:FAIL"`
 
-	// Autostart                            types.Bool   `tfsdk:"autostart" helper:"autostart,default:false"`
-	// UsePrecedingStepFiles                types.Bool   `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,default:false"`
+	// Autostart             types.Bool `tfsdk:"autostart" helper:"autostart,default:false"`
+	// UsePrecedingStepFiles types.Bool `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,default:false"`
 
-	CustomProperties types.Map `tfsdk:"custom_properties" helper:"customProperties,elementtype:string,required"`
+	CustomProperties    types.Map `tfsdk:"custom_properties" helper:"customProperties,elementtype:string,optional,noread"`
+	CustomPropertiesAll types.Map `tfsdk:"custom_properties_all" helper:"customProperties,elementtype:string,computed,nowrite,fieldMapOnRead:customProperties"`
 }
 
 func init() {

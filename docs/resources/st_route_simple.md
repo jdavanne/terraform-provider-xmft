@@ -47,14 +47,49 @@ description: |-
 
 Optional:
 
+- `characters_replace` (Attributes) (see [below for nested schema](#nestedatt--steps--characters_replace))
 - `compress` (Attributes) (see [below for nested schema](#nestedatt--steps--compress))
 - `decompress` (Attributes) (see [below for nested schema](#nestedatt--steps--decompress))
+- `encoding_conversion` (Attributes) (see [below for nested schema](#nestedatt--steps--encoding_conversion))
 - `execute_route` (Attributes) (see [below for nested schema](#nestedatt--steps--execute_route))
+- `external_script` (Attributes) (see [below for nested schema](#nestedatt--steps--external_script))
+- `line_folding` (Attributes) (see [below for nested schema](#nestedatt--steps--line_folding))
+- `line_truncating` (Attributes) (see [below for nested schema](#nestedatt--steps--line_truncating))
+- `pgp_decryption` (Attributes) (see [below for nested schema](#nestedatt--steps--pgp_decryption))
+- `pgp_encryption` (Attributes) (see [below for nested schema](#nestedatt--steps--pgp_encryption))
 - `pluggable` (Attributes) (see [below for nested schema](#nestedatt--steps--pluggable))
 - `publish_to_account` (Attributes) (see [below for nested schema](#nestedatt--steps--publish_to_account))
 - `pull_from_partner` (Attributes) (see [below for nested schema](#nestedatt--steps--pull_from_partner))
 - `rename` (Attributes) (see [below for nested schema](#nestedatt--steps--rename))
 - `send_to_partner` (Attributes) (see [below for nested schema](#nestedatt--steps--send_to_partner))
+
+<a id="nestedatt--steps--characters_replace"></a>
+### Nested Schema for `steps.characters_replace`
+
+Required:
+
+- `find_character_sequence` (String)
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `input_charset` (String) default:UTF-8
+- `line_strip` (String) default:''
+- `output_charset` (String) default:UTF-8
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `replace_character_sequence` (String) default:''
+- `status` (String) default:ENABLED
+- `type` (String) default:CharactersReplace
+
+Read-Only:
+
+- `id` (String)
+
 
 <a id="nestedatt--steps--compress"></a>
 ### Nested Schema for `steps.compress`
@@ -68,7 +103,7 @@ Optional:
 - `condition` (String) default:''
 - `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
 - `file_filter_expression` (String) default:*
-- `file_filter_expression_type` (String) default:GLOB
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
 - `post_transformation_action_rename_as_expression` (String) default:''
 - `single_archive_enabled` (Boolean) default:false
 - `single_archive_name` (String) default:''
@@ -91,12 +126,34 @@ Optional:
 - `condition` (String) default:''
 - `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
 - `file_filter_expression` (String) default:*
-- `file_filter_expression_type` (String) default:GLOB
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
 - `filename_collision_resolution_type` (String) enum:/RENAME_OLD/OVERWRITE/FAIL, default:OVERWRITE
 - `post_transformation_action_rename_as_expression` (String) default:''
 - `status` (String) default:ENABLED
 - `type` (String) default:Decompress
 - `zip_password` (String) default:''
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--encoding_conversion"></a>
+### Nested Schema for `steps.encoding_conversion`
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `input_charset` (String) default:UTF-8
+- `output_charset` (String) default:UTF-8
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `status` (String) default:ENABLED
+- `type` (String) default:EncodingConversion
 
 Read-Only:
 
@@ -116,12 +173,12 @@ Optional:
 - `type` (String) default:ExecuteRoute
 
 
-<a id="nestedatt--steps--pluggable"></a>
-### Nested Schema for `steps.pluggable`
+<a id="nestedatt--steps--external_script"></a>
+### Nested Schema for `steps.external_script`
 
 Required:
 
-- `custom_properties` (Map of String)
+- `script_path` (String)
 
 Optional:
 
@@ -129,11 +186,131 @@ Optional:
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
 - `condition` (String) default:''
 - `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `log_output` (Boolean) default:false
+- `root_execution` (Boolean) default:false
+- `status` (String) default:ENABLED
+- `type` (String) default:ExternalScript
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--line_folding"></a>
+### Nested Schema for `steps.line_folding`
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `file_fold_width` (Number) default:1
+- `input_charset` (String) default:UTF-8
+- `output_charset` (String) default:''
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `status` (String) default:ENABLED
+- `type` (String) default:LineFolding
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--line_truncating"></a>
+### Nested Schema for `steps.line_truncating`
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `input_charset` (String) default:UTF-8
+- `output_charset` (String) default:''
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `status` (String) default:ENABLED
+- `truncate_length` (Number) default:1
+- `type` (String) default:LineTruncating
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--pgp_decryption"></a>
+### Nested Schema for `steps.pgp_decryption`
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `require_encryption` (Boolean) default:false
+- `require_trusted_signature` (Boolean) default:false
+- `status` (String) default:ENABLED
+- `type` (String) default:PgpDecryption
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--pgp_encryption"></a>
+### Nested Schema for `steps.pgp_encryption`
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `compression_level` (String) default:2
+- `compression_type` (String) default:0
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `encrypt_key_expression` (String) default:''
+- `encrypt_key_expression_type` (String) enum:/ALIAS/EXPRESSION_WILDCARD, default:ALIAS
+- `encrypt_key_owner_expression` (String) default:''
+- `encrypt_key_owner_expression_type` (String) enum:/NAME/EXPRESSION, default:''
+- `file_filter_expression` (String) default:*
+- `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
+- `post_transformation_action_rename_as_expression` (String) default:''
+- `sign_key_expression` (String) default:''
+- `sign_key_expression_type` (String) enum:/ALIAS/EXPRESSION_WILDCARD, default:''
+- `sign_key_owner_expression` (String) default:''
+- `sign_key_owner_expression_type` (String) enum:/NAME/EXPRESSION, default:''
+- `status` (String) default:ENABLED
+- `type` (String) default:PgpEncryption
+- `use_ascii_armour` (Boolean) default:false
+
+Read-Only:
+
+- `id` (String)
+
+
+<a id="nestedatt--steps--pluggable"></a>
+### Nested Schema for `steps.pluggable`
+
+Optional:
+
+- `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL
+- `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED
+- `condition` (String) default:''
+- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `custom_properties` (Map of String)
 - `status` (String) default:ENABLED
 - `type` (String) default:Pluggable
 
 Read-Only:
 
+- `custom_properties_all` (Map of String)
 - `id` (String)
 
 
@@ -234,7 +411,7 @@ Optional:
 - `archive_policy_on_failure` (String)
 - `archive_policy_on_success` (String)
 - `condition` (String) default:''
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS
 - `data_encoding` (String) default:''
 - `file_filter_expression` (String) default:*
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB
@@ -250,7 +427,7 @@ Optional:
 - `route_file_as` (String) default:''
 - `sleep_between_retries` (Number)
 - `sleep_increment_between_retries` (Number)
-- `status` (String) default:ENABLED
+- `status` (String) enum:/ENABLED/DISABLED, default:ENABLED
 - `store_and_forward_mode` (String) default:''
 - `target_account_expression` (String) default:''
 - `target_account_expression_type` (String) enum:/NAME/EXPRESSION, default:''

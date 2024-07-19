@@ -32,7 +32,7 @@ var supportedAttributes = []string{
 	"noread",
 	"nowrite",
 	"fold", "fold:",
-	"readmap",
+	"fieldMapOnRead", "fieldMapOnRead:",
 	"default", "default:",
 	"elementtype:",
 	"emptyIsNull",

@@ -37,7 +37,7 @@ type stRouteStepRenameResourceModel struct {
 	// Autostart                                  types.Bool   `tfsdk:"autostart" helper:",default:false"`
 	// UsePrecedingStepFiles                      types.Bool   `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,noread,nowrite"`
 	OutputFileName           types.String `tfsdk:"output_file_name" helper:"outputFileName,required"`
-	FileFilterExpression     types.String `tfsdk:"file_filter_expression" helper:"fileFilterExpression,emptyIsNull,default:*"`
+	FileFilterExpression     types.String `tfsdk:"file_filter_expression" helper:"fileFilterExpression,default:*"`
 	FileFilterExpressionType types.String `tfsdk:"file_filter_expression_type" helper:"fileFilterExpressionType,enum:/GLOB/REGEXP/TEXT_FILES,default:GLOB"`
 }
 

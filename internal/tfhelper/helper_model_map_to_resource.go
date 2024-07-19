@@ -63,13 +63,13 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 			// nowrite := FlagsHas(flags, "nowrite")
 			// required := Has(flags, "required")
 			noread := FlagsHas(flags, "noread")
-			readmap := FlagsHas(flags, "readmap")
+			fieldMapOnRead, fieldMapOnReadOk := FlagsGet(flags, "fieldMapOnRead")
 			foldStr, fold := FlagsGet(flags, "fold")
 
 			elementtype, _ := FlagsGet(flags, "elementtype")
 			// sensitive := Has(flags, "sensitive")
-			if readmap {
-				name = name[0 : len(name)-1]
+			if fieldMapOnReadOk {
+				name = fieldMapOnRead
 			}
 			attrValue, ok := attrs[name]
 			// tflog.Info(ctx, "AttributesToResource : "+fmt.Sprint(modelName, ".", name, "=", attrValue, " attrs=", attrs, "hasValue=", ok))

@@ -38,7 +38,7 @@ type stRouteStepDecompressResourceModel struct {
 	// Autostart                                  types.Bool   `tfsdk:"autostart" helper:",default:false"`
 	// UsePrecedingStepFiles                      types.Bool   `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,noread,nowrite"`
 	FileFilterExpression                       types.String `tfsdk:"file_filter_expression" helper:"fileFilterExpression,default:*"`
-	FileFilterExpressionType                   types.String `tfsdk:"file_filter_expression_type" helper:"fileFilterExpressionType,default:GLOB"`
+	FileFilterExpressionType                   types.String `tfsdk:"file_filter_expression_type" helper:"fileFilterExpressionType,enum:/GLOB/REGEXP/TEXT_FILES,default:GLOB"`
 	FilenameCollisionResolutionType            types.String `tfsdk:"filename_collision_resolution_type" helper:"filenameCollisionResolutionType,enum:/RENAME_OLD/OVERWRITE/FAIL,emptyIsNull,default:OVERWRITE"`
 	ZipPassword                                types.String `tfsdk:"zip_password" helper:"zipPassword,emptyIsNull,default:"`
 	PostTransformationActionRenameAsExpression types.String `tfsdk:"post_transformation_action_rename_as_expression" helper:"postTransformationActionRenameAsExpression,emptyIsNull,default:"`

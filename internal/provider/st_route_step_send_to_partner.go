@@ -60,9 +60,10 @@ import (
 type stRouteStepSendToPartnerResourceModel struct {
 	Id     types.String `tfsdk:"id" helper:",computed,state"`
 	Type   types.String `tfsdk:"type" helper:",default:SendToPartner"`
-	Status types.String `tfsdk:"status" helper:",default:ENABLED"`
+	Status types.String `tfsdk:"status" helper:",enum:/ENABLED/DISABLED,default:ENABLED"`
+
 	// PrecedingStep types.String `tfsdk:"preceding_step"`
-	ConditionType       types.String `tfsdk:"condition_type" helper:"conditionType,enum:ALWAYS/EL,default:ALWAYS"`
+	ConditionType       types.String `tfsdk:"condition_type" helper:"conditionType,enum:/ALWAYS/EL,default:ALWAYS"`
 	Condition           types.String `tfsdk:"condition" helper:",emptyIsNull,default:"`
 	ActionOnStepSuccess types.String `tfsdk:"action_on_step_success" helper:"actionOnStepSuccess,enum:/PROCEED/STOP,default:PROCEED"`
 	ActionOnStepFailure types.String `tfsdk:"action_on_step_failure" helper:"actionOnStepFailure,enum:/FAIL/PROCEED,default:FAIL"`
