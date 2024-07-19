@@ -60,7 +60,8 @@
 - [ ] site : as/2
 - [x] site : folder monitoring
 - [ ] site : connect direct
-- [ ] site : synchony
+- [ ] site : synchrony
+- [x] site : custom
   
 ### AR Steps
 - [x] step: send-to-partner
@@ -69,18 +70,17 @@
 - [x] step: decompress
 - [x] step: pull-from-partner
 - [x] step: rename
-- 
-- [ ] step: pgp-decryption
-- [ ] step: pgp-encryption
+- [x] step: pgp-decryption
+- [x] step: pgp-encryption
 - [x] step: pluggable
-- [ ] step: character-replace
-- [ ] step: encoding-conversion
+- [x] step: character-replace
+- [x] step: encoding-conversion
 - [x] step: execute-route
-- [ ] step: external-script
+- [x] step: external-script
 - [ ] step: line-ending
-- [ ] step: line-folding
+- [x] step: line-folding
 - [ ] step: line-padding
-- [ ] step: line-truncating
+- [x] step: line-truncating
   
 ### Connectors
 - [ ] connector-site : s3 connector

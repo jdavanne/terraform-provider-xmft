@@ -1,4 +1,23 @@
 
+# 0.0.8
+
+FEATURES:
+- add advanced routing steps types (still missing line_ending, line_padding):
+  - line_folding
+  - line_truncating
+  - pgp_decryption
+  - pgp_encryption
+  - pluggable
+  - characters_replace
+  - encoding_conversion
+  - external_script
+- add st_site_custom resource
+
+CAVEATS:
+- line_ending and line_padding are not yet supported
+- st_site_custom.custom_properties uses CamelCase instead of snake_case
+- st_site_custom.custom_properties is write only, no change with be observed from server, however st_site_custom.custom_properties with get the latest field
+
 # 0.0.7
 
 FEATURES:
