@@ -22,7 +22,7 @@ type stConfigurationFileArchivingModel struct {
 	LastUpdated types.String `tfsdk:"last_updated" helper:",computed,noread,nowrite"`
 	Name        types.String `tfsdk:"name" helper:",default:sentinel,noread,nowrite"`
 
-	// Enabled                         types.Bool   `tfsdk:"enabled" tsdk:"isEnabled:true"`
+	IsEnabled                       types.Bool   `tfsdk:"is_enabled" helper:"isEnabled,default:true"`
 	GlobalArchivingPolicy           types.String `tfsdk:"global_archiving_policy" helper:"globalArchivingPolicy,default:disabled"`
 	ArchiveFolder                   types.String `tfsdk:"archive_folder" helper:"archiveFolder"`
 	EncryptionCertificate           types.String `tfsdk:"encryption_certificate" helper:"encryptionCertificate,default:"`
