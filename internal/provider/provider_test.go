@@ -73,12 +73,22 @@ func check(typename, name, path string, m map[string]interface{}) []ResourceChec
 		switch v := v.(type) {
 		case map[string]interface{}:
 			l = append(l, check(typename, name, path+k, v)...)
-		case bool, int, float64:
+		case bool, int, float64, string, nil:
 			l = append(l, ResourceCheck{typename, name, path + k, fmt.Sprint(v)})
 			fmt.Println(typename, name, path+k, v)
-		case string:
-			l = append(l, ResourceCheck{typename, name, path + k, v})
-			fmt.Println(typename, name, path+k, v)
+		case []interface{}:
+			for idx, v2 := range v {
+				switch v3 := v2.(type) {
+				case string, bool, int, float64, nil:
+					l = append(l, ResourceCheck{typename, name, path + k + "." + fmt.Sprint(idx), fmt.Sprint(v3)})
+					fmt.Println(typename, name, path+k+"."+fmt.Sprint(idx), v3)
+				case map[string]interface{}:
+					l = append(l, check(typename, name, path+k+"."+fmt.Sprint(idx), v3)...)
+					fmt.Println(typename, name, path+k, v)
+				default:
+					panic("unsupported stype :" + path + k + " " + fmt.Sprintf("%T", v))
+				}
+			}
 		default:
 			panic("unsupported stype :" + path + k + " " + fmt.Sprintf("%T", v))
 		}

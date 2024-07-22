@@ -8,7 +8,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
 )
 
-func TestNewBasicSTBasicApplicationResource(t *testing.T) {
+func TestNewSTBasicApplicationResource(t *testing.T) {
 	t.Parallel()
 	r := time.Now().Format("-2006-01-02_15-04-05") + "-" + fmt.Sprint(time.Now().UnixNano())
 	resourceType := "xmft_st_basic_application"

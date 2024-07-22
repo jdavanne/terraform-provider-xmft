@@ -88,6 +88,23 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								Default:     d,
 								Description: flagsDescription(flags, "[]"),
 							}
+						case "basetypes.Int64Value":
+							var d defaults.List
+							if defok && def == "" {
+								f := types.ListNull(types.Int64Type)
+								d = listdefault.StaticValue(f)
+							} else if defok {
+								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+							}
+							attrs[name] = schema.ListAttribute{
+								ElementType: types.Int64Type,
+								Required:    required,
+								Optional:    optional,
+								Computed:    computed,
+								Sensitive:   sensitive,
+								Default:     d,
+								Description: flagsDescription(flags, "[]"),
+							}
 						default:
 							panic("unsupported slice type: " + typestr + "(" + modelName + "." + fieldName + ")")
 						}

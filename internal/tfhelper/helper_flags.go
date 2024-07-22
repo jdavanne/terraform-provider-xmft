@@ -35,6 +35,12 @@ var supportedAttributes = []string{
 	"fieldMapOnRead", "fieldMapOnRead:",
 	"default", "default:",
 	"elementtype:",
+
+	// jsonschema
+	"uniqueItems",
+	"nullable",
+	"format:",
+
 	"emptyIsNull",
 	"testazerty", "testazerty:",
 	"enum:",

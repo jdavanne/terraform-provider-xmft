@@ -9,7 +9,14 @@
 - [x] route_template : ???
 - [x] route-composite AKA route package
 - [x] route-simple
-- [x] account-subscriptions
+- [x] subscription: advanced routing
+- [ ] subscription: basic app
+- [ ] subscription: human system
+- [ ] subscription: shared folder
+- [ ] subscription: standard router
+- [ ] subscription: synchrony transfer
+- [ ] subscription: MBFT
+- [ ] subscription: site mailbox
 - [~] business-unit
 - [x] administrators
 - [x] account-certificates
@@ -104,22 +111,23 @@
 - [x] application: advanced-routing
 - [x] application: basic-application
 - [ ] application: shared-folder
+- [x] application: file-maintenance
+- [ ] application: archive maintenance
+- [ ] application: standard-router
+- [ ] application: transfer-log-maintenance
 - [ ] application: audit-log-maintenance
 - [ ] application: log-entry-amintenance
 - [ ] application: package-retention-maintenance
 - [ ] application: sentinel-link-data
-- [ ] application: transfer-log-maintenance
-- [ ] application: human-to-system
-- [ ] application: standard-router
-- [ ] application: site-mailbox
 
-- [ ] application: archive maintenance
+- [ ] application: human-to-system
+- [ ] application: site-mailbox
 - [ ] application: axway-transfer-cft
 - [ ] application: file-transfer-via-file-service-interface
 - [ ] application: unlicenced-account-maintenance
 - [ ] application: login-threshol-maintenance
 - [ ] application: account-maintenance
-- [ ] application: file-maintenance
+
 
 # CFT gaps
 
