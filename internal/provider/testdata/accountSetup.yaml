@@ -1,0 +1,469 @@
+Flow:
+  type: object
+  properties:
+    accountSetup:
+      $ref: '#/GetAccountSetup'
+PostFlow:
+  type: object
+  properties:
+    accountSetup:
+      $ref: '#/PostAccountSetup'
+MultiPartFlow:
+  type: object
+  properties:
+    AccountSetupBody:
+      $ref: '#/Flow'
+    Certificates:
+      type: string
+      format: binary
+BaseAccountSetup:
+  type: object
+  properties:
+    account:
+      type: object
+      oneOf:
+        - $ref: 'account.yaml#/UserAccount'
+        - $ref: 'account.yaml#/TemplateAccount'
+        - $ref: 'account.yaml#/ServiceAccount'
+      discriminator:
+        propertyName: type
+        mapping:
+          user: 'account.yaml#/UserAccount'
+          template: 'account.yaml#/TemplateAccount'
+          service: 'account.yaml#/ServiceAccount'
+      example:
+        $ref: 'accountSetup.yaml#/UserExample'
+    certificates:
+      $ref: '#/EmptyCertificates'
+    sites:
+      type: array
+      items:
+        anyOf:
+          - $ref: 'site.yaml#/HTTPSite'
+          - $ref: 'site.yaml#/AdhocSite'
+          - $ref: 'site.yaml#/AS2Site'
+          - $ref: 'site.yaml#/ConnectDirectSite'
+          - $ref: 'site.yaml#/FTPSite'
+          - $ref: 'site.yaml#/SSHSite'
+          - $ref: 'site.yaml#/PeSITSite'
+          - $ref: 'site.yaml#/FolderMonitorSite'
+          - $ref: 'site.yaml#/SynchronySite'
+          - $ref: 'site.yaml#/CustomSite'
+        discriminator:
+          propertyName: type
+          mapping:
+            http: 'site.yaml#/HTTPSite'
+            ftp: 'site.yaml#/FTPSite'
+            ssh: 'site.yaml#/SSHSite'
+            pesit: 'site.yaml#/PeSITSite'
+            AS2: 'site.yaml#/AS2Site'
+            folder: 'site.yaml#/FolderMonitorSite'
+            adhoc: 'site.yaml#/AdhocSite'
+            cd: 'site.yaml#/ConnectDirectSite'
+            synchrony transfer: 'site.yaml#/SynchronySite'
+            custom: 'site.yaml#/CustomSite'
+    transferProfiles:
+      type: array
+      items:
+        $ref: 'transferProfile.yaml#/TransferProfile'
+    routes:
+      type: array
+      items:
+        $ref: 'route.yaml#/Route'
+    subscriptions:
+      type: array
+      items:
+        anyOf:
+          - $ref: 'subscription.yaml#/AdvancedRoutingSubscription'
+          - $ref: 'subscription.yaml#/BasicSubscription'
+          - $ref: 'subscription.yaml#/HumanSystemSubscription'
+          - $ref: 'subscription.yaml#/MBFTSubscription'
+          - $ref: 'subscription.yaml#/SharedFolderSubscription'
+          - $ref: 'subscription.yaml#/SiteMailboxSubscription'
+          - $ref: 'subscription.yaml#/StandardRouterSubscription'
+          - $ref: 'subscription.yaml#/SynchronyTransferSubscription'
+        discriminator:
+          propertyName: type
+          mapping:
+            AdvancedRouting: 'subscription.yaml#/AdvancedRoutingSubscription'
+            Basic: 'subscription.yaml#/BasicSubscription'
+            HumanSystem: 'subscription.yaml#/HumanSystemSubscription'
+            MBFT: 'subscription.yaml#/MBFTSubscription'
+            SharedFolder: 'subscription.yaml#/SharedFolderSubscription'
+            SiteMailbox: 'subscription.yaml#/SiteMailboxSubscription'
+            StandardRouter: 'subscription.yaml#/StandardRouterSubscription'
+            SynchronyTransfer: 'subscription.yaml#/SynchronyTransferSubscription'
+GetAccountSetup:
+  allOf:
+    - $ref: '#/BaseAccountSetup'
+    - type: object
+      properties:
+        certificates:
+          $ref: '#/AccountCertificates'
+PostAccountSetup:
+  allOf:
+    - $ref: '#/BaseAccountSetup'
+    - type: object
+      properties:
+        certificates:
+          $ref: '#/PostAccountCertificates'
+EmptyCertificates:
+  type: object
+AccountCertificates:
+  type: object
+  properties:
+    login:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountX509Certificate'
+          - $ref: '#/AccountPGPCertificate'
+          - $ref: '#/AccountSSHCertificate'
+        discriminator:
+          propertyName: type
+          mapping:
+            x509: '#/AccountX509Certificate'
+            pgp: '#/AccountPGPCertificate'
+            ssh: '#/AccountSSHCertificate'
+    partner:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountX509Certificate'
+          - $ref: '#/AccountPGPCertificate'
+          - $ref: '#/AccountSSHCertificate'
+        discriminator:
+          propertyName: type
+          mapping:
+            x509: '#/AccountX509Certificate'
+            pgp: '#/AccountPGPCertificate'
+            ssh: '#/AccountSSHCertificate'
+    private:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountX509Certificate'
+          - $ref: '#/AccountPGPCertificate'
+          - $ref: '#/AccountSSHCertificate'
+        discriminator:
+          propertyName: type
+          mapping:
+            x509: '#/AccountX509Certificate'
+            pgp: '#/AccountPGPCertificate'
+            ssh: '#/AccountSSHCertificate'
+PostAccountCertificates:
+  type: object
+  properties:
+    login:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountX509Certificate'
+          - $ref: '#/PostAccountPGPCertificate'
+          - $ref: '#/AccountSSHCertificate'
+        discriminator:
+          propertyName: type
+          mapping:
+            x509: '#/AccountX509Certificate'
+            pgp: '#/PostAccountPGPCertificate'
+            ssh: '#/AccountSSHCertificate'
+    partner:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountX509Certificate'
+          - $ref: '#/PostAccountPGPCertificate'
+          - $ref: '#/AccountSSHCertificate'
+        discriminator:
+          propertyName: type
+          mapping:
+            x509: '#/AccountX509Certificate'
+            pgp: '#/PostAccountPGPCertificate'
+            ssh: '#/AccountSSHCertificate'
+    private:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountX509Certificate'
+          - $ref: '#/PostAccountPGPCertificate'
+          - $ref: '#/AccountSSHCertificate'
+        discriminator:
+          propertyName: type
+          mapping:
+            x509: '#/AccountX509Certificate'
+            pgp: '#/PostAccountPGPCertificate'
+            ssh: '#/AccountSSHCertificate'
+AccountCertificate:
+  type: object
+  required:
+    - type
+    - account
+    - keyName
+    - keySize
+    - validity
+  properties:
+    type:
+      type: string
+      description: Type of the certificate
+      enum:
+        - pgp
+        - ssh
+        - x509
+    alias:
+      type: string
+      description: Certificate alias
+    keySize:
+      type: integer
+      description: Certificate key size
+    validity:
+      type: integer
+      description: Certificate validity
+    keyName:
+      type: string
+      description: Certificate key name
+    accessLevel:
+      type: string
+      description: Certificate access level
+    account:
+      type: string
+      description: Name of the account the certificate belongs to
+    certificatePassword:
+      type: string
+      description: Certificate password
+      format: password
+    generate:
+      type: boolean
+      description: |
+        When true, certificate would be generated.
+        When false, certificate must be provided as part of the body in order to be imported.
+      default: false
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+  discriminator:
+    propertyName: type
+AccountX509Certificate:
+  allOf:
+    - $ref: '#/AccountCertificate'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: x509
+        caPassword:
+          type: string
+          description: CA password
+        signatureAlgorithm:
+          type: string
+          description: Signature algorithm
+        subject:
+          type: string
+          description: Certificate subject
+AccountPGPCertificate:
+  allOf:
+    - $ref: '#/AccountCertificate'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: pgp
+        fullName:
+          type: string
+          description: Full name
+        keyType:
+          type: string
+          description: Key Type
+        email:
+          type: string
+          description: Email
+        keySize:
+          type: integer
+          description: |
+            Certificate key size. The value applies to the master key.
+PostAccountPGPCertificate:
+  allOf:
+    - $ref: '#/AccountPGPCertificate'
+    - type: object
+      properties:
+        keySize:
+          type: integer
+          description: |
+            Certificate key size. If RSA, the value applies to both the master key and the subkey; if DSA/ElGamal, the value applies only to the subkey, while the master key has a fixed value of 1024.
+AccountSSHCertificate:
+  allOf:
+    - $ref: '#/AccountCertificate'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: ssh
+        caPassword:
+          type: string
+          description: CA password
+        signatureAlgorithm:
+          type: string
+          description: Signature algorithm
+        subject:
+          type: string
+          description: Certificate subject
+FlowResponse:
+  type: object
+  properties:
+    message:
+      type: string
+    url:
+      type: string
+FlowResponseArray:
+  type: object
+  properties:
+    messages:
+      type: array
+      items:
+        $ref: '#/FlowResponse'
+    certificates:
+      type: array
+      items:
+        $ref: 'certificate.yaml#/Certificate'
+UserExample:
+  name: string
+  uid: string
+  gid: string
+  type: user
+  homeFolder: string
+  homeFolderAccessLevel: string
+  notes: string
+  skin: Default HTML Template
+  lastModified: string
+  loginRestrictionPolicy: string
+  mappedUser: string
+  authByEmail: false
+  disabled: false
+  businessUnit: string
+  transfersWebServiceAllowed: false
+  accountCreationDate: 0
+  rejectReason: string
+  accountVerificationStatus: string
+  transferType: string
+  accountSubmitForApprove: false
+  accountEncryptMode: string
+  subscriptionFolderDiscovery: string
+  fileArchivingPolicy: string
+  additionalAttributes: {
+    additionalProp1: string,
+    additionalProp2: string,
+    additionalProp3: string
+  }
+  contact: {
+    email: string,
+    phone: string
+  }
+  adhocSettings: {
+    deliveryMethod: string,
+    enrollmentTypes: [ string ],
+    implicitEnrollmentType: string
+  }
+  unlicensed: false
+  isUnlicensedUserAllowedToReply: false
+  routingMode: string
+  user: {
+    name: string,
+    authExternal: false,
+    locked: false,
+    failedAuthAttempts: 0,
+    failedAuthMaximum: 1,
+    lastFailedAuth: string,
+    lastLogin: string,
+    successfulAuthMaximum: 1,
+    successfulLogins: 1,
+    secretQuestion: {
+      secretQuestion: string,
+      secretAnswerGuessFailures: 0,
+      forceSecretQuestionChange: false
+    },
+    passwordCredentials: {
+      password: string,
+      forcePasswordChange: false,
+      passwordExpiryInterval: 1
+    },
+  }
+  addressBookSettings: {
+    policy: string,
+    nonAddressBookCollaborationAllowed: false,
+    sources: [{
+                id: string,
+                name: string,
+                type: string,
+                parentGroup: string,
+                enabled: false,
+                customProperties: {
+                  value1: string,
+                  value2: string
+                }
+              }
+    ],
+    contacts: [{
+                 id: string,
+                 fullName: string,
+                 primaryEmail: string
+               }
+    ]
+  }
+  accountMaintenanceSettings: {
+    criteria: {
+      daysAfterCreation: 1,
+      daysOfInactivity: 1
+    },
+    action: {
+      action: string,
+      daysDeleteDisabled: 1
+    },
+    emailNotificationBeforeAction: {
+      emailTemplate: string,
+      notifyDays: string,
+      notifyAccount: false
+    },
+    emailNotificationForUserPassword: {
+      emailTemplate: string,
+      notifyDays: string,
+      notifyAccount: false
+    },
+    emailNotificationForUserCertificate: {
+      emailTemplate: string,
+      notifyDays: string,
+      notifyAccount: false
+    },
+    policy: string,
+    accountDisabledDate: 0,
+    accountNotified: false,
+    accountPasswordNotified: false,
+    accountCertificateNotified: false
+  }
+  bandwidthLimits: {
+    policy: string,
+    inboundLimit: 0,
+    outboundLimit: 0
+  }
+  fileMaintenanceSettings: {
+    policy: string,
+    deleteFilesDays: 0,
+    pattern: string,
+    expirationPeriod: false,
+    removeFolders: false,
+    warningNotifications: false,
+    warnNotifyAccount: false,
+    warningNotificationsTemplate: string,
+    notifyDays: string,
+    sendSentinelAlert: false,
+    deletionNotifications: false,
+    deletionNotifyAccount: false,
+    deletionNotificationsTemplate: string,
+    reportNotified: false,
+    warnNotified: false
+  }

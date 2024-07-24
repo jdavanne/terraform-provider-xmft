@@ -17,55 +17,57 @@ description: |-
 
 ### Required
 
-- `account` (String)
-- `host` (String)
-- `name` (String)
-- `user_name` (String)
+- `account` (String) The account for which the site is created
+- `host` (String) Specify the remote site server host.
+- `name` (String) The type of the site. Acts as a discriminator.
+- `user_name` (String) Specify the site login username.
 
 ### Optional
 
-- `access_level` (String) default:PRIVATE
-- `additional_attributes` (Map of String)
-- `allowed_macs` (String)
+- `access_level` (String) default:PRIVATE, The access level for this site.
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `allowed_macs` (String) Allowed macs for ssh site.
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
 - `block_size` (Number) default:32768
 - `buffer_size` (Number) default:32768
-- `cipher_suites` (String)
-- `client_certificate` (String) default:''
-- `default` (Boolean) default:false
-- `dmz` (String) default:none
-- `download_folder` (String) default:''
-- `download_folder_advanced_expression_enabled` (Boolean) default:false
-- `download_pattern` (String) default:*
-- `download_pattern_advanced_expression_enabled` (Boolean) default:false
-- `download_pattern_type` (String) default:glob
-- `finger_print` (String) default:''
+- `cipher_suites` (String) Cipher suites for ssh site.
+- `client_certificate` (String) default:'', The client certificate ID used for mutual authentication.
+- `default` (Boolean) default:false, Defines whether it is a default site. Only site from type PeSIT can be marked as 'Default'
+- `dmz` (String) default:none, Specify the remote site network zone.
+- `download_folder` (String) default:'', Specify the download folder.
+- `download_folder_advanced_expression_enabled` (Boolean) default:false, When it is 'true' the download folder is evaluated using expression language.
+- `download_pattern` (String) default:*, Specify the download pattern.
+- `download_pattern_advanced_expression_enabled` (Boolean) default:false, When it is 'true' the download pattern is evaluated using expression language.
+- `download_pattern_type` (String) default:glob, Specify the download pattern type. Pattern matching expression supports 'glob' and 'regex' syntaxes.When the pattern type is "File Globbing" then the String representation of the filename is matched using a limited pattern language that resembles regular expressions but with a simpler syntax.
+- `finger_print` (String) default:'', Specify the fingerprint.
 - `fips_mode` (Boolean) default:false
-- `key_exchange_algorithms` (String)
-- `max_concurrent_connection` (Number) default:0
-- `password` (String) default:''
-- `port` (String) default:22
-- `protocol` (String) default:ssh
-- `protocols` (String) default:''
-- `public_keys` (String)
+- `key_exchange_algorithms` (String) Key exchange algorithms for ssh site.
+- `max_concurrent_connection` (Number) default:0, The max concurrent connection of the site
+- `password` (String) default:'', Specify the site login password encrypted in 'AES128'. This property should be set if 'usePassword' is 'true'.
+- `port` (String) default:22, Specify the remote site server port.
+- `protocol` (String) default:ssh, <nil>
+- `protocols` (String) default:'', Enabled SSL protocols for ssh site.
+- `public_keys` (String) Public keys for ssh site.
 - `socket_buffer_size` (Number) default:65536
 - `socket_send_buffer_size` (Number) default:65536
 - `socket_timeout` (Number) default:300
 - `tcp_no_delay` (Boolean) default:true
-- `transfer_mode` (String) default:AUTO_DETECT
-- `transfer_type` (String) default:internal
-- `type` (String) default:ssh
-- `update_permissions_with_chmod_command` (String) default:''
-- `upload_folder` (String) default:''
+- `transfer_mode` (String) default:AUTO_DETECT, Specify the transfer mode.
+- `transfer_type` (String) default:internal, The transfer type of the site. It can be unspecified (N), internal (I), partner(E)
+- `type` (String) default:ssh, Type of the site.
+- `update_permissions_with_chmod_command` (String) default:'', Determines whether to use chmod or umask command to change file permissions. This setting overrides the global setting configured via the Ssh.UpdateFilePermissionsWithChmodCommand option. The possible values are - null(Default) - The global setting is applied; True - The file permissions, specified in the SSH transfer site, are set after transfer ends with chmod; False - The file handler is opened with specified permissions. The file permissions are set with umask. There is no need to edit the Upload Permissions field - correct format is automatically set.
+- `upload_folder` (String) default:'', Specify the upload folder.
 - `upload_folder_overridable` (Boolean) default:false
-- `upload_permissions` (String) default:0644
+- `upload_permissions` (String) default:0644, Defines the upload permissions.
 - `use_password` (Boolean) default:true
-- `use_password_expr` (Boolean) default:false
+- `use_password_expr` (Boolean) default:false, Specify whether to have password expressions or not.
 - `verify_finger` (Boolean) default:false
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The id of the site.
 - `last_updated` (String)
 
 <a id="nestedatt--alternative_addresses"></a>
@@ -73,6 +75,6 @@ description: |-
 
 Required:
 
-- `host` (String)
-- `port` (String)
-- `position` (Number)
+- `host` (String) The host/url of the alternative address.
+- `port` (String) The port of the alternative address.
+- `position` (Number) The position when alternate addresses.

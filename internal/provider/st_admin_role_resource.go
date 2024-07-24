@@ -84,7 +84,7 @@ type stAdminRoleModel struct {
 }
 
 func NewSTAdminRoleModelResource() resource.Resource {
-	return NewSTResource(&stAdminRoleModel{}, "st_admin_role", "", "/api/v2.0/administrativeRoles", "/api/v2.0/administrativeRoles/{roleName}")
+	return NewSTResource(&stAdminRoleModel{}, "st_admin_role", "", "/api/v2.0/administrativeRoles", "/api/v2.0/administrativeRoles/{roleName}").UseSwaggerUri("/api/v2.0/administrativeRoles/{name}")
 }
 
 func init() {

@@ -1,0 +1,62 @@
+DaemonsStatus:
+  type: object
+  properties:
+    httpStatus:
+      $ref: '#/Status'
+    ftpStatus:
+      $ref: '#/Status'
+    sshStatus:
+      $ref: '#/Status'
+    as2Status:
+      $ref: '#/Status'
+    pesitStatus:
+      $ref: '#/Status'
+Status:
+  type: string
+  enum:
+    - Running
+    - Not running
+    - Shutdown
+    - Pending shutdown
+DaemonOperationResult:
+  type: object
+  properties:
+    daemon:
+      type: string
+      description: Daemon name.
+      enum:
+        - HTTP
+        - FTP
+        - SSH
+        - AS2
+        - PESIT
+    message:
+      type: string
+      description: Message for the performed daemon operation.
+    isSuccessful:
+      type: boolean
+      description: Whether or not the daemon operation was successful.
+      default: false
+DaemonOperationResults:
+  type: object
+  properties:
+    daemonOperationResults:
+      type: array
+      items:
+        $ref: '#/DaemonOperationResult'
+SshDaemonConfiguration:
+  allOf:
+    - type: object
+      properties:
+        maxConnections:
+          maximum: 100000
+          minimum: 1
+          type: integer
+          description: Maximum number of SSH clients that can simultaneously connect to the SSH server.
+        preferBouncyCastleProvider:
+          type: boolean
+          description: The preferred Crypto Provider to be used. When set to false, system uses Sun library as the preferred crypto provider for SSH daemon, and BouncyCastle as a fallback. Sun provider has better performance in certain cases, but is not FIPS-certified.
+          default: true
+        banner:
+          type: string
+          description: Set the SSH welcome login message.

@@ -1,0 +1,221 @@
+BaseSiteTemplate:
+  required:
+    - name
+    - protocol
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the site template.
+    name:
+      type: string
+      description: The name of the site template.
+    type:
+      type: string
+      description: The type of the site template. Acts as a discriminator.
+    protocol:
+      type: string
+      description: The protocol of the site template. It could be 'cd', 'synchrony
+        transfer' or any 'custom' one.
+      enum:
+        - cd
+        - synchrony
+        - custom
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+  discriminator:
+    propertyName: type
+CustomSiteTemplate:
+  allOf:
+    - $ref: '#/BaseSiteTemplate'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: custom
+        protocol:
+          type: string
+          default: custom
+        customProperties:
+          type: object
+          properties:
+            property_1:
+              type: string
+            property_2:
+              type: string
+ConnectDirectSiteTemplate:
+  allOf:
+    - required:
+        - localServerName
+        - localServerPort
+        - recScript
+        - sendScript
+        - userName
+    - $ref: '#/BaseSiteTemplate'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: cd
+        protocol:
+          type: string
+          default: cd
+        localServerName:
+          type: string
+          description: The name of the site template.
+        localServerPort:
+          type: string
+          description: The port of the local Connect:Direct server.
+        submitScriptWithinFile:
+          type: boolean
+          description: Specify if the script contains unicode characters and has to be submitted within a file.
+          default: false
+        recScript:
+          type: string
+          description: Receive script of the Connect:Direct site template.
+        sendScript:
+          type: string
+          description: Send script of the Connect:Direct site template.
+        userName:
+          type: string
+          description: The username for the site template.
+        usePassword:
+          type: boolean
+          description: Whether to use password for login. The field is NOT
+            required only when field "useCertificate" is set.
+          default: false
+        usePasswordExpr:
+          type: boolean
+          description: Whether to use password expressions.
+          default: false
+        password:
+          type: string
+          description: Password for login.
+        useCertificate:
+          type: boolean
+          description: Specify if the login certificate should bet set. The field is NOT
+            required only when field "usePassword" is set.
+          default: false
+        certificatePlaceholder:
+          type: string
+          description: Speficy the site login certificate placeholder.
+            This property should be set if 'useCertificate' is 'true'.
+        transferMode:
+          type: string
+          description: The transfer mode of the site template.
+          enum:
+            - Auto detect
+            - Binary
+            - Ascii
+SynchronySiteTemplate:
+  allOf:
+    - required:
+        - host
+        - port
+        - userName
+        - partner
+        - transferProfile
+        - password
+        - usePasswordExpr
+    - $ref: '#/BaseSiteTemplate'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: synchrony transfer
+        protocol:
+          type: string
+          default: synchrony transfer
+        host:
+          type: string
+          description: The host of the synchrony site template.
+        port:
+          type: string
+          description: The port of the synchrony site template.
+        userName:
+          type: string
+          description: The username of the synchrony site template.
+        partner:
+          type: string
+          description: The partner parameter of the synchrony site template.
+        transferProfile:
+          type: string
+          description: The transfer profile parameter of the synchrony site template.
+        usePasswordExpr:
+          type: boolean
+          description: Whether to use password expressions.
+        password:
+          type: string
+          description: Password for login.
+        additionalProperties:
+          $ref: '#/AdditionalProperties'
+AdditionalProperties:
+  type: object
+  properties:
+    appcycid:
+      type: string
+    appobjid:
+      type: string
+    direction:
+      type: string
+    fName:
+      type: string
+    freeMsg:
+      type: string
+    ida:
+      type: string
+    ipart:
+      type: string
+    maxDate:
+      type: string
+    maxTime:
+      type: string
+    minDate:
+      type: string
+    minTime:
+      type: string
+    nfName:
+      type: string
+    nIdf:
+      type: string
+    pri:
+      type: string
+    rappl:
+      type: string
+    rUser:
+      type: string
+    sappl:
+      type: string
+    state:
+      type: string
+    sUser:
+      type: string
+    trk:
+      type: string
+SiteTemplateResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/ConnectDirectSiteTemplate'
+          - $ref: '#/SynchronySiteTemplate'
+          - $ref: '#/CustomSiteTemplate'
+        discriminator:
+          propertyName: type
+          mapping:
+            cd: '#/ConnectDirectSiteTemplate'
+            synchrony transfer: '#/SynchronySiteTemplate'
+            custom: '#/CustomSiteTemplate'

@@ -1,0 +1,1156 @@
+Application:
+  required:
+    - name
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+      description: The application ID
+    name:
+      maxLength: 80
+      minLength: 0
+      type: string
+      description: The unique application name
+    type:
+      type: string
+      enum:
+        - AccountFilePurge
+        - AccountTTL
+        - AdvancedRouting
+        - ArchiveMaint
+        - AuditLogMaint
+        - Basic
+        - HumanSystem
+        - LogEntryMaint
+        - LoginThresholdMaintenance
+        - MBFT
+        - PackageRetentionMaint
+        - SentinelLinkDataMaint
+        - SharedFolder
+        - SiteMailbox
+        - StandardRouter
+        - SynchronyTransfer
+        - TransferLogMaint
+        - UnlicensedAccountMaint
+      description: |
+        The type of the application. Acts as a discriminator. Note: application types that does not support subscribing to are: 'TransferLogMaint', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'UnlicensedAccountMaint', 'PackageRetentionMaint'
+    notes:
+      maxLength: 2048
+      minLength: 0
+      type: string
+      description: An unstructured comments (description) for the application
+        entity
+    managedByCG:
+      type: boolean
+      description: This property indicates whether the application is managed by Central Governance.
+      default: false
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+    businessUnits:
+      type: array
+      description: Names of business units that application entity belongs to.
+      items:
+        type: string
+  discriminator:
+    propertyName: type
+HumanSystemApplication:
+  description: A representation of a HumanSystem application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: HumanSystem
+StandardRouterApplication:
+  description: A representation of a StandardRouter application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: StandardRouter
+        outboxEnabled:
+          type: boolean
+          description: |
+            [Allow Subscribers to Submit files in this Application] When this property is set to true then permit incoming file transfers from the subscriber parties to the application and following properties can be set: OUTBOX_FOLDER, SECURE_CONNECTION_REQUIRED, RENAME_FILES and OUTGOING_FILENAME_FORMAT
+          default: false
+        outboxFolder:
+          type: string
+          description: The name of the folder where incoming transferred files are
+            submitted via subscriptions
+        secureConnectionRequired:
+          type: boolean
+          description: Define whether to enable SSL for the incoming transfers
+          default: false
+        renameFilesEnabled:
+          type: boolean
+          description: |
+            Define whether to add a prefix to the file name identifying the sender before it is sent to the internal system
+          default: false
+        outboxFileFormat:
+          type: string
+          description: |
+            The format of the new file name. By default, the file is renamed in the format &lt;ID&gt;\_&lt;FILENAME&gt; where, &lt;ID&gt; is the Subscriber ID specified when the subscription is created, &lt;FILENAME&gt; is the original name of the transferred file and "\_" is the delimiter. The use of the placeholders, &lt;ID&gt;,&lt;FILENAME&gt; and the delimiter in the new file name format is mandatory
+          default: false
+        inboxEnabled:
+          type: boolean
+          description: |
+            [Send files to Subscribers] When this property is set to true then permit outgoing file transfers from the application to the subscribed parties. The properties INBOX_FOLDER and ID_FROM_FILENAME_EXTRACTION_PATTERN can be set
+          default: false
+        inboxFolder:
+          type: boolean
+          description: |
+            [Receive folder] The name of the folder where outgoing transferred files are submitted to the subscriber. The receive folder is created as a sub-folder of the subscription folder
+          default: false
+        inboxIdPattern:
+          type: string
+          description: |
+            A pattern in the ID Pattern box to define the ID of the subscriber to whom files are routed. By default, the pattern is &lt;ID&gt;\_&lt;FILENAME&gt; where, &lt;ID&gt; is a regular expression corresponding to the Subscriber ID specified when the subscription is created, &lt;FILENAME&gt; is the original name of the transferred file and and "\_" is the delimiter. The use of the placeholders, &lt;ID&gt;,&lt;FILENAME&gt; and the delimiter in the new file name format is mandatory.
+          default: false
+        dropFolder:
+          type: string
+          description: The drop folder.
+SiteMailboxApplication:
+  description: A representation of a SiteMailbox application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - inboxFolder
+        - outboxFolder
+      type: object
+      properties:
+        type:
+          type: string
+          default: SiteMailbox
+        outboxFolder:
+          type: string
+          description: The application outbox folder
+        inboxFolder:
+          type: string
+          description: The application inbox folder.
+        dropFolder:
+          type: string
+          description: The drop folder.
+SharedFolderApplication:
+  description: A representation of a SharedFolder application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: SharedFolder
+        sharedFolder:
+          type: string
+          description: The shared folder.
+TransferLogMaintApplication:
+  description: A representation of a TransferLogMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - daysKeepingDataInDb
+        - daysKeepingDataInFiles
+        - daysKeepingInProgressInDb
+        - recordsPerFile
+      type: object
+      properties:
+        type:
+          type: string
+          default: TransferLogMaint
+        daysKeepingDataInDb:
+          type: integer
+          description: Specify in days how old transfer log entries will be when
+            they are deleted
+          format: int32
+        daysKeepingInProgressInDb:
+          type: integer
+          description: Specify in days how long to keep in-progress transfers
+          format: int32
+        exportEnabled:
+          type: boolean
+          description: Define whether to export data before deletetion. By default
+            is false. When is set to true then the properties folder, daysKeepingDataInFiles
+            and  recordsPerFile can be set
+          default: false
+        exportDir:
+          type: string
+          description: A full directory path specifying where the export files are
+            stored
+        pgdumpPath:
+          type: string
+          description: |
+            A full directory path specifying where the pg_dump utility is on the PostgreSQL database server. Required for PostgreSQL database.
+        daysKeepingDataInFiles:
+          type: integer
+          description: |
+            The period of time in days exported files remain in the export directory before they are deleted. If this field is empty or zero, SecureTransport does not delete the files
+          format: int32
+        recordsPerFile:
+          type: integer
+          description: |
+            The maximum number of records in thousands that can exist in an exported file. When this value is exceeded, SecureTransport starts to export the transfer log entries in a new file.
+          format: int32
+        parallelismDegree:
+          type: integer
+          description: Number of processors to use for export. Applicable only for Oracle.
+          format: int32
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+BasicApplication:
+  description: A representation of a Basic application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: Basic
+AdvancedRoutingApplication:
+  description: A representation of an AdvancedRouting application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: AdvancedRouting
+LogEntryMaintApplication:
+  description: A representation of a LogEntryMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - recordsPerFile
+        - timeKeepingDataInDb
+      type: object
+      properties:
+        type:
+          type: string
+          default: LogEntryMaint
+        timeKeepingDataInDb:
+          type: integer
+          description: |
+            Specify how old log entries will be when they are deleted in terms of days, hours, or minutes. You cannot enter spaces-only values in this field.
+          format: int32
+        exportDir:
+          type: string
+          description: |
+            A full directory path specifying where the export files are stored. If you are exporting from an Oracle database, you must fill in the name of the directory defined in the Oracle database ,for example, ST_DMPDIR. The value of this property will be set automatically for the folder property of the application.
+          format: int32
+        pgdumpPath:
+          type: string
+          description: |
+            A full directory path specifying where the pg_dump utility is on the PostgreSQL database server. Required for PostgreSQL database.
+        daysKeepingDataInFiles:
+          type: integer
+          description: |
+            Specify when SecureTransport deletes old exported log entry data. The value can be specified in days/hours/minutes depending on the dayMode property.
+          format: int32
+        recordsPerFile:
+          type: integer
+          description: |
+            Specify the maximum number of records that can exist in an exported file. When this value is exceeded, SecureTransport starts to export the server log entries in a new file.
+          format: int32
+        dayMode:
+          type: integer
+          description: The day mode. Set value 0 for days; 1 for hours or 2 for
+            hours.
+          format: int32
+        exportEnabled:
+          type: boolean
+          default: false
+          description: Whether export is enabled. Applicable only for Oracle.
+        parallelismDegree:
+          type: integer
+          description: Number of processors to use for export. Applicable only for Oracle.
+          format: int32
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+ArchiveMaintApplication:
+  description: A representation of an ArchiveMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: ArchiveMaint
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+SentinelLinkDataMaintApplication:
+  description: A representation of a SentinelLinkDataMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: SentinelLinkDataMaint
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+SynchronyTransferApplication:
+  description: A representation of a SynchronyTransfer application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: SynchronyTransfer
+MBFTApplication:
+  description: A representation of a MBFT application.
+  allOf:
+    - $ref: '#/Application'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: MBFT
+PackageRetentionMaintApplication:
+  description: A representation of a PackageRetentionMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - maxRunningMinutes
+      type: object
+      properties:
+        type:
+          type: string
+          default: PackageRetentionMaint
+        maxRunningMinutes:
+          type: integer
+          description: The maximum number of minutes the application runs each time
+            it is started.
+          format: int32
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+UnlicensedAccountMaintApplication:
+  description: A representation of an UnlicensedAccountMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - inactivePeriod
+      type: object
+      properties:
+        type:
+          type: string
+          default: UnlicensedAccountMaint
+        inactivePeriod:
+          type: integer
+          description: Specify how long in days an unlicensed account must be inactive
+            before it is deleted.
+          format: int32
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+AuditLogMaintApplication:
+  description: A representation of an AuditLogMaint application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - dayMode
+        - timeKeepingDataInDb
+      type: object
+      properties:
+        type:
+          type: string
+          default: AuditLogMaint
+        timeKeepingDataInDb:
+          type: integer
+          description: |
+            Specify in days or months (depending on 'dayMode' property) how old transfer log entries will be when they are deleted.
+          format: int32
+        dayMode:
+          type: integer
+          description: The day mode. Set value 0 for months or 1 for days.
+          format: int32
+        exportEnabled:
+          type: boolean
+          description: |
+            Define whether to export the deleted audit log entries to a file before they are deleted. If true then exportDir property is required to be set.
+          default: false
+        exportDir:
+          type: string
+          description: A full directory path specifying where the export files are.
+            stored.
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+LoginThresholdMaintenanceApplication:
+  description: A representation of a LoginThresholdMaintenance application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - isUnlock
+      type: object
+      properties:
+        type:
+          type: string
+          default: LoginThresholdMaintenance
+        isUnlock:
+          type: boolean
+          default: false
+          description: Define whether unlock functionality is enabled
+        isReport:
+          type: boolean
+          default: false
+          description: |
+            If this property is set to true, a report will be sent to the specified email addresses in the emails property. If isUnlock is set to true, the report will contain a list of unlocked users. If isUnlock is set to false, the report will contain a list of locked, due to login threshold functionality, users
+        emails:
+          type: string
+          description: |
+            The email address or addresses to deliver the report to. Email addresses can be separated by either a comma or a semicolon.
+        reportEmailTemplate:
+          type: string
+          description: The email template for the report from the Report Email Template
+            list.
+          default: LoginThresholdReport.xhtml
+          enum:
+            - LoginThresholdReport.xhtml
+            - AdhocDefault.xhtml
+            - LoginThresholdNotification.xhtml
+            - RoutingFailedNotification.xhtml
+            - RoutingSucceededNotification.xhtml
+            - RoutingTriggeredNotification.xhtml
+            - AccountMaintenanceNotification.xhtml
+            - FileMaintenanceNotification.xhtml
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+AccountFilePurgeApplication:
+  description: A representation of a File Maintenance application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - deleteFilesDays
+      type: object
+      properties:
+        type:
+          type: string
+          default: AccountFilePurge
+        deleteFilesDays:
+          type: integer
+          format: int32
+          description: This property represents file retention period. All files
+            older than the property value will be deleted.
+        pattern:
+          type: string
+          description: This property represents file name pattern. All file names
+            match of the property value will be regarded by the application.
+        expirationPeriod:
+          type: boolean
+          default: false
+          description: |
+            If this property is set to true, the deletion of files based on file expiration period will be enabled. The file expiration period will be set as flow file attribute EXPIRE.ON.
+        removeFolders:
+          type: boolean
+          default: false
+          description: If this property is set to true, the deletion of folders
+            remain empty after File Maintence will be enabled.
+        warningNotifications:
+          type: boolean
+          default: false
+          description: If this property is set to true, the warning notifications
+            feature will be enabled.
+        notifyDays:
+          type: string
+          description: This property represents warning notifications period when
+            emails will be sent to the recipients. Accept comma-separated values.
+        sendSentinelAlert:
+          type: boolean
+          default: false
+          description: If this property is set to true, the warning TO_BE_DELETED
+            state will be reported to Sentinel Server.
+        warnNotifyAccount:
+          type: boolean
+          default: false
+          description: If this property is set to true, the warning notifications
+            will be sent to account email.
+        warningNotificationsTemplate:
+          type: string
+          description: The email template name which will be used in File Maintenance
+            warning email notifications.
+          default: FileMaintenanceNotification.xhtml
+          enum:
+            - FileMaintenanceNotification.xhtml
+            - AccountMaintenanceNotification.xhtml
+            - LoginThresholdReport.xhtml
+            - AdhocDefault.xhtml
+            - LoginThresholdNotification.xhtml
+            - RoutingFailedNotification.xhtml
+            - RoutingSucceededNotification.xhtml
+            - RoutingTriggeredNotification.xhtml
+        warnNotifyEmails:
+          type: string
+          description: This property represents comma-separated email addresses
+            for warning notifications recipients.
+        deletionNotifications:
+          type: boolean
+          default: false
+          description: If this property is set to true, the deletion notifications
+            feature will be enabled.
+        deletionNotificationsTemplate:
+          type: string
+          description: The email template name which will be used in File Maintenance
+            report email notifications.
+          default: FileMaintenanceNotification.xhtml
+          enum:
+            - FileMaintenanceNotification.xhtml
+            - AccountMaintenanceNotification.xhtml
+            - LoginThresholdReport.xhtml
+            - AdhocDefault.xhtml
+            - LoginThresholdNotification.xhtml
+            - RoutingFailedNotification.xhtml
+            - RoutingSucceededNotification.xhtml
+            - RoutingTriggeredNotification.xhtml
+        deletionNotifyAccount:
+          type: boolean
+          default: false
+          description: If this property is set to true, the deletion notifications
+            will be sent to account email.
+        deletionNotifyEmails:
+          type: string
+          description: This property represents comma-separated email addresses
+            for deletion notifications recipients.
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+AccountMaintenanceApplication:
+  description: A representation of an Account Maintenance application.
+  allOf:
+    - $ref: '#/Application'
+    - required:
+        - accountAction
+      type: object
+      properties:
+        type:
+          type: string
+          default: AccountTTL
+        accountCreationDaysCriteria:
+          type: integer
+          format: int32
+          minimum: 0
+          description: The criteria representing the amount of days after account
+            creation or first maintenance job run.
+        accountInactivityDaysCriteria:
+          type: integer
+          format: int32
+          minimum: 0
+          description: The criteria representing the amount of days of account inactivity.
+        accountAction:
+          type: string
+          description: The action which should be performed when Account Maintenance
+            criteria is met.
+          enum:
+            - DELETE
+            - DISABLE
+            - PURGE
+        deleteDisabledAccountAfterXDaysCriteria:
+          type: integer
+          format: int32
+          minimum: 0
+          description: |
+            The sub-action criteria representing the amount of days for deletion of accounts disabled by Account Maintenance application only. It is valid if action is set to "DISABLE".
+        notificationDays:
+          type: string
+          description: The comma-separated periods for notifications.
+        reportNotificationEmailTemplate:
+          type: string
+          description: The email template name which will be used in Account Maintenance
+            report email notifications.
+          default: AccountMaintenanceNotification.xhtml
+          enum:
+            - AccountMaintenanceNotification.xhtml
+            - FileMaintenanceNotification.xhtml
+            - LoginThresholdReport.xhtml
+            - AdhocDefault.xhtml
+            - LoginThresholdNotification.xhtml
+            - RoutingFailedNotification.xhtml
+            - RoutingSucceededNotification.xhtml
+            - RoutingTriggeredNotification.xhtml
+        enableAccountNotifications:
+          type: boolean
+          default: false
+          description: If the account matches a criteria and an action to be performed
+            in X days or sooner, a notification mail should be sent to the email
+            address configured for that user. Accepts "on" value to enable the notifications.
+        actionNotificationEmails:
+          type: string
+          description: The comma-separated email addresses for notifications.
+        passwordNotificationDays:
+          type: string
+          description: The comma-separated periods for the account password expiration
+            notifications.
+        passwordNotificationEmailTemplate:
+          type: string
+          description: The email template name which will be used in Account Maintenance
+            password email notifications.
+          default: AccountMaintenanceNotification.xhtml
+          enum:
+            - AccountMaintenanceNotification.xhtml
+            - FileMaintenanceNotification.xhtml
+            - LoginThresholdReport.xhtml
+            - AdhocDefault.xhtml
+            - LoginThresholdNotification.xhtml
+            - RoutingFailedNotification.xhtml
+            - RoutingSucceededNotification.xhtml
+            - RoutingTriggeredNotification.xhtml
+        enablePasswordExpirationNotifications:
+          type: boolean
+          default: false
+          description: If the account password will expire in one of configured
+            notification days, a notification mail will be sent to the email addresses
+            configured for that user. Accepts "on" value to enable the password
+            exipration notifications.
+        passwordExpirationNotificationEmails:
+          type: string
+          description: The comma-separated email addresses for the account password
+            exipration notifications.
+        certificateNotificationDays:
+          type: string
+          description: The comma-separated periods for the account certificates
+            expiration notifications.
+        firstMaintenanceRun:
+          type: integer
+          format: int64
+          minimum: 0
+          description: First TTL maintenance job run.
+        certificateNotificationEmailTemplate:
+          type: string
+          description: The email template name which will be used in Account Maintenance
+            certificate email notifications.
+          default: AccountMaintenanceNotification.xhtml
+          enum:
+            - AccountMaintenanceNotification.xhtml
+            - FileMaintenanceNotification.xhtml
+            - LoginThresholdReport.xhtml
+            - AdhocDefault.xhtml
+            - LoginThresholdNotification.xhtml
+            - RoutingFailedNotification.xhtml
+            - RoutingSucceededNotification.xhtml
+            - RoutingTriggeredNotification.xhtml
+        enableCertificateExpirationNotifications:
+          type: boolean
+          default: false
+          description: If the account certificates will expire in one of configured
+            notification days, a notification mail will be sent to the email addresses
+            configured for that user. Accepts "on" value to enable the certificates
+            exipration notifications.
+        notificationCertificateEmails:
+          type: string
+          description: The comma-separated email addresses for the account certificates
+            exipration notifications.
+        schedules:
+          description: Application's schedules.
+          type: array
+          items:
+            anyOf:
+              - $ref: 'application.yaml#/OnceSchedule'
+              - $ref: 'application.yaml#/HourlySchedule'
+              - $ref: 'application.yaml#/DailySchedule'
+              - $ref: 'application.yaml#/WeeklySchedule'
+              - $ref: 'application.yaml#/MonthlySchedule'
+              - $ref: 'application.yaml#/YearlySchedule'
+              - $ref: 'application.yaml#/CronExpressionSchedule'
+OnceSchedule:
+  description: A representation of a schedule of type OnceSchedule
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: ONCE
+      example: ONCE
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    executionTimes:
+      uniqueItems: true
+      description: The execution times
+      nullable: true
+      type: array
+      items:
+        type: string
+HourlySchedule:
+  description: A representation of a schedule of type HourlySchedule
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: HOURLY
+      example: HOURLY
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    executionTimes:
+      uniqueItems: true
+      description: The execution times
+      nullable: true
+      type: array
+      items:
+        type: string
+    endDate:
+      type: string
+      description: The end date in date-time format
+      format: date-time
+    hourlyStep:
+      type: integer
+      description: The hourly step
+      format: int64
+    hourlyType:
+      type: string
+      description: The hourly type
+      example: string
+      enum:
+        - PERHOURS
+        - PERMINUTES
+DailySchedule:
+  description: A representation of a schedule of type DailySchedule
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: DAILY
+      example: DAILY
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    executionTimes:
+      uniqueItems: true
+      description: The execution times
+      nullable: true
+      type: array
+      items:
+        type: string
+    dailyType:
+      type: string
+      description: The daily type
+      example: string
+      enum:
+        - EVERYDAY
+        - EVERY_WEEKDAY
+    endDate:
+      type: string
+      description: The end date in date-time format
+      format: date-time
+WeeklySchedule:
+  description: A representation of a schedule of type WeeklySchedule
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: WEEKLY
+      example: WEEKLY
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    executionTimes:
+      uniqueItems: true
+      description: The execution times
+      nullable: true
+      type: array
+      items:
+        type: string
+    endDate:
+      type: string
+      description: The end date in date-time format
+      format: date-time
+    daysOfWeek:
+      uniqueItems: true
+      description: The days of week
+      nullable: true
+      type: array
+      items:
+        type: string
+        example: string
+        enum:
+          - SUNDAY
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+MonthlySchedule:
+  description: A representation of a schedule of type MonthlySchedule
+  required:
+    - monthlyType
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: MONTHLY
+      example: MONTHLY
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    executionTimes:
+      uniqueItems: true
+      description: The execution times
+      nullable: true
+      type: array
+      items:
+        type: string
+    daysOfWeek:
+      uniqueItems: true
+      description: The days of week
+      nullable: true
+      type: array
+      items:
+        type: string
+        example: string
+        enum:
+          - SUNDAY
+          - MONDAY
+          - TUESDAY
+          - WEDNESDAY
+          - THURSDAY
+          - FRIDAY
+          - SATURDAY
+    daysOfMonth:
+      uniqueItems: true
+      description: The days of month
+      nullable: true
+      type: array
+      items:
+        type: integer
+        format: int32
+    weekOfMonth:
+      type: string
+      description: The week of the month
+      example: string
+      enum:
+        - FIRST
+        - SECOND
+        - THIRD
+        - FOURTH
+        - LAST
+    monthlyType:
+      type: string
+      description: The monthly type
+      example: string
+      enum:
+        - EXACT
+        - SEQUENCE_WEEKLY
+        - SEQUENCE_MONTHLY
+    endDate:
+      type: string
+      description: The end date in date-time format
+      format: date-time
+YearlySchedule:
+  description: A representation of a schedule of type YearlySchedule
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: YEARLY
+      example: YEARLY
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    executionTimes:
+      uniqueItems: true
+      description: The execution times
+      nullable: true
+      type: array
+      items:
+        type: string
+    daysOfMonth:
+      uniqueItems: true
+      description: The days of month
+      nullable: true
+      type: array
+      items:
+        type: integer
+        format: int32
+    endDate:
+      type: string
+      description: The end date in date-time format
+      format: date-time
+    months:
+      uniqueItems: true
+      description: The months
+      nullable: true
+      type: array
+      items:
+        type: string
+        example: string
+        enum:
+          - JANUARY
+          - FEBRUARY
+          - MARCH
+          - APRIL
+          - MAY
+          - JUNE
+          - JULY
+          - AUGUST
+          - SEPTEMBER
+          - OCTOBER
+          - NOVEMBER
+          - DECEMBER
+CronExpressionSchedule:
+  description: A representation of a schedule of type CronExpressionSchedule
+  type: object
+  properties:
+    tag:
+      type: string
+      description: "The type of the application or subscription. \nFor application\
+          \ schedule are valid the following application types: 'HumanSystem', 'StandardRouter',\
+          \ 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting',\
+          \ 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer',\
+          \ 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'.\
+          \ \nFor subscription schedule are valid the following options : 'PARTNER-IN',\
+          \ 'PARTNER-OUT'.\n"
+    type:
+      type: string
+      description: The type of the schedule
+      default: EXPRESSION
+      example: EXPRESSION
+    skipHolidays:
+      type: boolean
+      description: Whether to skip holidays.
+      default: false
+    startDate:
+      type: string
+      description: The start date in date-time format
+      format: date-time
+    cronExpression:
+      type: string
+      description: The cron expression.
+    endDate:
+      type: string
+      description: The end date in date-time format
+      format: date-time
+ApplicationResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/AccountFilePurgeApplication'
+          - $ref: '#/AccountMaintenanceApplication'
+          - $ref: '#/AdvancedRoutingApplication'
+          - $ref: '#/ArchiveMaintApplication'
+          - $ref: '#/AuditLogMaintApplication'
+          - $ref: '#/BasicApplication'
+          - $ref: '#/HumanSystemApplication'
+          - $ref: '#/LogEntryMaintApplication'
+          - $ref: '#/LoginThresholdMaintenanceApplication'
+          - $ref: '#/MBFTApplication'
+          - $ref: '#/PackageRetentionMaintApplication'
+          - $ref: '#/SentinelLinkDataMaintApplication'
+          - $ref: '#/SharedFolderApplication'
+          - $ref: '#/SiteMailboxApplication'
+          - $ref: '#/StandardRouterApplication'
+          - $ref: '#/SynchronyTransferApplication'
+          - $ref: '#/TransferLogMaintApplication'
+          - $ref: '#/UnlicensedAccountMaintApplication'
+        discriminator:
+          propertyName: type
+          mapping:
+            AccountFilePurge: '#/AccountFilePurgeApplication'
+            AccountTTL: '#/AccountMaintenanceApplication'
+            AdvancedRouting: '#/AdvancedRoutingApplication'
+            ArchiveMaint: '#/ArchiveMaintApplication'
+            AuditLogMaint: '#/AuditLogMaintApplication'
+            Basic: '#/BasicApplication'
+            HumanSystem: '#/HumanSystemApplication'
+            LogEntryMaint: '#/LogEntryMaintApplication'
+            LoginThresholdMaintenance: '#/LoginThresholdMaintenanceApplication'
+            MBFT: '#/MBFTApplication'
+            PackageRetentionMaint: '#/PackageRetentionMaintApplication'
+            SentinelLinkDataMaint: '#/SentinelLinkDataMaintApplication'
+            SharedFolder: '#/SharedFolderApplication'
+            SiteMailbox: '#/SiteMailboxApplication'
+            StandardRouter: '#/StandardRouterApplication'
+            SynchronyTransfer: '#/SynchronyTransferApplication'
+            TransferLogMaint: '#/TransferLogMaintApplication'
+            UnlicensedAccountMaint: '#/UnlicensedAccountMaintApplication'

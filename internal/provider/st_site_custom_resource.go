@@ -157,7 +157,7 @@ type stTransferSiteCustomModel struct {
 }
 
 func NewSTTransferSiteCustomModelResource() resource.Resource {
-	return NewSTResource(&stTransferSiteCustomModel{}, "st_site_custom", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}")
+	return NewSTResource(&stTransferSiteCustomModel{}, "st_site_custom", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}").AddDiscriminator("[type=custom]")
 }
 
 func init() {

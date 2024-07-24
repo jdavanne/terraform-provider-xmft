@@ -18,32 +18,34 @@ description: |-
 ### Required
 
 - `content` (String)
-- `name` (String)
+- `name` (String) The name of the certificate.
 
 ### Optional
 
-- `account` (String) default:''
-- `additional_attributes` (Map of String)
+- `account` (String) default:'', The account, the certificate owner.
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
 - `ca_password` (String, Sensitive)
-- `overwrite` (Boolean) default:false
-- `password` (String, Sensitive)
-- `type` (String) enum:/x509/ssh, default:x509
-- `usage` (String) enum:/private/local/partner/login/trusted, default:private
+- `overwrite` (Boolean) default:false, Define whether to overwrite the certificate if a certificate with the same name, type and usage already exists.
+- `password` (String, Sensitive) The private key password.
+- `type` (String) enum:/x509/ssh, default:x509, The type of the certificate entity as string.
+- `usage` (String) enum:/private/local/partner/login/trusted, default:private, The usage of the certificate entity as string.
 
 ### Read-Only
 
-- `access_level` (String)
-- `creation_time` (Number)
-- `expiration_time` (String)
-- `fingerprint` (String)
-- `id` (String) The ID of this resource.
-- `issuer` (String)
-- `key_algorithm` (String)
-- `key_size` (Number)
+- `access_level` (String) The access level to this certificate for other accounts.
+- `creation_time` (Number) The creation time of the certificate entity in Unix Timestamp format.
+- `expiration_time` (String) The certificate expiration time in Unix Timestamp format. This is a read only property and it is automatically calculated depending on the 'validityPeriod' property
+- `fingerprint` (String) The certificate fingerprint. This is a auto generating read only property.
+- `id` (String) The ID of the certificate entity.
+- `issuer` (String) The issuer of the certificate. This is a auto generating read only property.
+- `key_algorithm` (String) The name of the algorithm for generated key. Only for certificate entities of type 'pgp' this property can be set (for certificate entities of type 'x509' this property is automatically being set to 'RSA' when generate a 'x509' certificate.
+- `key_size` (Number) The size of the key. Valid values are: 1024, 2048, 3072, 4096. For PGP keys the value applies to the master key.
 - `last_updated` (String)
-- `serial_number` (String)
-- `sign_algorithm` (String)
-- `subject` (String)
-- `validation_status` (String)
-- `validity_period` (Number)
-- `version` (Number)
+- `serial_number` (String) The serial number. This is a auto generating read only property.
+- `sign_algorithm` (String) The certificate signature algorithm as string
+- `subject` (String) The the certificate subject DN (distinguished name) in RFC2253 format. Example: 'CN=test,OU=Axway_TT,O=Axway,L=Sofia,ST=Sofia,C=Bulgaria'.
+- `validation_status` (String) The certificate validation status.
+- `validity_period` (Number) The certificate validity in days.
+- `version` (Number) The certificate version.

@@ -1,0 +1,101 @@
+Session:
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the session
+    userName:
+      type: string
+      description: The user name
+    host:
+      type: string
+      description: The host of the client that's connected to the daemon
+    protocol:
+      type: string
+      description: The protocol
+      enum:
+        - FTP
+        - HTTP
+    userClass:
+      type: string
+      description: The user class. By default the user class can be 'VirtClass'
+        or 'RealClass'
+    currentTransferBandwith:
+      type: string
+      description: The current transfer bandwith
+    command:
+      type: string
+      description: The command currently being executed. Like STOR, RETR, IDLE.
+    sessionCreationTime:
+      type: string
+      description: The creation time of the session.
+    nodeIp:
+      type: string
+      description: The IP of the node.
+    serverName:
+      type: string
+      description: The name of the server from which this sessions is initiated.
+SessionBandwidthStatisticsByLoginName:
+  type: object
+  properties:
+    loginName:
+      type: string
+      description: The login name
+    bandwidthUsageStats:
+      $ref: '#/SessionsBandwidth'
+      description: Bandwidth Usage Statistics
+    sessions:
+      $ref: '#/SessionsCount'
+    maxAllowedBandwidth:
+      $ref: '#/SessionsBandwidth'
+      description: Max allowed bandwidth for inbound and outbound transfers
+SessionsBandwidth:
+  type: object
+  properties:
+    inbound:
+      type: integer
+      format: int32
+    outbound:
+      type: integer
+      format: int32
+SessionsCount:
+  type: object
+  properties:
+    total:
+      type: integer
+      format: int32
+      description: Total sessions count
+    http:
+      type: integer
+      format: int32
+      description: HTTP sessions count
+    ftp:
+      type: integer
+      format: int32
+      description: FTP sessions count
+    ssh:
+      type: integer
+      format: int32
+      description: SSH sessions count
+ServerUsageSnapshotByUserClass:
+  type: object
+  properties:
+    userClass:
+      type: string
+      description: The user class. By default the user class can be 'VirtClass'
+        or 'RealClass'
+    globalLoggedInCounters:
+      $ref: '#/SessionsCount'
+    maxAllowed:
+      type: string
+      description: The max allowed field
+      enum:
+        - unlimited
+        - some number
+    instantaneousFTPBandwidth:
+      type: string
+      description: The instantaneous FTP bandwidth. For example '0 bytes/sec'.
+    localLoggedInCounters:
+      $ref: '#/SessionsCount'
+    bandwidthUsageStats:
+      $ref: '#/SessionsBandwidth'

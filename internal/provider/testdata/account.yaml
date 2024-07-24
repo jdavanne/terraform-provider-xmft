@@ -1,0 +1,500 @@
+BaseAccount:
+  required:
+    - homeFolder
+    - name
+    - type
+  type: object
+  properties:
+    type:
+      type: string
+      description: |
+        The account type. Type 'user' means user account; type 'service' means service account; type 'template' means account template. Acts as a discriminator.
+      enum:
+        - user
+        - service
+        - template
+    id:
+      type: string
+      description: The unique identifier of the account.
+      default: string
+    name:
+      maxLength: 80
+      minLength: 0
+      pattern: ^(([^\/\;\']*))$
+      type: string
+      description: The account name
+      default: string
+    uid:
+      type: string
+      description: The numeric user ID of the account. Required for SecureTransport
+        installation running on UNIX environment.
+      default: 10000
+    gid:
+      type: string
+      description: The numeric group ID of the account
+      default: 10000
+    homeFolder:
+      maxLength: 255
+      minLength: 0
+      type: string
+      description: |
+        The home folder on the local system used for this account. The folder path name must be a valid absolute directory name
+    homeFolderAccessLevel:
+      type: string
+      description: The home folder access level
+      enum:
+        - PRIVATE
+        - PUBLIC
+        - BUSINESS_UNIT
+    skin:
+      type: string
+      description: The skin templates
+      enum:
+        - Default HTML Template
+        - Axway Jelly Ball 9
+        - SecureTransport Legacy Client
+        - Axway Box and Stripe in Blue
+        - SecureTransport Web Access Plus
+    notes:
+      maxLength: 2048
+      minLength: 0
+      type: string
+      description: An unstructured comments to the account
+      default: user
+    lastModified:
+      type: string
+      description: Last modified time for the account.
+    authByEmail:
+      type: boolean
+      description: This property defines if authentication by email address is
+        allowed for this account
+      default: false
+    disabled:
+      type: boolean
+      description: |
+        This property defines if this account is disabled. If the account is disabled: 1) Subscriptions for the account will not trigger. ; 2) Users associated with the account will not be able to login and perform any transfers
+      default: false
+    transfersWebServiceAllowed:
+      type: boolean
+      description: |
+        This property is an attribute name to indicate whether access to the transfers resource from the end user RESTful API is allowed.
+      default: false
+    pesitId:
+      type: string
+      description: This property defines the PeSIT ID which is used for defining a PeSIT partnership.
+    accountCreationDate:
+      type: integer
+      format: int64
+      description: Account creation date.
+      readOnly: true
+    loginRestrictionPolicy:
+      type: string
+      description: The login restriction policy for this account.
+    transferType:
+      type: string
+      description: |
+        This property is an attribute name to indicate the transfer type of the account's transfer site. It can be unspecified (N), internal (I), partner(E). By default is unspecified.
+      default: N
+      enum:
+        - N
+        - I
+        - E
+    accountSubmitForApprove:
+      type: boolean
+      description: If the account has been sent for approve to 'checker' administrator.
+      default: false
+    accountVerificationStatus:
+      type: string
+      description: Verification status for the account.
+    managedByCG:
+      type: boolean
+      description: This property indicates whether the account is managed by Central Governance.
+      default: false
+    businessUnit:
+      type: string
+      description: The business unit that account belongs to.
+    rejectReason:
+      type: string
+      maxLength: 2048
+      description: Reject reason.
+    accountEncryptMode:
+      type: string
+      description: |
+        Account entities support repository encryption mode. There are two possible options for the encryptMode - 'ENABLED' and 'UNSPECIFIED'.
+        When 'ENABLED' is set then repository encryption for the account is enabled.
+        When 'UNSPECIFIED' is set then repository encryption for the account is not enabled and can be specified with EncryptClass.
+      enum:
+        - UNSPECIFIED
+        - ENABLED
+    subscriptionFolderDiscovery:
+      type: string
+      description: |
+        For accounts with multiple subscriptions, the number of subscriptions and the target folder depth would impact performance.
+        There are two possible options for the subscriptionFolderDiscovery - 'ITERATIVE' and 'RECURSIVE'.
+        When 'ITERATIVE' is set, then subscription folder discovery is performed by iteration over all of the account's subscriptions while trying to match the target folder. Should be used when the number of subscriptions is small and the target folder depth is large.
+        When 'RECURSIVE' is set, then subscription folder discovery is performed by recursive traversal of the target folder hierarchy - the target folder is checked first, then moving up to parent folders. Should be used when the number of subscriptions is large and the target folder depth is small.
+        The default value is 'ITERATIVE'.
+      enum:
+        - ITERATIVE
+        - RECURSIVE
+    fileArchivingPolicy:
+      type: string
+      description: |
+        Account entities support a custom property named 'fileArchivingPolicy' that can be set only if the global File Archiving is enabled.
+        There are three possible options for the fileArchivingPolicy - 'DEFAULT', 'DISABLED' and 'ENABLED'.
+        When 'DEFAULT' is set, then the following apply: if the account is assigned to business unit, it will inherit its policy, otherwise, the global archiving policy applies.
+        When 'DISABLED' is set, file archiving will be disabled for this account.
+        When 'ENABLED' is set, file archiving will be enabled for this account.
+      enum:
+        - DEFAULT
+        - DISABLED
+        - ENABLED
+    mappedUser:
+      type: string
+      description: The name of the real user mapped to this account for SecureTransport
+        installation running on Windows environment.
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys should follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters. Key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+    contact:
+      $ref: 'account.yaml#/AccountContact'
+    adhocSettings:
+      $ref: 'account.yaml#/AdhocSettings'
+  discriminator:
+    propertyName: type
+UserAccount:
+  allOf:
+    - $ref: '#/BaseAccount'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: user
+        unlicensed:
+          type: boolean
+          description: This property defines if the account is an unlicensed account.
+          default: false
+        isUnlicensedUserAllowedToReply:
+          type: boolean
+          description: This property defines if the unlicensed user may reply to packages.
+          default: false
+        routingMode:
+          type: string
+          description: |
+            Accounts support PeSIT Store and Forward mode via property named 'routingMode'. There are three possible options for the routingMode: accept (the value for Routing Mode that accept transfers), reject (the value for Routing Mode that reject transfers) and ignore (the value for Routing Mode that ignores transfers). By default is 'reject'.
+          default: reject
+          enum:
+            - reject
+            - accept
+            - ignore
+        fileMaintenanceSettings:
+          $ref: 'account.yaml#/FileMaintenanceSettingsForAccount'
+        bandwidthLimits:
+          $ref: 'inheritance.yaml#/BandwidthLimits'
+        accountMaintenanceSettings:
+          $ref: 'account.yaml#/AccountMaintenanceSettingsForAccount'
+        addressBookSettings:
+          $ref: 'account.yaml#/AddressBookSettingsForAccount'
+        user:
+          $ref: 'account.yaml#/User'
+TemplateAccount:
+  allOf:
+    - $ref: '#/BaseAccount'
+    - type: object
+      required:
+        - templateClass
+      properties:
+        type:
+          type: string
+          default: template
+        isUnlicensedUserAllowedToReply:
+          type: boolean
+          description: This property defines if the unlicensed user may reply to packages.
+          default: false
+        enrolledWithExternalPass:
+          type: boolean
+          description: Wheter or not to enroll the account with external password. Note - this is only applicable for account template.
+          default: false
+        templateClass:
+          type: string
+        fileMaintenanceSettings:
+          $ref: 'account.yaml#/FileMaintenanceSettingsForAccount'
+        bandwidthLimits:
+          $ref: 'inheritance.yaml#/BandwidthLimits'
+        addressBookSettings:
+          $ref: 'account.yaml#/AddressBookSettingsForAccount'
+ServiceAccount:
+  allOf:
+    - $ref: '#/BaseAccount'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: service
+        routingMode:
+          type: string
+          description: |
+            Accounts support PeSIT Store and Forward mode via property named 'routingMode'. There are three possible options for the routingMode: accept (the value for Routing Mode that accept transfers), reject (the value for Routing Mode that reject transfers) and ignore (the value for Routing Mode that ignores transfers). By default is 'reject'.
+          default: reject
+          enum:
+            - reject
+            - accept
+            - ignore
+        user:
+          $ref: 'account.yaml#/User'
+AccountContact:
+  type: object
+  properties:
+    email:
+      maxLength: 255
+      type: string
+      description: The account email
+    phone:
+      maxLength: 80
+      type: string
+      description: The account phone.
+AdhocSettings:
+  type: object
+  properties:
+    deliveryMethod:
+      type: string
+      enum:
+        - DEFAULT
+        - DISABLED
+        - ANONYMOUS
+        - ACCOUNT_WITHOUT_ENROLLMENT
+        - ACCOUNT_WITH_ENROLLMENT
+        - CUSTOM
+      description: "This property defines the delivery method. When deliveryMethod\
+                  \ is set to 'Disabled' then Adhoc is disabled and enrollmentType/implicitEnrollmentType\
+                  \ can not be set. When deliveryMethod is set to 'Default' then it is only\
+                  \ available on BU and Account (setting the BU to use the value and account\
+                  \ to use the BU value). When deliveryMethod is set to 'Anonymous' then\
+                  \ implicit enrollment types 'Anonymous' and \"\" (empty string for Select\
+                  \ by sender) are enabled. When deliveryMethod is set to 'Account Without\
+                  \ Enrollment' then implicit enrollment types 'Anonymous', \"\"  (empty\
+                  \ string for Select by sender) and 'Existing Account' are enabled. When\
+                  \ deliveryMethod is set to 'Account With Enrollment' then implicit enrollment\
+                  \ types 'Anonymous', \"\" (empty string for Select by sender), 'Enroll\
+                  \ unlicensed', 'Enroll licensed' are enabled          \n"
+    enrollmentTypes:
+      type: array
+      description: |
+        This property is used for a custom delivery method and can be set only if deliveryMethod property is set to 'Custom'
+      items:
+        type: string
+    implicitEnrollmentType:
+      type: string
+      description: |
+        The Implicit Enrollment Type value controls which option Web Access Plus selects initially in the User Access window and which enrollment type is used by the Axway Email Plug-ins. The choices depend on the enrollment types enabled by the Delivery Methods and Enrollment Types fields
+      enum:
+        - ANONYMOUS_LINK
+        - CHALLENGED_LINK
+        - EXISTING_ACCOUNT
+        - ENROLL_UNLICENSED
+        - ENROLL_LICENSED
+FileMaintenanceSettingsForAccount:
+  allOf:
+    - $ref: 'inheritance.yaml#/FileMaintenanceSettings'
+    - type: object
+      properties:
+        reportNotified:
+          type: string
+          description: Report email notifications for future action.
+        warnNotified:
+          type: string
+          description: Warning email notifications for future action.
+AccountMaintenanceSettingsForAccount:
+  allOf:
+    - $ref: 'inheritance.yaml#/AccountMaintenanceSettings'
+    - type: object
+      properties:
+        accountDisabledDate:
+          type: integer
+          format: int64
+          description: Date when account has been disabled by account retention maintenance.
+        accountNotified:
+          type: boolean
+          description: Denotes whether an email has already been sent as a notification to the current account.
+          readOnly: true
+          default: false
+        accountPasswordNotified:
+          type: boolean
+          description: If the account password will expire in one of configured notification
+            days, a notification mail will be sent to the email addresses configured
+            for that user.
+          default: false
+        accountCertificateNotified:
+          type: boolean
+          description: If the account certificates will expire in one of configured
+            notification days, a notification mail will be sent to the email addresses
+            configured for that user.
+          default: false
+User:
+  required:
+    - name
+    - passwordCredentials
+  type: object
+  properties:
+    name:
+      maxLength: 80
+      minLength: 0
+      pattern: ^(([^\+\:\[]*))$
+      type: string
+      description: The name of the user (the login name)
+      default: string
+    authExternal:
+      type: boolean
+      description: |
+        Tells if external authentication is enabled. It has value 'true' if the user authentication is done by an external authentication and 'false' if the user authentication is done by the ST system
+      default: false
+    lastLogin:
+      type: string
+      description: |
+        The time the user last successfully logged in. It has value null if the user never successfully logged in. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on user login.
+      readOnly: true
+    locked:
+      type: boolean
+      description: |
+        Test if authentication via the user login is disabled. This may be because the user has been locked or the maximum authentication attempts has been exceeded
+      default: false
+    failedAuthAttempts:
+      minimum: 0
+      type: integer
+      description: The number of sequential failed authentication attempts
+      format: int32
+      readOnly: true
+    failedAuthMaximum:
+      minimum: 1
+      type: integer
+      description: |
+        The number of failed authentication attempts allowed before authentication via the user is disabled. If not set, the value from configuration option Users.DefaultLockoutLimit will be taken. A value of 0 allows the user an unlimited number of attempts
+      format: int32
+    failedSshKeyAuthAttempts:
+      minimum: 0
+      type: integer
+      description: The number of sequential failed ssh key authentication attempts
+      format: int32
+      readOnly: true
+    failedSshKeyAuthMaximum:
+      minimum: 1
+      type: integer
+      description: |
+        The number of failed ssh key authentication attempts allowed before authentication via the user is disabled. If not set, the value from configuration option Users.DefaultSshKeyLockoutLimit will be taken. A value of 0 allows the user an unlimited number of attempts
+      format: int32
+    successfulAuthMaximum:
+      minimum: 1
+      type: integer
+      description: |
+        The number of successful authentication attempts allowed within a predefined period before authentication is disabled. That period is defined globally. A value of null allows the user an unlimited number of attempts
+      format: int32
+    lastFailedAuth:
+      type: string
+      description: |
+        The time of the last unsuccessful authentication attempt. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on failed user login.
+      readOnly: true
+    lastFailedSshKeyAuth:
+      type: string
+      description: |
+        The time of the last unsuccessful ssh key authentication attempt. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on failed user login.
+      readOnly: true
+    successfulLogins:
+      type: integer
+      description: The number of successful login attempts
+      readOnly: true
+    passwordCredentials:
+      $ref: 'account.yaml#/PasswordCredentials'
+    secretQuestion:
+      $ref: 'account.yaml#/SecretQuestion'
+PasswordCredentials:
+  required:
+    - username
+  type: object
+  properties:
+    password:
+      maxLength: 2147483647
+      minLength: 1
+      type: string
+      description: |
+        The password. If the password property is not set then the passwordDigest property must be set and vice versa
+    passwordDigest:
+      maxLength: 2147483647
+      minLength: 1
+      type: string
+      description: |
+        The password digest. If the passwordDigest property is not set then the password property must be set and vice versa
+    forcePasswordChange:
+      type: boolean
+      description: Checks if password change is forced
+      default: false
+    lastPasswordChange:
+      type: string
+      description: |
+        The last password change. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on password change.
+    lastOwnPasswordChange:
+      type: string
+      description: |
+        The last password change by the user. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on password change by user.
+    passwordExpiryInterval:
+      minimum: 1
+      type: integer
+      description: The password expiry interval. Accepts only positive integers.
+      format: int32
+SecretQuestion:
+  type: object
+  properties:
+    secretQuestion:
+      type: string
+      description: The secret question text.
+      readOnly: true
+    secretAnswerGuessFailures:
+      type: integer
+      description: Failed attempts for guessing the secret answer.
+      format: int32
+    forceSecretQuestionChange:
+      type: boolean
+      description: Flag indicating if user is forced to set its secret question.
+      default: false
+AddressBookSettingsForAccount:
+  allOf:
+    - $ref: 'inheritance.yaml#/AddressBookSettings'
+    - type: object
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: 'account.yaml#/AddressBookContact'
+AddressBookContact:
+  required:
+    - fullName
+    - primaryEmail
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the address book contact
+    fullName:
+      type: string
+      description: The full name of the address book contact
+    primaryEmail:
+      type: string
+      description: The primary email of the address book contact.
+AccountResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: 'account.yaml#/UserAccount'
+          - $ref: 'account.yaml#/TemplateAccount'
+          - $ref: 'account.yaml#/ServiceAccount'

@@ -1,0 +1,32 @@
+ClusterServiceStatus:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The service name.
+      enum:
+        - FolderMonitor
+        - Scheduler
+    status:
+      type: string
+      description: Is service currently running or not.
+  discriminator:
+    propertyName: name
+ClusterServiceOperationResult:
+  type: object
+  properties:
+    name:
+      type: string
+      description: The service name.
+      enum:
+        - FolderMonitor
+        - Scheduler
+    message:
+      type: string
+      description: Message for the performed service operation.
+    isSuccessful:
+      type: boolean
+      description: Whether or not the service operation was successful.
+      default: false
+  discriminator:
+    propertyName: name

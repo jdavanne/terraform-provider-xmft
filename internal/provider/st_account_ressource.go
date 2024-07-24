@@ -262,7 +262,7 @@ type stAccountResourceModel struct {
 }
 
 func NewSTAccountResource() resource.Resource {
-	return NewSTResource(&stAccountResourceModel{}, "st_account", "", "/api/v2.0/accounts", "/api/v2.0/accounts/{name}")
+	return NewSTResource(&stAccountResourceModel{}, "st_account", "", "/api/v2.0/accounts", "/api/v2.0/accounts/{name}").AddDiscriminator("[type=user]")
 }
 
 func init() {

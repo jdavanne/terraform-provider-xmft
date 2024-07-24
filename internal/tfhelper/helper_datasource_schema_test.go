@@ -19,7 +19,7 @@ func TestGenerateToDataSourceSchema(t *testing.T) {
 	var v TestResourceModel
 
 	// Call the GenerateToSchema function
-	generated := DataSourceModelToSchema(ctx, "testresource", &v)
+	generated := DataSourceModelToSchema(ctx, "testresource", "/api", &v)
 
 	expected := schema.Schema{
 		Attributes: map[string]schema.Attribute{

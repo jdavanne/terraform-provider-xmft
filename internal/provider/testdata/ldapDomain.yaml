@@ -1,0 +1,263 @@
+LdapDomain:
+  required:
+    - name
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the ldap domain.
+    name:
+      type: string
+      description: The name of the ldap domain.
+      maxLength: 255
+    isDefault:
+      type: boolean
+      description: Specify if ldap doamin is default domain.
+      default: false
+    precedence:
+      type: integer
+      format: int32
+      description: Precedence property of ldap domain.
+    protocolVersion:
+      type: integer
+      format: int32
+      description: Protocol version of ldap domain.
+      enum:
+        - 2
+        - 3
+    sslEnabled:
+      type: boolean
+      description: Whether ssl is enabled for ldap domain.
+      default: false
+    tlsEnabled:
+      type: boolean
+      description: Whether tls is enabled for ldap domain.
+      default: false
+    referralsAllowed:
+      type: boolean
+      description: Whether referrals are allowed.
+      default: false
+    anonymousBindsAllowed:
+      type: boolean
+      description: Whether anonymous binds are allowed.
+      default: false
+    bindDn:
+      type: string
+      description: Bind dn of ldap domain.
+    bindDnPassword:
+      type: string
+      description: Bind dn password of ldap domain.
+    commonCase:
+      type: string
+      description: Common case property of ldap domain.
+      enum:
+        - NONE
+        - UPPER
+        - LOWER
+    clientCertificate:
+      type: string
+      description: ID of a local certificate to be used for authentication.
+    certVerify:
+      type: boolean
+      description: CertVerify property of ldap domain.
+      default: false
+    description:
+      type: string
+      maxLength: 4000
+      description: Description of ldap domain.
+    addressBookSettings:
+      $ref: '#/AddressBookSettingsLDAP'
+    userSettings:
+      $ref: '#/UserSettingsLDAP'
+    ldapSearches:
+      $ref: '#/LdapSearches'
+    ldapServers:
+      type: array
+      items:
+        $ref: '#/LdapServers'
+    attributes:
+      type: array
+      items:
+        $ref: '#/AttributesLDAP'
+    addressBookAttributes:
+      type: array
+      items:
+        $ref: '#/AddressBookAttributesLDAP'
+    dnFilters:
+      type: array
+      items:
+        $ref: '#/DnFiltersLDAP'
+AddressBookSettingsLDAP:
+  type: object
+  properties:
+    addressBookBaseDN:
+      type: string
+      description: Base DN of address book.
+    addressBookQuery:
+      type: string
+      description: Address book query.
+    shouldUseOnlyAdditionalQuery:
+      type: boolean
+      description: Whether to use only additional query.
+      default: false
+UserSettingsLDAP:
+  type: object
+  properties:
+    defaultUid:
+      type: integer
+      format: int32
+      minimum: 1
+      default: 10000
+      description: Default uid.
+    defaultGid:
+      type: integer
+      format: int32
+      minimum: 1
+      default: 10000
+      description: Default gid.
+    defaultUserType:
+      type: string
+      enum:
+        - virtual
+        - real
+      default: virtual
+      description: Default user type.
+    defaultUserShell:
+      type: string
+      default: /bin/sh
+      description: Default user's shell.
+    defaultAuthByEmail:
+      type: boolean
+      default: false
+      description: Authentication by email.
+    sysUser:
+      type: string
+      description: System user attribute. Windows specific.
+LdapSearches:
+  type: object
+  properties:
+    baseDn:
+      type: string
+      default: ou=Engineering, o=Acme
+      description: Base dn.
+    aliasQuery:
+      type: string
+      description: Alias query.
+    useGenericSearchFilter:
+      type: boolean
+      default: false
+      description: Whether to use generic search filter.
+    genericSearchAttribute:
+      type: string
+      maxLength: 128
+      description: Generic search attribute.
+    genericSearchFilter:
+      type: string
+      maxLength: 1024
+      description: Generic search filter.
+    searchAttribute:
+      type: string
+      enum:
+        - UID
+        - CN
+        - SAMACCOUNTNAME
+      default: UID
+      description: Search attribute.
+LdapServers:
+  type: object
+  required:
+    - host
+    - port
+  properties:
+    id:
+      type: string
+      description: The id of ldap server.
+    host:
+      type: string
+      maxLength: 255
+      description: The host of ldap server.
+    port:
+      type: integer
+      format: int32
+      minimum: 0
+      maximum: 65535
+      default: 389
+      description: The port of ldap server.
+    order:
+      type: integer
+      format: int32
+      default: 1
+      description: Order of ldap server.
+AttributesLDAP:
+  required:
+    - attribute
+    - mappedAttribute
+  type: object
+  properties:
+    attribute:
+      type: string
+      maxLength: 255
+      description: Attribute name.
+    description:
+      type: string
+      description: Description of attribute.
+    enabled:
+      type: boolean
+      default: false
+      description: Whether attribute is enabled.
+    mappedAttribute:
+      type: string
+      maxLength: 255
+      description: The mapped attribute.
+AddressBookAttributesLDAP:
+  required:
+    - attribute
+    - mappedAttribute
+  type: object
+  properties:
+    attribute:
+      type: string
+      maxLength: 255
+      description: Attribute name of address book.
+    description:
+      type: string
+      description: Description of address book attribute.
+    enabled:
+      type: boolean
+      default: false
+      description: Whether attribute is enabled for address book.
+    mappedAttribute:
+      type: string
+      maxLength: 255
+      description: The mapped attribute for address book.
+DnFiltersLDAP:
+  required:
+    - enabled
+    - filter
+    - userClass
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of dn filter.
+    enabled:
+      type: string
+      description: Whether dn filter is enabled.
+      default: false
+    filter:
+      type: string
+      maxLength: 255
+      description: Filter's name.
+    userClass:
+      type: string
+      maxLength: 255
+      description: User class property of dn filter.
+LdapDomainResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/LdapDomain'

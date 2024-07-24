@@ -74,7 +74,7 @@ func (d *stVersionDataSource) Metadata(_ context.Context, req datasource.Metadat
 
 func (d *stVersionDataSource) Schema(ctx context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	var obj stVersionDataSourceModel
-	resp.Schema = tfhelper.DataSourceModelToSchema(ctx, "version", &obj)
+	resp.Schema = tfhelper.DataSourceModelToSchema(ctx, "version", "/version", &obj)
 }
 
 func (d *stVersionDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

@@ -17,64 +17,66 @@ description: |-
 
 ### Required
 
-- `account` (String)
-- `host` (String)
-- `name` (String)
+- `account` (String) The account for which the site is created
+- `host` (String) Specify the remote partner host.
+- `name` (String) The type of the site. Acts as a discriminator.
 
 ### Optional
 
-- `access_level` (String) default:PRIVATE
-- `additional_attributes` (Map of String)
+- `access_level` (String) default:PRIVATE, The access level for this site.
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
 - `buffer_size` (Number) default:8192
 - `cft_compatible_ssl_mode` (Boolean) default:false
 - `checkpoint_interval` (Number) default:1024
 - `checkpoint_window` (Number) default:4
-- `cipher_suites` (String)
-- `compression` (String) enum:/none/vertical/horizontal/both, default:none
+- `cipher_suites` (String) Cipher suites for ssh site.
+- `compression` (String) enum:/none/vertical/horizontal/both, default:none, Specify the transfer compression. It can be 0 (None), 1 (Horizontal), 2 (Vertical) or 3 (Both).
 - `configure_preconnection` (Boolean) default:false
 - `connection_timeout` (Number) default:60
-- `default` (Boolean) default:false
-- `dmz` (String) default:''
-- `final_destination` (String) default:''
+- `default` (Boolean) default:false, Defines whether it is a default site. Only site from type PeSIT can be marked as 'Default'
+- `dmz` (String) default:'', Specify the remote partner network zone. It can be 'any', 'none', 'Default' or custom network zone.
+- `final_destination` (String) default:'', Advanced PeSIT Setting. Use this field to override the final destination (PI62) of the transfer. To preserve the original value use ${pesit.pi.finalDestinationID}. To make a Store and Forward PeSIT transfer specify the final destination and choose the intermediate partner (ipart parameter in Axway Transfer CFT) in the transfer site list.
 - `is_secure` (Boolean) default:false
-- `login_certificate` (String) default:''
-- `max_concurrent_connection` (Number) default:0
-- `originator` (String) default:''
-- `partner_certificate` (String) default:''
-- `partner_password` (String) default:''
-- `pesit_id` (String) default:''
-- `port` (String) default:1761
-- `preconnection_partner_id` (String) default:''
-- `preconnection_partner_password` (String) default:''
-- `preconnection_server_id` (String) default:''
-- `preconnection_server_password` (String) default:''
-- `protocol` (String) default:pesit
-- `protocols` (String)
+- `login_certificate` (String) default:'', The client certificate ID used for mutual authentication.
+- `max_concurrent_connection` (Number) default:0, The max concurrent connection of the site
+- `originator` (String) default:'', Advanced PeSIT Setting. Use this field to override the original sender (PI61) of the transfer. To preserve the original value use ${pesit.pi.originalSenderID}.
+- `partner_certificate` (String) default:'', The partner certificate ID used for mutual authentication.
+- `partner_password` (String) default:'', Specify the partner password encrypted in 'AES128'. This property should be set if 'usePartnerPassword' is 'true'.
+- `pesit_id` (String) default:'', Specify the PeSIT ID which will be used for defining the PeSIT partnership.
+- `port` (String) default:1761, Specify the remote partner port.
+- `preconnection_partner_id` (String) default:'', Specify the partner id used for Pre-Connection.
+- `preconnection_partner_password` (String) default:'', Specify the partner password encrypted in 'AES128'. It is used for Pre-Connection.
+- `preconnection_server_id` (String) default:'', Specify the server id used for Pre-Connection.
+- `preconnection_server_password` (String) default:'', Specify the server password encrypted in 'AES128'. It is used for preconnection.
+- `protocol` (String) default:pesit, <nil>
+- `protocols` (String) Enabled SSL protocols for ssh site.
 - `ptcp_connect_retry_count` (Number) default:10
 - `ptcp_connections` (Number) default:1
 - `ptcp_packet_size` (Number) default:3000
-- `receive_message` (String) default:''
+- `receive_message` (String) default:'', Specify a user receive message.
 - `resync_allowed` (Boolean) default:false
-- `send_message` (String) default:''
-- `server_password` (String) default:''
+- `send_message` (String) default:'', Specify a user send message. An expression language can be used e.g. ${pesit.serverID}.
+- `server_password` (String) default:'', Specify the server password encrypted in 'AES128'. This property should be set if 'useServerPassword' is 'true'.
 - `socket_send_receive_buffersize` (Number) default:65536
-- `store_and_forward_mode` (String) default:START_NEW
-- `transfer_type` (String) default:internal
-- `type` (String) default:pesit
+- `store_and_forward_mode` (String) default:START_NEW, Advanced PeSIT Setting. All the advanced PeSIT settings are included or all are ommitted. "Preserve" Store and Forward mode will preserve the current Store and Forward transfer (if any). "Start new" will initiate a new Store and Forward transfer and the current transfer (if any) will be acknowledged.
+- `transfer_type` (String) default:internal, The transfer type of the site. It can be unspecified (N), internal (I), partner(E)
+- `type` (String) default:pesit, Type of the site.
 - `use_partner_password` (Boolean) default:false
-- `use_partner_password_expr` (Boolean) default:false
+- `use_partner_password_expr` (Boolean) default:false, Specify whether to have partner password expressions or not.
 - `use_preconnection_partner_password` (Boolean) default:false
-- `use_preconnection_partner_password_expr` (Boolean) default:false
+- `use_preconnection_partner_password_expr` (Boolean) default:false, Specify whether to have Pre-Connection partner password expressions or not.
 - `use_preconnection_server_password` (Boolean) default:false
-- `use_preconnection_server_password_expr` (Boolean) default:false
+- `use_preconnection_server_password_expr` (Boolean) default:false, Specify whether to have Pre-Connection server password expressions or not.
 - `use_server_password` (Boolean) default:false
-- `use_server_password_expr` (Boolean) default:false
+- `use_server_password_expr` (Boolean) default:false, Specify whether to have server password expressions or not.
 - `verify_cert` (Boolean) default:false
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The id of the site.
 - `last_updated` (String)
 
 <a id="nestedatt--alternative_addresses"></a>
@@ -82,6 +84,6 @@ description: |-
 
 Required:
 
-- `host` (String)
-- `port` (String)
-- `position` (Number)
+- `host` (String) The host/url of the alternative address.
+- `port` (String) The port of the alternative address.
+- `position` (Number) The position when alternate addresses.

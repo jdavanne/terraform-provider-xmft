@@ -1,0 +1,618 @@
+Subscription:
+  required:
+    - account
+    - application
+    - folder
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the subscription
+    type:
+      type: string
+      enum:
+        - AdvancedRouting
+        - Basic
+        - HumanSystem
+        - MBFT
+        - SharedFolder
+        - SiteMailbox
+        - StandardRouter
+        - SynchronyTransfer
+      description: |
+        The type of the application. Acts as a discriminator.
+    folder:
+      type: string
+      description: The folder of the subscription
+    account:
+      type: string
+      description: The account of the subscription
+    application:
+      type: string
+      description: The application of the subscription
+    maxParallelSitPulls:
+      type: integer
+      description: Custom attribute under which we store the option for maximum
+       sit pulls to be executed simultaneously. Negative value or 0 - no limit,
+       positive value 4 - limits simultaneously
+    flowAttrsMergeMode:
+      type: string
+      description: The flow merge mode
+      enum:
+        - preserve
+        - overwrite
+        - append
+    folderMonitorScheduleCheck:
+      type: string
+      description: Whether a folder monitor subscription is scheduled.
+    flowName:
+      type: string
+      description: Name of the CG flow
+    scheduledFolderMonitor:
+      type: string
+      description: Specify if this subscription is targeted for a scheduled folder
+        monitor.
+    subscriptionEncryptMode:
+      type: string
+      description: Encryption that will be used for subscription folder. Accepting
+        one of default, enabled, disabled.
+    fileRetentionPeriod:
+      type: integer
+      description: Specify the retention period of the pulled files. Must be non-negative integer between 0 and 36500.
+      default: 0
+    flowAttributes:
+      type: object
+      description: |
+        Flow attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+    schedules:
+      type: array
+      description: Subscription's schedules.
+      items:
+        anyOf:
+        - $ref: 'application.yaml#/OnceSchedule'
+        - $ref: 'application.yaml#/HourlySchedule'
+        - $ref: 'application.yaml#/DailySchedule'
+        - $ref: 'application.yaml#/WeeklySchedule'
+        - $ref: 'application.yaml#/MonthlySchedule'
+        - $ref: 'application.yaml#/YearlySchedule'
+        - $ref: 'application.yaml#/CronExpressionSchedule'
+    transferConfigurations:
+      type: array
+      items:
+        $ref: 'subscription.yaml#/TransferConfiguration'
+  discriminator:
+    propertyName: type
+StandardRouterSubscription:
+  description: A representation of an Standard Router subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: StandardRouter
+        subscriberID:
+          type: string
+          description: The subscriber ID.
+        postTransmissionActions:
+          $ref: 'subscription.yaml#/PostTransmissionActionsALL'
+SiteMailboxSubscription:
+  description: A representation of an Site Mailbox subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: SiteMailbox
+        templateAdvancedExpression:
+          type: boolean
+          description: Specify if advanced expressions section be displayed in Admin
+            UI Subscriptions page.
+          default: false
+        postTransmissionActions:
+          $ref: 'subscription.yaml#/PostTransmissionActionsALL'
+PostTransmissionActionsIN:
+  type: object
+  properties:
+    ptaOnTempfailInDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnTempfailInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on temporary failure. An expression language
+        can be used to specify a file name/folder.
+    ptaOnPermfailInDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnPermfailInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on failure. An expression language can
+        be used to specify a file name/folder.
+    ptaOnSuccessInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on success. An expression language can
+        be used to specify a file name/folder.
+    ptaOnSuccessInDoDelete:
+      type: boolean
+      description: Defines whether to delete the source file on success after the transmission.
+      default: false
+PostTransmissionActionsOUT:
+  type: object
+  description: A representation of post transmission actions.
+  properties:
+    ptaOnPermfailOutDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnPermfailOutDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on failure. An expression language can
+        be used to specify a file name/folder.
+    ptaOnSuccessOutDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on success after the transmission.
+      default: false
+    ptaOnSuccessOutDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on success. An expression language can
+        be used to specify a file name/folder.
+PostTransmissionActionsALL:
+  allOf:
+    - $ref: 'subscription.yaml#/PostTransmissionActionsIN'
+    - $ref: 'subscription.yaml#/PostTransmissionActionsOUT'
+    - type: object
+BasicSubscription:
+  description: A representation of an Basic subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: Basic
+        templateAdvancedExpression:
+          type: boolean
+          description: Specify if advanced expressions section be displayed in Admin
+            UI Subscriptions page.
+          default: false
+        postTransmissionActions:
+          $ref: 'subscription.yaml#/PostTransmissionActionsALL'
+AdvancedRoutingSubscription:
+  description: A representation of an Advanced Routing subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: AdvancedRouting
+        postClientDownloads:
+          $ref: 'subscription.yaml#/PostClientDownloads'
+        postProcessingActions:
+          $ref: 'subscription.yaml#/PostProcessingActions'
+        postTransmissionActions:
+          $ref: 'subscription.yaml#/PostTransmissionActionsAdvancedRouting'
+PostClientDownloads:
+  type: object
+  properties:
+    postClientDownloadActionType:
+      type: string
+      description: Specify if Post Client Download Actions will be applied to
+        each file successfully downloaded from the subscription folder. It can
+        be 'DELETE' or no property at all.
+    postClientDownloadActionTypeFailure:
+      type: string
+      description: Advanced Routing setting for post client download action type option on failure.
+    postClientDownloadTypeOnPermfailDoDelete:
+      type: boolean
+      description: Defines whether to delete the file in case of a permanent
+        failure of a post client download.
+      default: false
+    postClientDownloadTypeOnSuccessDoAdvancedRouting:
+      type: boolean
+      description: Defines whether to trigger advanced routing in case of a
+        successful post client download.
+      default: false
+    postClientDownloadTypeOnSuccessDoAdvancedRoutingProcessFile:
+      type: boolean
+      description: Defines whether to trigger advanced routing with file copy
+        in case of a successful post client download.
+      default: false
+    postClientDownloadTypeOnFailDoAdvancedRouting:
+      type: boolean
+      description: Defines whether to trigger advanced routing in case of a
+        failed post client download.
+      default: false
+    postClientDownloadTypeOnFailDoAdvancedRoutingProcessFailedFile:
+      type: boolean
+      description: Defines whether to trigger advanced routing with file copy
+        in case of a failed post client download.
+      default: false
+PostProcessingActions:
+  type: object
+  properties:
+    ppaOnFailInDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+        This action is applied to files arrived to this folder and processed by a route package.
+      default: false
+    ppaOnFailInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on failure. An expression language can
+        be used to specify a file name/folder. This action is applied to files
+        arrived to this folder and processed by a route package.
+    ppaOnSuccessInDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on success after the transmission.
+        This action is applied to files arrived to this folder and processed by a route package.
+      default: false
+    ppaOnSuccessInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on success. An expression language can
+        be used to specify a file name/folder. This action is applied to files
+        arrived to this folder and processed by a route package.
+PostTransmissionActionsAdvancedRouting:
+  type: object
+  properties:
+    moveOverwrite:
+      type: boolean
+      description: Delete the target file and repeat the rename operation.
+      default: false
+    ptaOnTempfailInDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnTempfailInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on temporary failure. An expression language
+        can be used to specify a file name/folder.
+    ptaOnPermfailInDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnPermfailInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or
+        move it to a different folder on failure. An expression language can
+        be used to specify a file name/folder.
+    ptaOnPermfailDoAdvancedRouting:
+      type: boolean
+      description: Defines whether to trigger advanced routing in case of a
+        PTA permanent failure.
+      default: false
+    ptaOnPermfailInDoAdvancedRoutingFailedFile:
+      type: boolean
+      description: Defines whether to trigger advanced routing with file copy
+        in case of a PTA permanent failure.
+      default: false
+    ptaOnPermfailInDoAdvancedRoutingWildcardPull:
+      type: boolean
+      description: Defines whether to trigger wildcard pull with advanced routing
+        in case of a PTA permanent failure.
+      default: false
+    ptaOnTempfailInDoAdvancedRouting:
+      type: boolean
+      description: Defines whether to trigger advanced routing in case of a
+        PTA temporary failure.
+      default: false
+    ptaOnTempfailInDoAdvancedRoutingProcessFailedFile:
+      type: boolean
+      description: Defines whether to trigger advanced routing with file copy
+        in case of a PTA permanent failure.
+      default: false
+    ptaOnTempfailInDoAdvancedRoutingWildcardPull:
+      type: boolean
+      description: Defines whether to trigger wildcard pull with advanced routing
+        in case of a PTA temporary failure.
+      default: false
+    ptaOnSuccessDoInAdvancedRoutingWildcardPull:
+      type: boolean
+      description: Defines whether to trigger wildcard pull with advanced routing
+        in case of a PTA success.
+      default: false
+    ptaOnSuccessTriggerRouteExecutionOnPeSITAck:
+      type: boolean
+      description: |
+        When enabled, the route execution triggers on any of the following events:
+
+        - When a PeSIT acknowledgement is received.
+
+        - When a transfer completes with a status for which the Route action is configured.
+
+        This event does not affect the contents of the subscription folder. It only triggers the selected route, and all other subscription’s settings are not applicable. Make sure you set a route trigger condition (in the Route settings, select Condition: Expression Language).
+      default: false
+    ptaOnSuccessInDoDelete:
+      type: boolean
+      description: Defines whether to delete the source file on success after the transmission.
+      default: false
+    ptaOnSuccessInDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or move it to a different folder on success.
+        An expression language can be used to specify a file name/folder.
+    ptaOnSuccessInDoMoveOverwrite:
+      type: boolean
+      description: When the "Allow Overwrite Existing File" option is enabled and the rename operation fails because the target
+        file exists, ST will delete the target file and repeat the rename operation.
+      default: false
+    ptaOnPermfailOutDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnPermfailOutDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or move it to a different folder on permanent failure.
+        An expression language can be used to specify a file name/folder.
+    ptaOnSuccessOutDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on success after the transmission.
+      default: false
+    ptaOnSuccessOutDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or move it to a different folder on success.
+        An expression language can be used to specify a file name/folder.
+    ptaOnSuccessOutDoMoveOverwrite:
+      type: boolean
+      description: When the "Allow Overwrite Existing File" option is enabled and the rename operation fails because the target
+        file exists, ST will delete the target file and repeat the rename operation.
+      default: false
+    ptaOnTempfailOutDoDelete:
+      type: boolean
+      description: Defines whether to delete the file on failure after the transmission.
+      default: false
+    ptaOnTempfailOutDoMove:
+      type: string
+      description: Specify a value to rename the file after transmission or move it to a different folder on failure.
+        An expression language can be used to specify a file name/folder.
+    triggerOnConditionEnabled:
+      type: boolean
+      description: If checked, processing of files in the subscription folder
+        will be triggered upon a specific condition.
+      default: false
+    triggerOnConditionExpression:
+      type: string
+      description: Specify the condition on which to trigger file processing.
+        An expression language can be used.
+    triggerOnSuccessfulWildcardPull:
+      type: boolean
+      description: Setting for trigger on successful wildcard pull.
+      default: false
+    submitFilterType:
+      type: string
+      description: |
+        Specify the submit filter type. It could be 'FILENAME_PATTERN' or 'TRIGGER_FILE_CONTENT'.
+        If 'FILENAME_PATTERN' is selected and 'submitFilenamePatternExpression' is with value '*' all files will be submitted for processing in the subscription folder.
+
+        If 'FILENAME_PATTERN' is selected and 'submitFilenamePatternExpression' is with some filename pattern, only files matching specific filename pattern will be submitted for processing.
+
+        If 'TRIGGER_FILE_CONTENT' is selected, data file names will be read from trigger file content. Each file name should be on new line. The whitespace characters before and after the file names are discarded. Also lines containing only whitespace characters are not considered as files.Trigger file format:file1.txt, file2.txt, file3.png
+    submitFilenamePatternExpression:
+      type: string
+      description: Specify the file name pattern. An expression language can be used.
+    triggerFileOption:
+      type: string
+      description: |
+        Specify the trigger file option. Possible values: 'fail', 'continue' or 'retry'. This property controls the behaviour of AR processing in case not all files listed in the trigger file are available.
+        'fail' - AR processing should fail if any of the listed files is missing. This is the default behaviour.
+        'continue' - AR processing should skip the missing files and continue with the existing ones.
+        'retry' - if any of the files listed in the trigger file are not available, AR processing will be retried. The retry behaviour could be further configured with the 'triggerFileRetriesNumber' and 'triggerFileRetryDelay' properties.
+    triggerFileRetriesNumber:
+      type: integer
+      description: |
+        Specify the trigger file maximum retries number. 
+        
+        This option is available when 'triggerFileOption' option is set to 'retry'.    
+    triggerFileRetryDelay:
+      type: integer
+      description: |
+        Specify the interval in seconds, when next trigger file retry will be executed.
+        
+        This option is available when 'triggerFileOption' option is set to 'retry'.
+SynchronyTransferSubscription:
+  description: A representation of an Axway Transfer CFT subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: SynchronyTransfer
+MBFTSubscription:
+  description: A representation of a File Transfer via File Services subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: MBFT
+HumanSystemSubscription:
+  description: A representation of an Human To System subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: HumanSystem
+        rules:
+          type: array
+          items:
+            $ref: 'subscription.yaml#/PackageRoutingRule'
+PackageRoutingRule:
+  type: object
+  description: A representation of Package Routing Rule.
+  properties:
+    enabled:
+      type: boolean
+      default: false
+    recipientPattern:
+      type: string
+    fileFilterPattern:
+      type: string
+    targetFolder:
+      type: string
+SharedFolderSubscription:
+  description: A representation of an Shared Folder application subscription.
+  allOf:
+    - $ref: 'subscription.yaml#/Subscription'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: SharedFolder
+        templateAdvancedExpression:
+          type: boolean
+          description: Specify if advanced expressions section be displayed in Admin
+            UI Subscriptions page.
+          default: false
+        postTransmissionActions:
+          $ref: 'subscription.yaml#/PostTransmissionActionsIN'
+TransferConfiguration:
+  required:
+    - direction
+    - tag
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the transfer configuration
+    tag:
+      type: string
+      description: The tag of the transfer configuration
+      enum:
+        - PARTNER-IN
+        - PARTNER-OUT
+    outbound:
+      type: boolean
+      description: The direction of the transfer configuration. It should be false (from
+        account to application) or true (from application to account)
+      default: false
+    site:
+      type: string
+      description: The transfer site
+    transferProfile:
+      type: string
+      description: The transfer profile of the transfer configuration
+    dataTransformations:
+      type: array
+      description: The data transformations of the transfer configuration.
+      items:
+        $ref: 'subscription.yaml#/DataTransformation'
+DataTransformation:
+  required:
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the data transformation
+    type:
+      type: string
+      description: The type of the data transformation.
+    asciiArmor:
+      type: boolean
+      description: Specify if SecureTransport uses ASCII armor encoding.
+        ASCII armor refers to using binary-to-text encoding for plain text data.
+    compressionAlgorithm:
+      type: integer
+      description: Specify what type of compression is used.
+        Possible values are -1 (Preffered), 0 (No compression), 1 (ZIP), 2 (ZLIB) or 3 (BZIP2).
+        Preferred compression methods and order of preference are determined by examining the recipient's PGP key.
+        If the data compression method you choose is not among the recipient's preferred methods,
+        it is possible that the recipient will not be able to access the data.
+      format: int32
+    compressionLevel:
+      type: integer
+      description: Specify the compression level. Possible values are 2 (Fast), 5 (Normal), 7 (Good) or 9 (Best).
+    encryptEnabled:
+      type: boolean
+      description: Specify if the file should be encrypted using PGP key.
+      default: false
+    localSignCertificate:
+      type: string
+      description: Which PGP key should be used for signing.
+    originalNameExpression:
+      type: string
+      description: Specify if the original encrypted file is saved to a different name, location, or both.
+        You can use a file name expression.
+    originalNameExpressionEnabled:
+      type: boolean
+      description: Specify if the original encrypted file is saved.
+      default: false
+    partnerEncryptCertificate:
+      type: string
+      description: Which PGP key should be used for encryption.
+    requireEncryption:
+      type: boolean
+      description: Specify if the file is required to be encrypted or the transfer will fail.
+    requireSignature:
+      type: boolean
+      description: Specify if the file is required to contain a trusted signature or the transfer will fail.
+    signingEnabled:
+      type: boolean
+      description: Specify if the file should be signed using PGP key.
+      default: false
+    transformedNameExpression:
+      type: string
+      description: Specify if the decrypted file is saved to a different name, location or both.
+        You can use a file name expression.
+    transformedNameExpressionEnabled:
+      type: boolean
+      description: Specify if the file should be decrypted.
+      default: false
+SubscriptionResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: 'subscription.yaml#/AdvancedRoutingSubscription'
+          - $ref: 'subscription.yaml#/BasicSubscription'
+          - $ref: 'subscription.yaml#/HumanSystemSubscription'
+          - $ref: 'subscription.yaml#/MBFTSubscription'
+          - $ref: 'subscription.yaml#/SharedFolderSubscription'
+          - $ref: 'subscription.yaml#/SiteMailboxSubscription'
+          - $ref: 'subscription.yaml#/StandardRouterSubscription'
+          - $ref: 'subscription.yaml#/SynchronyTransferSubscription'
+        discriminator:
+          propertyName: type
+          mapping:
+            AdvancedRouting: 'subscription.yaml#/AdvancedRoutingSubscription'
+            Basic: 'subscription.yaml#/BasicSubscription'
+            HumanSystem: 'subscription.yaml#/HumanSystemSubscription'
+            MBFT: 'subscription.yaml#/MBFTSubscription'
+            SharedFolder: 'subscription.yaml#/SharedFolderSubscription'
+            SiteMailbox: 'subscription.yaml#/SiteMailboxSubscription'
+            StandardRouter: 'subscription.yaml#/StandardRouterSubscription'
+            SynchronyTransfer: 'subscription.yaml#/SynchronyTransferSubscription'
+PullHistoryDetailsResult:
+  type: object
+  properties:
+    message:
+      type: string
+      description: Message for the performed operation of the clearance of pulled files history.
+    isSuccessful:
+      type: boolean
+      description: Whether or not the operation was successful.
+      default: false

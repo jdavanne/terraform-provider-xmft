@@ -17,21 +17,23 @@ description: |-
 
 ### Required
 
-- `base_folder` (String)
-- `name` (String)
+- `base_folder` (String) The base folder of the business unit entity.
+- `name` (String) The unique name of the business unit entity.
 
 ### Optional
 
-- `additional_attributes` (Map of String)
-- `base_folder_modifying_allowed` (Boolean) default:false
-- `dmz` (String) default:''
-- `enabled_icap_servers` (List of String) default:[]
-- `home_folder_modifying_allowed` (Boolean) default:false
-- `managed_by_cg` (Boolean) default:false
-- `parent` (String) default:''
-- `shared_folders_collaboration_allowed` (Boolean)
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `base_folder_modifying_allowed` (Boolean) default:false, Flag indicating if the base folder of the business unit entity is modifiable (this property defines whether the base folder for the belonging accounts may be modified).
+- `dmz` (String) default:'', The name of the DMZ zone
+- `enabled_icap_servers` (List of String) default:[], <nil>
+- `home_folder_modifying_allowed` (Boolean) default:false, Flag indicating if the belonging accounts' base folders are modifiable.
+- `managed_by_cg` (Boolean) default:false, This property indicates whether the business unit is managed by Central Governance.
+- `parent` (String) default:'', The name of the parent business unit entity.
+- `shared_folders_collaboration_allowed` (Boolean) Flag indicating if accounts may collaborate using, creating and sharing folders.
 
 ### Read-Only
 
-- `business_unit_hierarchy` (String)
+- `business_unit_hierarchy` (String) The full path hierarchy of the business unit entity.
 - `last_updated` (String)

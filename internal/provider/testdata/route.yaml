@@ -1,0 +1,1535 @@
+Route:
+  required:
+    - conditionType
+    - failureEmailNotification
+    - name
+    - successEmailNotification
+    - type
+  type: object
+  properties:
+    id:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Route Id
+    name:
+      maxLength: 255
+      minLength: 0
+      pattern: ^(([^\\/\\;\\']*))$
+      type: string
+      description: Route name
+      default: string
+    description:
+      maxLength: 2048
+      minLength: 0
+      type: string
+      description: Route description
+    type:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: |
+        Route types: TEMPLATE - Route Package Template, SIMPLE - Route in a Route Package Template, COMPOSITE - Assign a route with TEMPLATE type to a virtual account and its subscriptions
+      enum:
+        - TEMPLATE
+        - SIMPLE
+        - COMPOSITE
+    managedByCG:
+      type: boolean
+      description: This property indicates whether the route is managed by Central Governance.
+      default: false
+    routeTemplate:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: In COMPOSITE route this is the id of an existing template route
+        visible by the account this route is created for
+    account:
+      maxLength: 80
+      minLength: 0
+      pattern: ^(([^\/\;\']*))$
+      type: string
+      description: The account where the route is subscribed
+      default: string
+    businessUnits:
+      type: array
+      description: Route business unit names appropriate for the Administrator
+        who is managing this route
+      items:
+        type: string
+    conditionType:
+      type: string
+      description: |
+        For routes of type TEMPLATE or COMPOSITE, the property determines whether all SIMPLE routes that
+        match their conditions will be executed or just the first one.
+
+        For routes of type SIMPLE, the property determines if the route gets executed always or based on the condition,
+        specified in the condition property using expression language.
+      enum:
+        - MATCH_ALL
+        - MATCH_FIRST
+        - ALWAYS
+        - EL
+    condition:
+      type: string
+      description: An expression for route execution when conditionType is EL.
+    failureEmailNotification:
+      type: boolean
+      description: Notify following e-mails on route failure.
+      default: false
+    failureEmailTemplate:
+      type: string
+      description: Notification template name on route failure
+    failureEmailName:
+      maxLength: 2048
+      minLength: 0
+      type: string
+      description: E-mail Notifications on route failure
+    successEmailNotification:
+      type: boolean
+      description: |
+        Notify following e-mails on route success.
+      default: false
+    successEmailTemplate:
+      type: string
+      description: Notification template name on route success
+    successEmailName:
+      maxLength: 2048
+      minLength: 0
+      type: string
+      description: E-mail Notifications on route success
+    triggeringEmailNotification:
+      type: boolean
+      description: Notify following e-mails on route triggering.
+      default: false
+    triggeringEmailTemplate:
+      type: string
+      description: Notification template name on route triggering
+    triggeringEmailName:
+      maxLength: 2048
+      minLength: 0
+      type: string
+      description: E-mail Notifications on route triggering
+    subscriptions:
+      type: array
+      description: Collection of subscription IDs for an account
+      items:
+        type: string
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+    stepStatuses:
+      type: array
+      description: Step statuses.
+      items:
+        $ref: 'route.yaml#/RouteStepStatus'
+    steps:
+      type: array
+      description: Route's steps.
+      items:
+        anyOf:
+          - $ref: 'route.yaml#/RouteStepEncodingConversion'
+          - $ref: 'route.yaml#/RouteStepCompress'
+          - $ref: 'route.yaml#/RouteStepDecompress'
+          - $ref: 'route.yaml#/RouteStepLineFolding'
+          - $ref: 'route.yaml#/RouteStepLineEnding'
+          - $ref: 'route.yaml#/RouteStepLinePadding'
+          - $ref: 'route.yaml#/RouteStepLineTruncating'
+          - $ref: 'route.yaml#/RouteStepPgpDecryption'
+          - $ref: 'route.yaml#/RouteStepPgpEncryption'
+          - $ref: 'route.yaml#/RouteStepRename'
+          - $ref: 'route.yaml#/RouteStepCharactersReplace'
+          - $ref: 'route.yaml#/RouteStepExternalScript'
+          - $ref: 'route.yaml#/RouteStepPublish'
+          - $ref: 'route.yaml#/RouteStepSendToPartner'
+          - $ref: 'route.yaml#/RouteStepPullFromPartner'
+          - $ref: 'route.yaml#/RouteStepExecuteRoute'
+          - $ref: 'route.yaml#/PluggableRouteStep'
+        discriminator:
+          propertyName: type
+          mapping:
+            EncodingConversion: 'route.yaml#/RouteStepEncodingConversion'
+            Compress: 'route.yaml#/RouteStepCompress'
+            Decompress: 'route.yaml#/RouteStepDecompress'
+            LineFolding: 'route.yaml#/RouteStepLineFolding'
+            LineEnding: 'route.yaml#/RouteStepLineEnding'
+            LinePadding: 'route.yaml#/RouteStepLinePadding'
+            LineTruncating: 'route.yaml#/RouteStepLineTruncating'
+            PgpDecryption: 'route.yaml#/RouteStepPgpDecryption'
+            PgpEncryption: 'route.yaml#/RouteStepPgpEncryption'
+            Rename: 'route.yaml#/RouteStepRename'
+            CharactersReplace: 'route.yaml#/RouteStepCharactersReplace'
+            ExternalScript: 'route.yaml#/RouteStepExternalScript'
+            Publish: 'route.yaml#/RouteStepPublish'
+            SendToPartner: 'route.yaml#/RouteStepSendToPartner'
+            PullFromPartner: 'route.yaml#/RouteStepPullFromPartner'
+            ExecuteRoute: 'route.yaml#/RouteStepExecuteRoute'
+            Pluggable: 'route.yaml#/PluggableRouteStep'
+BaseRouteStep:
+  required:
+    - status
+    - type
+  type: object
+  properties:
+    id:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Route step Id.
+      readOnly: true
+    type:
+      maxLength: 64
+      minLength: 0
+      type: string
+      description: Route step type. ExecuteRoute step links the routes of type
+        TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+      enum:
+        - EncodingConversion
+        - Compress
+        - Decompress
+        - LineFolding
+        - LineEnding
+        - LinePadding
+        - LineTruncating
+        - PgpDecryption
+        - PgpEncryption
+        - Rename
+        - CharactersReplace
+        - ExternalScript
+        - Publish
+        - SendToPartner
+        - PullFromPartner
+        - ExecuteRoute
+        - Pluggable
+    status:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Route step status.
+      enum:
+        - ENABLED
+        - DISABLED
+    precedingStep:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Preceding step id.
+    conditionType:
+      type: string
+      description: Defines whether the step is executed always or based on a condition,
+        specified in the condition property using expression language.
+      enum:
+        - ALWAYS
+        - EL
+    condition:
+      type: string
+      description: An expression for step execution when conditionType is EL.
+    actionOnStepSuccess:
+      type: string
+      description: Action on step success. Defines if the route will continue after the step success.
+      enum:
+        - PROCEED
+        - STOP
+    actionOnStepFailure:
+      type: string
+      description: Action on step failure. If set to PROCEED, the route execution
+        will continue even if the step execution fails.
+      enum:
+        - FAIL
+        - PROCEED
+  discriminator:
+    propertyName: type
+ExecuteRouteStep:
+  required:
+    - status
+    - type
+  type: object
+  properties:
+    id:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Route step Id.
+      readOnly: true
+    type:
+      maxLength: 64
+      minLength: 0
+      type: string
+      description: Route step type. ExecuteRoute step links the routes of type
+        TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+      enum:
+        - EncodingConversion
+        - Compress
+        - Decompress
+        - LineFolding
+        - LineEnding
+        - LinePadding
+        - LineTruncating
+        - PgpDecryption
+        - PgpEncryption
+        - Rename
+        - CharactersReplace
+        - ExternalScript
+        - Publish
+        - SendToPartner
+        - PullFromPartner
+        - ExecuteRoute
+        - Pluggable
+    status:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Route step status.
+      enum:
+        - ENABLED
+        - DISABLED
+    precedingStep:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Preceding step id.
+    executeRoute:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: SIMPLE route id.
+  discriminator:
+    propertyName: type
+RouteStepStatus:
+  required:
+    - status
+  type: object
+  properties:
+    id:
+      type: string
+      description: Step status id.
+    stepId:
+      maxLength: 32
+      minLength: 0
+      type: string
+      description: Step Id.
+    status:
+      type: string
+      description: Step status.
+      enum:
+        - ENABLED
+        - DISABLED
+RouteStepEncodingConversion:
+  description: A representation of a route step of type EncodingConversion
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - inputCharset
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: EncodingConversion
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        inputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify the source file encoding.
+        outputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify output file encoding. If not specified, source file encoding is used.
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression.
+RouteStepCompress:
+  description: A representation of a route step of type Compress
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - compressionLevel
+        - fileFilterExpression
+        - fileFilterExpressionType
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: Compress
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        singleArchiveEnabled:
+          type: boolean
+          description: Enable single file archiving.
+          default: false
+        compressionType:
+          type: string
+          description: Compression type.
+        zipPassword:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Zip file password. Used with compression type ZIP only.
+        compressionLevel:
+          type: string
+          description: Compression level.
+          enum:
+            - STORE
+            - FASTEST
+            - FAST
+            - NORMAL
+            - GOOD
+            - BETTER
+            - BEST
+        singleArchiveName:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Archive name or expression. Not used with compression type GZIP. Example: archive-${timestamp}.zip.
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for compress step.
+RouteStepDecompress:
+  description: A representation of a route step of type Decompress
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: Decompress
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        filenameCollisionResolutionType:
+          type: string
+          description: Action on file name collision.
+          enum:
+            - FAIL
+            - OVERWRITE
+            - RENAME_OLD
+          default: OVERWRITE
+        zipPassword:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Zip file password. Do not use the property if it is not needed
+            in the step flow.
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for decompress step.
+RouteStepLineFolding:
+  description: A representation of a route step of type LineFolding
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - fileFoldWidth
+        - inputCharset
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: LineFolding
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        fileFoldWidth:
+          type: integer
+          format: int32
+          minimum: 1
+          maximum: 2147483647
+          description: Maximum lane width in the file over which point it will be
+            folded. A positive integer value.
+          example: 1
+        inputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify the source file encoding. Example: UTF-8
+        outputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify output file encoding. If not specified, source file
+            encoding is used.
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for line folding step.
+RouteStepLineEnding:
+  description: A representation of a route step of type LineEnding
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - inputCharset
+        - inputEolSequence
+        - outputEolSequence
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: LineEnding
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        inputEolSequence:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Input EOL sequence. Example: \r\n
+        outputEolSequence:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Output EOL sequence. Example: \r\n
+        inputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify the source file encoding. Example: UTF-8 \n
+        outputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify output file encoding. If not specified, source file
+            encoding is used.
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for line ending step.
+RouteStepLinePadding:
+  description: A representation of a route step of type LinePadding
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - inputCharset
+        - linePaddingCharacter
+        - linePaddingLength
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: LinePadding
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        linePaddingCharacter:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify line padding character as valid Unicode escape sequence. Example : \u0043
+          pattern: ^\\\\\\\\u([0-9(a-f|A-F)]{4}){1}$
+          example: \\u0043
+        linePaddingLength:
+          type: string
+          description: Line padding length.
+        inputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify the source file encoding. Example: UTF-8
+        outputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify output file encoding. If not specified, source file
+            encoding is used
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for line padding step.
+RouteStepLineTruncating:
+  description: A representation of a route step of type LineTruncating
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - inputCharset
+        - truncateLength
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: LineTruncating
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        inputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify the source file encoding. Example: UTF-8
+        outputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify output file encoding. If not specified, source file
+            encoding is used.
+        truncateLength:
+          type: integer
+          format: int32
+          description: Line Truncate trims the file lines to have a limited maximum
+            length. Use this setting to specify the lines maximum length in number
+            of characters/symbols. This will cause extra characters to be discarded.
+          minimum: 1
+          example: 1
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for line truncating step.
+RouteStepPgpDecryption:
+  description: A representation of a route step of type PgpDecryption. PGP private
+    keys will be automatically determined on runtime. They will be searched only
+    within the key store of the account subscribed to this route.
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: PgpDecryption
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        requireEncryption:
+          type: boolean
+          description: Require encryption.
+          default: false
+        requireTrustedSignature:
+          type: boolean
+          description: Require trusted signature.
+          default: false
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for step.
+RouteStepPgpEncryption:
+  description: A representation of a route step of type PgpEncryption.
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - compressionType
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - useAsciiArmour
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: PgpEncryption
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        encryptKeyOwnerExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: You can specify either an account name or use an EL expression
+            to determine the recipient based on the environment information (such
+            as filename). If an account name is unknown (e.g. expression based)
+            its PGP certificates will be determined on runtime. PGP certificates
+            can be expression based as well. All the encrypt key related properties
+            (expressions, owners, types) should be set if an encrypt key is used.
+            Encrypt or sign key usage is mandatory.
+        encryptKeyExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: PGP encryption name amongst PGP Public Keys (within the selected
+            above account) or by entering an expression for this. Wild card symbols
+            ( asterisk symbol and ?) can also be used when specifying the PGP key
+            alias. If multiple keys match the pattern the first one will be picked
+            up and used.
+        encryptKeyOwnerExpressionType:
+          type: string
+          description: Account name or expression.
+        encryptKeyExpressionType:
+          type: string
+          description: Account name or expression.
+        signKeyOwnerExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: You can specify either an account name or use an EL expression
+            to determine the recipient based on the environment information (such
+            as filename). If an account name is unknown (e.g. expression based)
+            its PGP certificates will be determined on runtime. PGP certificates
+            can be expression based as well. All the sign key related properties
+            (expressions, owners, types) should be set if a sign key is used.
+        signKeyExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: PGP encryption name amongst PGP Public Keys (within the selected
+            above account) or by entering an expression for this. Wild card symbols
+            ( asterisk symbol and ?) can also be used when specifying the PGP key
+            alias. If multiple keys match the pattern the first one will be picked
+            up and used.
+        signKeyOwnerExpressionType:
+          type: string
+          description: Account name or expression.
+        signKeyExpressionType:
+          type: string
+          description: PGP Key alias or expression.
+        useAsciiArmour:
+          type: boolean
+          description: Encode Using ASCII Armor
+          default: false
+        compressionType:
+          type: string
+          description: Numbers in string format used "0" - no compression, "-1"
+            - use preferred, "1" - ZIP, "2" - ZLIB, "3" - BZIP2
+        compressionLevel:
+          type: string
+          description: The values are 2 for FAST, 5 for NORMAL, 7 for GOOD, 9 for
+            BEST
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for step.
+RouteStepRename:
+  description: A representation of a route step of type Rename
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - outputFileName
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: Rename
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails
+          default: false
+        outputFileName:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Output file name or expression. Example: ${basename(currentfulltarget)}.transformed
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+RouteStepCharactersReplace:
+  description: A representation of a route step of type CharactersReplace
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - findCharacterSequence
+        - inputCharset
+        - lineStrip
+        - replaceCharacterSequence
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: CharactersReplace
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        findCharacterSequence:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Find character sequence, example: q123
+        lineStrip:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Line strip enablement. Use value "stripEnabled" to enable
+            line strip. Other value will disable the line strip.
+        replaceCharacterSequence:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify replace character sequence. Unicode notation (\uXXXX) can be used. Multiple replace character sequences separated with a comma (,) can be specified. Comma must be Unicode encoded (\002c) if used in the replace sequence.
+        inputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: |
+            Specify the source file encoding. Example: UTF-8
+        outputCharset:
+          maxLength: 32
+          minLength: 0
+          type: string
+          description: Specify output file encoding. If not specified, source file
+            encoding is used.
+        postTransformationActionRenameAsExpression:
+          type: string
+          description: Post transformation action rename expression for step.
+RouteStepExternalScript:
+  description: A representation of a route step of type ExternalScript
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - scriptPath
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: ExternalScript
+        scriptPath:
+          maxLength: 256
+          minLength: 0
+          type: string
+          description: |
+            String or expression with an absolute path to external script. Example: For Unix environment: /usr /bin/env bash -c ${FILEDRIVEHOME}/bin/agents/example.sh For Windows environment: cmd /c ${FILEDRIVEHOME}\bin\agents\example.bat
+        logOutput:
+          type: boolean
+          description: The script will genarate standard output to Server log.
+          default: false
+        rootExecution:
+          type: boolean
+          description: Root execution property for external script.
+          default: false
+RouteStepPublish:
+  description: A representation of a route step of type Publish
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - fileFilterExpression
+        - fileFilterExpressionType
+        - filenameCollisionResolutionType
+        - targetAccountExpression
+        - targetAccountExpressionType
+        - targetFolderExpressionType
+      type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: Publish
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails.
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        filenameCollisionResolutionType:
+          type: string
+          description: File name collision resolution type.
+        targetAccountExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Target account name or expression.
+        targetAccountExpressionType:
+          type: string
+          description: Target account name or expression will be used.
+        targetFolderExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Folder in the account to publish the file to. Not existing folder will be automatically created. You can specify either a folder name or use an EL expression to determine the folder based on the environment information
+        targetFolderExpressionType:
+          type: string
+          description: Target folder simple name or expression will be used.
+        publishFileAs:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: New file name or expression for a new file name.
+        triggerSubscription:
+          type: boolean
+          description: |
+            When 'true', file published to a subscription folder triggers the subscription folder. Set to 'false' if you do not want any actions to be triggered as part of the publish operations (e.g. when publishing to the same subscription the file was picked up from)
+          default: false
+        postRoutingActionType:
+          type: string
+          description: Post routing action types
+        disableAutoCreateTargetFolder:
+          type: boolean
+          description: Disable auto create target folder for step.
+          default: false
+        postRoutingActionRenameExpression:
+          type: string
+          description: Post transformation action rename expression for step.
+RouteStepSendToPartner:
+  description: A representation of a route step of type SendToPartner
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - autostart
+        - archivePolicyOnFailure
+        - archivePolicyOnSuccess
+        - maxNumberOfRetries
+        - maxParallelClients
+        - sleepBetweenRetries
+        - sleepIncrementBetweenRetries
+        - targetAccountExpression
+        - targetAccountExpressionType
+        - transferProfileExpression
+        - transferSiteExpression
+        - transferSiteExpressionType
+    - type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: SendToPartner
+        usePrecedingStepFiles:
+          type: boolean
+          description: If true, the route execution will continue even if the step
+            execution fails
+          default: false
+        fileFilterExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: File name or file name expression. It is used with the file
+            filter expression property.
+        fileFilterExpressionType:
+          type: string
+          description: File filter expression type.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        targetAccountExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Target account name or expression.
+        targetAccountExpressionType:
+          type: string
+          description: Account name or expression type.
+        transferSiteExpression:
+          type: string
+          description: This value should be specified as concatenation of transfer sites or expressions with a separator "#!#CVD#!#". Examples - transfer_site_name#!#CVD#!#, transfer_site_name1#!#CVD#!#transfer_site_name2#!#CVD#!#, transfer_site_name_expression#!#CVD#!#
+        transferSiteExpressionType:
+          type: string
+          description: Specifies whether a list of site names or an expression will be used for the transferSiteExpression parameter.
+          enum:
+            - LIST
+            - EXPRESSION_WILDCARD
+        uploadFolder:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: You can specify an upload folder that will overwrite the
+            one configured in the transfer site settings (if allowed with the
+            respective transfer site). Expression language can be used to specify the new upload folder.
+        transferProfileExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Transfer profile property is used only if the transfer site is of type PeSIT. Otherwise it will be ignored. When the transfer profile is specified by using Expression Language, there are 3 possible cases: (1) EL expression does not match any account transfer profiles - then the default transfer profile is used. (2) EL expression matches more than one transfer profile - then the default transfer profile is used. (3) EL expression matches exactly one transfer profile - the matched transfer profile is used.
+        transferProfileExpressionType:
+          type: string
+          description: Profile name or expression.
+        storeAndForwardMode:
+          type: string
+          description: |
+            Advanced PeSIT Setting. All the advanced PeSIT settings are included or all are ommitted. "Preserve" Store and Forward mode will preserve the current Store and Forward transfer (if any). "Start new" will initiate a new Store and Forward transfer and the current transfer (if any) will be acknowledged.
+        virtualFilename:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Advanced PeSIT Setting. Use this field to override the virtual file name (PI12) predefined in the transfer profile. To preserve it use ${pesit.pi.fileName}. This configuration parameter corresponds to the idf parameter in Axway Transfer CFT.
+        dataEncoding:
+          type: string
+          description: Advanced PeSIT Setting. Data encoding.
+        recordFormat:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Advanced PeSIT Setting. "Variable", "Fixed". Use this field to override the record format (PI31) predefined in the transfer profile. To preserve it use ${pesit.pi.recordFormat}. This configuration parameter corresponds to the frecfm parameter in Axway Transfer CFT.
+        recordLength:
+          type: string
+          description: |
+            Use this field to override the record length (PI32) predefined in the transfer profile. To preserve it use ${pesit.pi.recordLength}. This configuration parameter corresponds to the frecl parameter in Axway Transfer CFT.
+        fileLabel:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Advanced PeSIT Setting. Use this field to override the file label (PI37) predefined in the transfer profile. To preserve it use ${pesit.pi.fileLabel}. This configuration parameter corresponds to the nfname parameter in Axway Transfer CFT.
+        originator:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Advanced PeSIT Setting. Use this field to override the original sender (PI61) of the transfer. To preserve the original value use ${pesit.pi.originalSenderID}.
+        finalDestination:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Advanced PeSIT Setting. Use this field to override the final destination (PI62) of the transfer. To preserve the original value use ${pesit.pi.finalDestinationID}. To make a Store and Forward PeSIT transfer specify the final destination and choose the intermediate partner (ipart parameter in Axway Transfer CFT) in the transfer site list.
+        userMessage:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Advanced PeSIT Setting. The Last PeSIT specific setting. Use this field to override the user message (PI99) predefined in the PeSIT transfer site. To preserve use ${pesit.pi.serviceParam}. This configuration parameter corresponds to the parm parameter in Axway Transfer CFT.
+        triggerFileName:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Name of the trigger file to be sent to the transfer site
+            after successful routing of file(s). EL expressions are supported.
+        triggerTargetAccountExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: An account name, login name or use an expression to determine
+            the recipient based on the environment information.
+        triggerTransferSiteExpression:
+          type: string
+          description: Transfer sites to send trigger files to. Expression language is supported. This value must be a concatenation of trigger transfer sites or expressions  with a separator "#!#CVD#!#". Examples - transfer_site_name#!#CVD#!#, transfer_site_name1#!#CVD#!#transfer_site_name2#!#CVD#!#, transfer_site_name_expression#!#CVD#!#
+        triggerTransferSiteExpressionType:
+          type: string
+          description: Transfer site expression type for the trigger output file.
+        routeFileAs:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: |
+            Name or expression like ${basename(currentfulltarget)}.sent or ${basename(transfer.target)}.?.${timestamp}?${extension(transfer.target)}
+        triggerFileContent:
+          type: string
+          description: The content of the trigger file. Expression language is supported. This value should be specified as concatenation of lines of the trigger file with a separator "#!#CVD#!#". Examples - line#!#CVD#!#, line1#!#CVD#!#line2#!#CVD#!#, line_expression#!#CVD#!#, null value or &#35;!#CVD#!# for empty (zero byte) trigger file.
+        postRoutingActionType:
+          type: string
+          description: |
+            Post routing action types: NONE, DELETE, RENAME. Default is no action (NONE).
+        sleepIncrementBetweenRetries:
+          type: integer
+          format: int32
+          description: Time (in milliseconds) with which the sleep interval between
+            retries will be increased after each retry.
+        sleepBetweenRetries:
+          type: integer
+          format: int32
+          description: Time interval (in milliseconds) which will be awaited between
+            retries.
+        maxParallelClients:
+          type: integer
+          format: int32
+          description: Maximum number of transfers that will be executed in parallel
+            by the step.
+        maxNumberOfRetries:
+          type: integer
+          format: int32
+          description: Number of times each transfer will be retried if it fails.
+            The retries are executed synchronously and the step will not finish
+            execution until all files are sent successfully or the retry count configured
+            in this property is reached.
+        triggerFileForEach:
+          type: boolean
+          description: Trigger file output for each transferred file.
+          default: false
+        triggerTransferProfileExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Transfer profile property is used only if the transfer site
+            is of type PeSIT. Otherwise it will be ignored.
+        triggerUploadFolder:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: You can specify an upload folder that will overwrite the
+            one configured in the transfer site settings(if allowed in the transfer
+            site). Expression language can be used to specify the new upload folder.
+        archivePolicyOnFailure:
+          type: string
+          description: Backup the files in the configured archive folder if the
+            step execution fails. By default will archive the files based on the
+            account configuration.
+          enum:
+            - DEFAULT
+            - ENABLED
+            - DISABLED
+        archivePolicyOnSuccess:
+          type: string
+          description: Backup the files in the configured archive folder if the
+            step execution succeeds. By default will archive the files based on
+            the account configuration.
+          enum:
+            - DEFAULT
+            - ENABLED
+            - DISABLED
+        postRoutingActionRenameExpression:
+          type: string
+          description: Post transformation action rename expression for step.
+        triggerTargetAccountExpressionType:
+          type: string
+          description: Target account expression type on trigger.
+          enum:
+            - NAME
+            - EXPRESSION
+        triggerTransferProfileExpressionType:
+          type: string
+          description: Transfer profile expression type on trigger.
+RouteStepPullFromPartner:
+  description: A representation of a route step of type PullFromPartner
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - required:
+        - actionOnStepFailure
+        - targetAccountExpression
+        - targetAccountExpressionType
+        - transferSiteExpression
+        - transferSiteExpressionType
+        - localFolderPathExpression
+        - localFolderPathExpressionType
+    - type: object
+      properties:
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        type:
+          type: string
+          default: PullFromPartner
+        targetAccountExpression:
+          maxLength: 64
+          minLength: 0
+          type: string
+          description: Target account name or expression.
+        targetAccountExpressionType:
+          type: string
+          description: Account name or expression type.
+        transferSiteExpression:
+          type: string
+          description: This value should be specified as concatenation of transfer sites or expressions with a separator "#!#CVD#!#". Examples - transfer_site_name#!#CVD#!#, transfer_site_name1#!#CVD#!#transfer_site_name2#!#CVD#!#, transfer_site_name_expression#!#CVD#!#
+        transferSiteExpressionType:
+          type: string
+          description: Specifies whether a list of site names or an expression will be used for the transferSiteExpression parameter.
+          enum:
+            - LIST
+            - EXPRESSION_WILDCARD
+        remoteFolderPathExpression:
+          maxLength: 512
+          minLength: 0
+          type: string
+          description: |
+            Path or expression translating to the path from where the file(s) would be downloaded from.
+        remoteFolderPathExpressionType:
+          type: string
+          description: Path or expression.
+          enum:
+            - SIMPLE
+            - EXPRESSION
+        remoteFileNameExpression:
+          maxLength: 512
+          minLength: 0
+          type: string
+          description: |
+            Name or expression translating to a name or a pattern that wold be used to filter the file(s) in the remote folder.
+        remoteFileNameExpressionType:
+          type: string
+          description: Name or expression.
+          enum:
+            - GLOB
+            - REGEXP
+            - TEXT_FILES
+        localFolderPathExpression:
+          maxLength: 512
+          minLength: 0
+          type: string
+          description: |
+            Path or expression translating to the path where the downloaded file(s) would be stored.
+        localFolderPathExpressionType:
+          type: string
+          description: Path or expression.
+          enum:
+            - SIMPLE
+            - EXPRESSION
+        localFileNameExpression:
+          maxLength: 512
+          minLength: 0
+          type: string
+          description: |
+            Value or expression that would be used when naming downloaded the files.
+        localFileNameExpressionType:
+          type: string
+          description: Name or expression.
+          enum:
+            - SIMPLE
+            - EXPRESSION
+        actionOnStepFailure:
+          type: string
+          description: Action on step failure. If set to PROCEED, the route execution
+            will continue even if the step execution fails.
+          enum:
+            - FAIL
+            - PROCEED
+RouteStepExecuteRoute:
+  description: A representation of a route step of type ExecuteRoute
+  allOf:
+    - $ref: 'route.yaml#/ExecuteRouteStep'
+    - type: object
+      properties:
+        type:
+          type: string
+          default: ExecuteRoute
+PluggableRouteStep:
+  description: A representation of a route step of type PluggableRouteStep
+  allOf:
+    - $ref: 'route.yaml#/BaseRouteStep'
+    - type: object
+      required:
+        - autostart
+      properties:
+        type:
+          type: string
+          default: Pluggable
+        autostart:
+          type: boolean
+          description: Step autostart.
+          default: false
+        customProperties:
+          type: object
+          properties:
+            property_1:
+              type: string
+            property_2:
+              type: string
+RouteStepMetadata:
+  type: object
+  properties:
+    stepType:
+      type: string
+      description: The step types.
+      enum:
+        - PgpEncryption
+        - PgpDecryption
+        - Compress
+        - Decompress
+        - LineEnding
+        - ExternalScript
+        - EncodingConversion
+        - CharactersReplace
+        - LinePadding
+        - LineTruncating
+        - LineFolding
+        - Rename
+        - Publish
+        - SendToPartner
+    stepCategory:
+      type: string
+      description: The step category.
+      enum:
+        - Transformation
+        - Routing
+    stepDisplayName:
+      type: string
+      description: The step name.
+    endpointSchema:
+      type: string
+      description: The endpoint schema.
+    uiPagePath:
+      type: string
+      description: The ui page path.
+    stepPropertyBean:
+      type: string
+      description: The step property bean.
+    stepValidatorClassName:
+      type: string
+      description: The step validator classname.
+    routeBuilderClassName:
+      type: string
+      description: The route builder classname.
+    stepPropertyTransformer:
+      type: string
+      description: The step property transformer.
+    stepModule:
+      type: string
+      description: The step module.
+    stepProducer:
+      type: string
+      description: The step producer.
+    stepJarName:
+      type: string
+      description: The step jar name.
+RouteStepsCharsets:
+  type: object
+  properties:
+    charsets:
+      type: array
+      description: Collection of all supported charsets in the ST server.
+      items:
+        type: string
+RouteResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: 'route.yaml#/Route'

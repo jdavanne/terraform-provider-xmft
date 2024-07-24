@@ -1,0 +1,39 @@
+OK:
+  description: OK - successful operation.
+Accepted:
+  description: Accepted - the request has been successfully submitted for asynchronous processing.
+Created:
+  description: Created - the request has succeeded and a new resource has been created as a result of it.
+NoContent:
+  description: No Content - successful operation.
+BadRequest:
+  description: Bad request - server could not understand the request due to invalid syntax.
+Unauthorized:
+  description: Unauthorized - incorrect login credentials.
+Forbidden:
+  description: Forbidden - insufficient permissions to perform the operation.
+NotFound:
+  description: Not Found - entity with specified parameter can not be found on the ST server.
+Conflict:
+  description: Conflict - duplicate entity.
+InternalServerError:
+  description: Internal Server Error
+MethodNotAllowed:
+  description: Method Not Allowed - request method is not supported by the target resource.
+NotAcceptable:
+  description: Not Acceptable - the server cannot produce a response matching the list of acceptable values defined in the request's headers.
+UnsupportedMediaType:
+  description: Unsupported Media Type - the server refuses to accept the request because the payload format is in an unsupported format.
+UnprocessableEntity:
+  description: Unprocessable Entity - the server understands the content type of the request entity, and the syntax of the request entity is correct, but it was unable to process the contained instructions.
+ServiceUnavailable:
+  description: Service Unavailable.
+ResultSet:
+  type: object
+  properties:
+    returnCount:
+      type: integer
+      description: The returned number of entities either equal to or fewer than the limit parameter.
+    totalCount:
+      type: integer
+      description: The total number of found entities, based on filter criteria and access rights.

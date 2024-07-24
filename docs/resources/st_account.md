@@ -17,36 +17,44 @@ description: |-
 
 ### Required
 
-- `home_folder` (String)
-- `name` (String)
+- `home_folder` (String) The home folder on the local system used for this account. The folder path name must be a valid absolute directory name
+- `name` (String) The account name
 - `user` (Attributes) (see [below for nested schema](#nestedatt--user))
 
 ### Optional
 
-- `account_encrypt_mode` (String) enum:/UNSPECIFIED/ENABLED, default:UNSPECIFIED
-- `additional_attributes` (Map of String)
-- `auth_by_email` (Boolean) default:false
-- `business_unit` (String) default:''
-- `disabled` (Boolean) default:false
-- `gid` (String) default:1000
-- `is_unlicensed_user_allowed_to_reply` (Boolean) default:true
-- `login_restriction_policy` (String) default:''
-- `managed_by_cg` (String) default:''
-- `mapped_user` (String) default:''
-- `notes` (String) default:''
-- `pesit_id` (String) default:''
-- `routing_mode` (String) enum:/accept/reject/ignore, default:reject
-- `skin` (String) default:"Default HTML Template"
-- `subscription_folder_discovery` (String) enum:/ITERATIVE/RECURSIVE, default:ITERATIVE
-- `transfer_type` (String) enum:/N/Y, default:N
-- `transfers_web_service_allowed` (Boolean) default:false
-- `type` (String) default:user
-- `uid` (String) default:1000
+- `account_encrypt_mode` (String) enum:/UNSPECIFIED/ENABLED, default:UNSPECIFIED, Account entities support repository encryption mode. There are two possible options for the encryptMode - 'ENABLED' and 'UNSPECIFIED'.
+When 'ENABLED' is set then repository encryption for the account is enabled.
+When 'UNSPECIFIED' is set then repository encryption for the account is not enabled and can be specified with EncryptClass.
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys should follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters. Key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `auth_by_email` (Boolean) default:false, This property defines if authentication by email address is allowed for this account
+- `business_unit` (String) default:'', The business unit that account belongs to.
+- `disabled` (Boolean) default:false, This property defines if this account is disabled. If the account is disabled: 1) Subscriptions for the account will not trigger. ; 2) Users associated with the account will not be able to login and perform any transfers
+- `gid` (String) default:1000, The numeric group ID of the account
+- `is_unlicensed_user_allowed_to_reply` (Boolean) default:true, This property defines if the unlicensed user may reply to packages.
+- `login_restriction_policy` (String) default:'', The login restriction policy for this account.
+- `managed_by_cg` (String) default:'', This property indicates whether the account is managed by Central Governance.
+- `mapped_user` (String) default:'', The name of the real user mapped to this account for SecureTransport installation running on Windows environment.
+- `notes` (String) default:'', An unstructured comments to the account
+- `pesit_id` (String) default:'', This property defines the PeSIT ID which is used for defining a PeSIT partnership.
+- `routing_mode` (String) enum:/accept/reject/ignore, default:reject, Accounts support PeSIT Store and Forward mode via property named 'routingMode'. There are three possible options for the routingMode: accept (the value for Routing Mode that accept transfers), reject (the value for Routing Mode that reject transfers) and ignore (the value for Routing Mode that ignores transfers). By default is 'reject'.
+- `skin` (String) default:"Default HTML Template", The skin templates
+- `subscription_folder_discovery` (String) enum:/ITERATIVE/RECURSIVE, default:ITERATIVE, For accounts with multiple subscriptions, the number of subscriptions and the target folder depth would impact performance.
+There are two possible options for the subscriptionFolderDiscovery - 'ITERATIVE' and 'RECURSIVE'.
+When 'ITERATIVE' is set, then subscription folder discovery is performed by iteration over all of the account's subscriptions while trying to match the target folder. Should be used when the number of subscriptions is small and the target folder depth is large.
+When 'RECURSIVE' is set, then subscription folder discovery is performed by recursive traversal of the target folder hierarchy - the target folder is checked first, then moving up to parent folders. Should be used when the number of subscriptions is large and the target folder depth is small.
+The default value is 'ITERATIVE'.
+- `transfer_type` (String) enum:/N/Y, default:N, This property is an attribute name to indicate the transfer type of the account's transfer site. It can be unspecified (N), internal (I), partner(E). By default is unspecified.
+- `transfers_web_service_allowed` (Boolean) default:false, This property is an attribute name to indicate whether access to the transfers resource from the end user RESTful API is allowed.
+- `type` (String) default:user, <nil>
+- `uid` (String) default:1000, The numeric user ID of the account. Required for SecureTransport installation running on UNIX environment.
 
 ### Read-Only
 
-- `account_creation_date` (Number)
-- `id` (String) The ID of this resource.
+- `account_creation_date` (Number) Account creation date.
+- `id` (String) The unique identifier of the account.
 - `last_updated` (String)
 
 <a id="nestedatt--user"></a>
@@ -54,19 +62,19 @@ description: |-
 
 Required:
 
-- `name` (String)
+- `name` (String) The name of the user (the login name)
 - `password_credentials` (Attributes) (see [below for nested schema](#nestedatt--user--password_credentials))
 
 Read-Only:
 
-- `failed_auth_attempts` (Number)
-- `last_failed_auth` (String)
+- `failed_auth_attempts` (Number) The number of sequential failed authentication attempts
+- `last_failed_auth` (String) The time of the last unsuccessful authentication attempt. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on failed user login.
 
 <a id="nestedatt--user--password_credentials"></a>
 ### Nested Schema for `user.password_credentials`
 
 Optional:
 
-- `force_password_change` (Boolean)
-- `password` (String)
-- `password_digest` (String)
+- `force_password_change` (Boolean) Checks if password change is forced
+- `password` (String) The password. If the password property is not set then the passwordDigest property must be set and vice versa
+- `password_digest` (String) The password digest. If the passwordDigest property is not set then the password property must be set and vice versa

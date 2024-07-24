@@ -94,33 +94,39 @@ resource "xmft_st_route_composite" "route_composite1" {
 
 ### Required
 
-- `name` (String)
-- `route_template` (String)
+- `name` (String) Route name
+- `route_template` (String) In COMPOSITE route this is the id of an existing template route visible by the account this route is created for
 
 ### Optional
 
-- `account` (String)
-- `additional_attributes` (Map of String)
-- `condition` (String)
-- `condition_type` (String) default:MATCH_ALL
-- `description` (String)
-- `failure_email_name` (String)
-- `failure_email_notification` (Boolean)
-- `failure_email_template` (String)
-- `managed_by_cg` (Boolean)
+- `account` (String) The account where the route is subscribed
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `condition` (String) An expression for route execution when conditionType is EL.
+- `condition_type` (String) default:MATCH_ALL, For routes of type TEMPLATE or COMPOSITE, the property determines whether all SIMPLE routes that
+match their conditions will be executed or just the first one.
+
+For routes of type SIMPLE, the property determines if the route gets executed always or based on the condition,
+specified in the condition property using expression language.
+- `description` (String) Route description
+- `failure_email_name` (String) E-mail Notifications on route failure
+- `failure_email_notification` (Boolean) Notify following e-mails on route failure.
+- `failure_email_template` (String) Notification template name on route failure
+- `managed_by_cg` (Boolean) This property indicates whether the route is managed by Central Governance.
 - `steps` (Attributes List) (see [below for nested schema](#nestedatt--steps))
-- `subscriptions` (List of String)
-- `success_email_name` (String)
-- `success_email_notification` (Boolean)
-- `success_email_template` (String)
-- `triggering_email_name` (String)
-- `triggering_email_notification` (Boolean)
-- `triggering_email_template` (String)
-- `type` (String) default:COMPOSITE
+- `subscriptions` (List of String) <nil>
+- `success_email_name` (String) E-mail Notifications on route success
+- `success_email_notification` (Boolean) Notify following e-mails on route success.
+- `success_email_template` (String) Notification template name on route success
+- `triggering_email_name` (String) E-mail Notifications on route triggering
+- `triggering_email_notification` (Boolean) Notify following e-mails on route triggering.
+- `triggering_email_template` (String) Notification template name on route triggering
+- `type` (String) default:COMPOSITE, Route types: TEMPLATE - Route Package Template, SIMPLE - Route in a Route Package Template, COMPOSITE - Assign a route with TEMPLATE type to a virtual account and its subscriptions
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) Route Id
 - `last_updated` (String)
 
 <a id="nestedatt--steps"></a>

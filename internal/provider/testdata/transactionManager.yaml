@@ -1,0 +1,16 @@
+TransactionManagerStatus:
+  type: object
+  properties:
+    status:
+      type: string
+      description: Whether Transaction Manager is running, stopped or shutdown is in progress.
+TransactionManagerOperationResult:
+  type: object
+  properties:
+    message:
+      type: string
+      description: Message for the performed operation.
+    isSuccessful:
+      type: boolean
+      description: Whether or not transaction manager operation was successful.
+      default: false

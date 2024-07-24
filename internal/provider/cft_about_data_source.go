@@ -42,7 +42,7 @@ func (d *cftAboutDataSource) Metadata(_ context.Context, req datasource.Metadata
 
 func (d *cftAboutDataSource) Schema(ctx context.Context, _ datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	var obj cftAboutDataSourceModel
-	resp.Schema = tfhelper.DataSourceModelToSchema(ctx, "version", &obj)
+	resp.Schema = tfhelper.DataSourceModelToSchema(ctx, "version", "/about", &obj)
 }
 
 func (d *cftAboutDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {

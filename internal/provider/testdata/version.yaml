@@ -1,0 +1,52 @@
+VersionInformation:
+  type: object
+  properties:
+    serverType:
+      type: string
+      description: The type of the ST server
+      enum:
+        - ST-Core-Server
+        - ST-Edge
+    version:
+      type: string
+      description: The ST version
+    build:
+      type: string
+      description: The ST build number
+    os:
+      type: string
+      description: The server operating system
+    dockerMode:
+      type: string
+      description: Whether the installation is in dockerMode
+    updateLevel:
+      type: string
+      description: The ST update level
+    updateHistory:
+      type: array
+      description: The full ST update history
+      items:
+        type: string
+    spiVersions:
+      type: array
+      description: The supported SPI versions
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Plugin categorization
+          versions:
+            type: array
+            description: The supported versions for current plugin category
+            items:
+              type: string
+    root:
+      type: boolean
+      description: Whether the user running SecureTransport is root or not
+      default: false
+    other:
+      type: array
+      description: Other ST information.
+      items:
+        type: string

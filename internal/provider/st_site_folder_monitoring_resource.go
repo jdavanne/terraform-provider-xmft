@@ -104,7 +104,7 @@ type stTransferSiteFolderMonitorModel struct {
 }
 
 func NewSTTransferSiteFolderMonitorModelResource() resource.Resource {
-	return NewSTResource(&stTransferSiteFolderMonitorModel{}, "st_site_folder_monitoring", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}")
+	return NewSTResource(&stTransferSiteFolderMonitorModel{}, "st_site_folder_monitoring", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}").AddDiscriminator("[type=folder]")
 }
 
 func init() {

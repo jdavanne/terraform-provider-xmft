@@ -1,0 +1,165 @@
+Administrator:
+  required:
+    - roleName
+    - localAuthentication
+  type: object
+  properties:
+    loginName:
+      type: string
+      description: The name of the administrator
+      maxLength: 80
+    roleName:
+      type: string
+      description: The role name of the administrator
+    isLimited:
+      type: boolean
+      description: The role type of the administrator - limited (delegated) or master
+      default: false
+    localAuthentication:
+      type: boolean
+      description: Clarifies whether the administator is being authenticated by
+        ST or external service.
+      default: true
+    certificateDN:
+      type: string
+      description: Specifies the DN of the certificate used by the administrator
+        for authentication.
+    dualAuthentication:
+      type: boolean
+      description: Clarifies whether the administator is being authenticated with
+        password and certificate or with password only.
+      default: false
+    locked:
+      type: boolean
+      description: Clarifies whether the administator is enabled/active.
+      default: false
+    parent:
+      type: string
+      description: Specifies the name of the parent administrator of this administrator
+        in an administrator hierarchy.
+    fullCreationPath:
+      type: string
+      description: Specifies the path of descendands of this administrator in
+        an administrator hierarchy.
+    passwordCredentials:
+      $ref: '#/AdministratorPasswordCredentials'
+    administratorRights:
+      $ref: '#/AdministratorRights'
+    businessUnits:
+      type: array
+      description: Collection with the names of the business units assigned to a delegated administrator.
+      items:
+        type: string
+AdministratorPasswordCredentials:
+  type: object
+  properties:
+    password:
+      type: string
+      description: Administrator's password
+    passwordExpired:
+      type: boolean
+      description: Clarifies whether the administator's password is expired.
+      default: false
+    lastPasswordChangeTime:
+      type: string
+      description: Last time the administrator's password was changed
+    lastOwnPasswordChange:
+      type: string
+      description: Last time the administrator has changed their own password
+    loginFailureCount:
+      type: integer
+      description: The count of the login failures
+      format: int32
+    lastLoginTime:
+      type: string
+      description: Last login time of the administrator
+    lastFailureLoginTime:
+      type: string
+      description: Last failure login time of the administrator
+AdministratorRights:
+  type: object
+  description: |
+    A set of permissions, defining what type of operations a certain Delegated Administrator is able to perform.
+    **Note:** Only applicable for Delegated Administrators, hence it`s values are not to be taken into account for Master Administrators.
+  properties:
+    canReadOnly:
+      type: boolean
+      description: Defines if the administrator is read only
+      default: false
+    isMaker:
+      type: boolean
+      description: Defines if the administrator has Maker rights
+      default: false
+    isChecker:
+      type: boolean
+      description: Defines if the administrator has Checker rights
+      default: false
+    canCreateUsers:
+      type: boolean
+      description: Defines if the administrator can create users
+      default: false
+    canUpdateUsers:
+      type: boolean
+      description: Defines if the administrator can update users
+      default: false
+    canAccessHelpDesk:
+      type: boolean
+      description: Defines if the administrator can access help desk
+      default: false
+    canSeeFullAuditLog:
+      type: boolean
+      description: Defines if the administrator can access the Audit Log
+      default: false
+    canManageAdministrators:
+      type: boolean
+      description: Defines if the administrator can manage administrators
+      default: false
+    canManageApplications:
+      type: boolean
+      description: Defines if the administrator can manage applications
+      default: false
+    canManageSharedFolders:
+      type: boolean
+      description: Defines if the administrator can manage shared folders
+      default: false
+    canManageBusinessUnits:
+      type: boolean
+      description: Defines if the administrator can manage business units
+      default: false
+    canManageRouteTemplates:
+      type: boolean
+      description: Defines if the administrator can manage route templates
+      default: false
+    canManageExternalScriptStep:
+      type: boolean
+      description: Defines if the administrator can manage the external script
+        step.
+      default: false
+    canManageLoginRestrictionPolicies:
+      type: boolean
+      description: Defines if the administrator can manage the login restriction
+        policies.
+      default: false
+    canManageIcapSettings:
+      type: boolean
+      description: Defines if the administrator can manage the ICAP settings.
+      default: false
+    canManageExternalScriptRootExecution:
+      type: boolean
+      description: Defines if the administrator can manage external script root execution.
+      default: false
+AuthenticationActionResult:
+  type: object
+  properties:
+    message:
+      type: string
+      description: Authentication result message.
+AdministratorResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/Administrator'

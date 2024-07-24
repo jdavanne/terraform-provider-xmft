@@ -1,0 +1,105 @@
+Policy:
+  required:
+    - name
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the policy.
+      readOnly: true
+    name:
+      pattern: ^([^/;']*)$
+      type: string
+      minLength: 1
+      maxLength: 80
+      description: The name of the login restriction policy. The name can not contain characters "/", ";" and "'".
+      default: string
+    type:
+      type: string
+      description: The type of the login restriction policy.
+      default: ALLOW_THEN_DENY
+      enum:
+        - ALLOW_THEN_DENY
+        - DENY_THEN_ALLOW
+    description:
+      type: string
+      description: The description of the login restriction policy.
+    businessUnits:
+      type: array
+      description: Names of business units that are assigned to the login restriction
+        policy to.
+      items:
+        type: string
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+    isDefault:
+      type: boolean
+      description: Define whether the policy is the default one for the ST server.
+      default: false
+    rules:
+      type: array
+      items:
+        $ref: '#/Rule'
+Rule:
+  required:
+    - clientAddress
+    - enabled
+    - name
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the login restriction rule.
+    name:
+      pattern: ^([^/;']*)$
+      maxLength: 80
+      type: string
+      description: The name of the login restriction rule. The name can not contain characters "/", ";" and "'".
+      default: string
+    isEnabled:
+      type: boolean
+      description: Define whether the rule should be enabled (true)or disabled (false). Each rule may be temporarily disabled and in that case it will not be used until it is enabled again.
+      default: false
+    type:
+      type: string
+      description: The type of the login restriction rule. The type could be either `ALLOW` and defines a condition (IP and/or expression) to allow login or could be `DENY` and defines a condition (IP and/or expression) to deny login. The rules of the same type are always evaluated as one set of rules - the order is not significant. But the order of evaluation 'AllOW' and 'DENY' sets, depend on the type of the policy they belong to.
+    clientAddress:
+      type: string
+      description: "The client address for the login restriction rule. When the\
+        \ current rule is evaluated it is compared with this client address. If\
+        \ there is no match then the rule is assumed to not match. If the current\
+        \ client address matches to the one defined in the rule and any additional\
+        \ conditions defined in the rule(for example expressions) also match (all\
+        \ of them) then the rule is assumed to match to the current user connection\
+        \ and is applied. \n\nThe value of the client address could be one of:\n\
+        \  - Specific IPv4 address\n  - Specific IPv6 address\n  - Specific IPv4\
+        \ address combined with a network mask. Example: 172.23.34.0/24\n  - Specific\
+        \ IPv6 address combined with a network mask. Example: FC00:1234:56::/120\n\
+        \  - Specific fully qualified host name. Example: host.domain.com\n  -\
+        \ Specific fully qualified host name, which is allowed to contain the\
+        \ * wildcard character. Example: *.domain.com\n"
+    expression:
+      type: string
+      description: The expression that should be evaluated to true in order for the rule to apply. This expression should be in the form of the SecureTransport expression language. It may include any environment variables, session attributes or other elements which are available at login time. For example it may include expression which evaluates the user class of the current user and compares it with some value. This expression may be not set - empty string or null value, in which case it would not be taken into account (cosider it true).
+    description:
+      type: string
+      description: The description of a login restriction rule.
+PolicyResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/Policy'

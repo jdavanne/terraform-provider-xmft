@@ -1,0 +1,87 @@
+AdministrativeRole:
+  type: object
+  required:
+    - roleName
+    - menus
+  properties:
+    roleName:
+      type: string
+      description: Name of the administrative role.
+    isLimited:
+      type: boolean
+      description: Type of the administrative role - master administrator or limited (delegated).
+      default: false
+    isBounceAllowed:
+      type: boolean
+      description: Is bounce function allowed for administrative role.
+      default: false
+    menus:
+      type: array
+      items:
+        type: string
+      enum:
+        - SSH Settings
+        - Login Restrictions
+        - Business Units
+        - PeSIT Settings
+        - FTP Commands
+        - Axway Sentinel/DI
+        - Server Log
+        - ICAP Settings
+        - Cluster Management
+        - Holiday Schedule
+        - Administrators
+        - User Accounts
+        - Database Settings
+        - Command Logging
+        - Restrictions
+        - Site Templates
+        - Server Access Control
+        - FTP Settings
+        - File Tracking
+        - Mail Templates
+        - Application
+        - Miscellaneous
+        - Service Accounts
+        - Audit Log
+        - Address Books
+        - System
+        - Certificates
+        - Secure Socket Layer
+        - Admin Access Control
+        - Server Control
+        - Virtual Groups
+        - Unlicensed Users
+        - Login Settings
+        - Manage Roles
+        - Admin Settings
+        - LDAP Domains
+        - Account Templates
+        - Import/Export
+        - File Archiving
+        - Access Rules
+        - SiteMinder Settings
+        - AS2 Settings
+        - Transfer Logging
+        - User Classes
+        - Change Password
+        - TM Settings
+        - Active Users
+        - Server Configuration
+        - Network Zones
+        - Server Usage Monitor
+        - Home Folders
+        - Support Tool
+        - User Type Ranges
+        - AdHoc Settings
+        - Server License
+        - Route Packages
+AdministrativeRoleResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/AdministrativeRole'

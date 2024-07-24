@@ -1,0 +1,299 @@
+BusinessUnit:
+  required:
+    - baseFolder
+    - name
+  type: object
+  properties:
+    name:
+      maxLength: 2147483647
+      minLength: 1
+      type: string
+      description: The unique name of the business unit entity.
+    baseFolder:
+      maxLength: 2147483647
+      minLength: 1
+      type: string
+      description: The base folder of the business unit entity.
+    parent:
+      type: string
+      description: The name of the parent business unit entity.
+    businessUnitHierarchy:
+      type: string
+      description: The full path hierarchy of the business unit entity.
+    baseFolderModifyingAllowed:
+      type: boolean
+      description: |
+        Flag indicating if the base folder of the business unit entity is modifiable (this property defines whether the base folder for the belonging accounts may be modified).
+      default: false
+    homeFolderModifyingAllowed:
+      type: boolean
+      description: Flag indicating if the belonging accounts' base folders are
+        modifiable.
+      default: false
+    dmz:
+      type: string
+      description: The name of the DMZ zone
+    managedByCG:
+      type: boolean
+      description: This property indicates whether the business unit is managed by Central Governance.
+      default: false
+    enabledIcapServers:
+      type: array
+      description: Enabled icap servers of the business unit.
+      items:
+        type: string
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+    bandwidthLimits:
+      $ref: '#/BandwidthLimitsForBU'
+    accountMaintenanceSettings:
+      $ref: '#/AccountMaintenanceSettingsForBU'
+    htmlTemplateSettings:
+      $ref: '#/HtmlTemplateSettings'
+    transfersApiSettings:
+      $ref: '#/TransfersApiSettings'
+    adHocSettings:
+      $ref: '#/AdHocSettings'
+    fileArchivingSettings:
+      $ref: '#/FileArchivingSettings'
+    loginRestrictionSettings:
+      $ref: '#/LoginRestrictionSettings'
+    addressBookSettings:
+      $ref: '#/AddressBookSettingsForBU'
+    fileMaintenanceSettings:
+      $ref: '#/FileMaintenanceSettingsForBU'
+    sharedFoldersCollaborationAllowed:
+      type: boolean
+      description: |
+        Flag indicating if accounts may collaborate using, creating and sharing folders.
+      default: false
+BandwidthLimitsForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/BandwidthLimits'
+    - type: object
+      properties:
+        modifyLimitsAllowed:
+          type: boolean
+          default: false
+          description: Whether modifying limits is allowed.
+AccountMaintenanceSettingsForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/BusinessUnitAccountMaintenanceSettings'
+    - type: object
+      properties:
+        emailNotificationBeforeAction:
+          $ref: '#/EmailNotificationBeforeActionForBU'
+        emailNotificationForUserPassword:
+          $ref: '#/EmailNotificationForUserPasswordForBU'
+        emailNotificationForUserCertificate:
+          $ref: '#/EmailNotificationForUserCertificateForBU'
+EmailNotificationBeforeActionForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/EmailNotificationBeforeAction'
+    - type: object
+      properties:
+        notifyEmails:
+          type: string
+          description: The comma-separated email addresses for Account Maintenance
+            notifications.
+EmailNotificationForUserPasswordForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/EmailNotificationForUserPassword'
+    - type: object
+      properties:
+        notifyEmails:
+          type: string
+          description: The comma-separated email addresses for Account Maintenance notifications.
+EmailNotificationForUserCertificateForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/EmailNotificationForUserCertificate'
+    - type: object
+      properties:
+        notifyEmails:
+          type: string
+          description: The comma-separated email addresses for Account Maintenance notifications.
+HtmlTemplateSettings:
+  type: object
+  properties:
+    htmlTemplateFolderPath:
+      type: string
+      pattern: ^((Default HTML Template)|(Axway Jelly Ball 9)|(Axway Box and Stripe in Blue)|(ST Web Client)|(SecureTransport Legacy Client))$
+      description: The HTML template directory path on the local system used for
+        this business unit entity
+      default: Default HTML Template
+    isAllowedForModifying:
+      type: boolean
+      description: Flag indicating if the HTML Template folder may be modified
+      default: false
+TransfersApiSettings:
+  type: object
+  properties:
+    isWebServiceRightsModifyingAllowed:
+      type: boolean
+      description: Flag indicating if web services rights are allowed for modifying
+      default: false
+    transfersWebServiceAllowed:
+      type: boolean
+      description: Defines whether the access to the /transfers resource from
+        the End-user REST API is allowed
+      default: false
+AdHocSettings:
+  type: object
+  properties:
+    authByEmail:
+      type: boolean
+      description: Flag indicating if auth is by email
+      default: false
+    isAuthByEmailModifyingAllowed:
+      type: boolean
+      description: Flag indicating if auth by email is allowed for modifying
+      default: false
+    isDeliveryMethodModifyingAllowed:
+      type: boolean
+      description: Flag indicating if the belonging accounts' could enroll other
+        accounts
+      default: false
+    deliveryMethod:
+      type: string
+      description: |
+        This property defines the delivery method. When deliveryMethod is set to 'Disabled' then Adhoc is disabled and enrollmentType/implicitEnrollmentType can not be set. When deliveryMethod is set to 'Default' then it is only available on BU and Account (setting the BU to use the value and account to use the BU value). When deliveryMethod is set to 'Anonymous' then implicit enrollment types 'Anonymous' and "" (Select by sender) are enabled. When deliveryMethod is set to 'Account Without Enrollment' then implicit enrollment types 'Anonymous', ""  (Select by sender) and 'Existing Account' are enabled. When deliveryMethod is set to 'Account With Enrollment' then implicit enrollment types 'Anonymous', "" (Select by sender), 'Enroll unlicensed', 'Enroll licensed' are enabled
+      default: DEFAULT
+      enum:
+        - DEFAULT
+        - DISABLED
+        - ANONYMOUS
+        - ACCOUNT_WITHOUT_ENROLLMENT
+        - ACCOUNT_WITH_ENROLLMENT
+        - CUSTOM
+    enrollmentTypes:
+      type: array
+      description: "This property is used for a custom delivery method and can\
+            \ be set only if deliveryMethod property is set to 'Custom'. Enrollment\
+            \ types are \n"
+      items:
+        type: string
+    enrollmentTemplate:
+      type: string
+      description: The name of the notification template for this business unit
+        entity
+      default: Default
+    implicitEnrollmentType:
+      type: string
+      description: |
+        The Implicit Enrollment Type value of the business unit entity. This property controls which option Web Access Plus selects initially in the User Access window and which enrollment type is used by the Axway Email Plug-ins. The choices depend on the enrollment types enabled by the Delivery Methods and Enrollment Types fields
+      enum:
+        - ANONYMOUS_LINK
+        - CHALLENGED_LINK
+        - EXISTING_ACCOUNT
+        - ENROLL_UNLICENSED
+        - ENROLL_LICENSED
+        - ENROLL_MOBILE
+    notificationTemplate:
+      type: string
+      description: The notification template
+FileArchivingSettings:
+  type: object
+  required:
+    - policy
+    - folderPolicy
+    - encryptionCertificatePolicy
+    - customFileSizePolicy
+    - customFileSize
+  properties:
+    policy:
+      type: string
+      enum:
+        - default
+        - enabled
+        - disabled
+      description: Defines whether the child business units are allowed to modify
+        archiving policy
+    policyModifyingAllowed:
+      type: boolean
+      description: Defines whether the child business units are allowed to modify
+        archiving policy.
+      default: false
+    folderPolicy:
+      type: string
+      enum:
+        - default
+        - custom
+      description: Defines whether account under BU can modify folder.
+    customFolder:
+      type: string
+      description: Custom archiving folder of the business unit
+    encryptionCertificatePolicy:
+      type: string
+      description: Archiving certificate policy of the business unit.
+    customEncryptionCertificate:
+      type: string
+      description: Custom encryption certificate of the business unit.
+    customFileSizePolicy:
+      type: string
+      enum:
+        - default
+        - custom
+      description: Custom file size policy of the business unit.
+    customFileSize:
+      type: integer
+      format: int32
+      minimum: 0
+      description: Custom file size for archiving of the businessunit unit.
+LoginRestrictionSettings:
+  type: object
+  properties:
+    isPolicyModifyingAllowed:
+      type: boolean
+      description: Flag indicating whether the login restriction policy option
+        is modifiable on account level.
+      default: false
+    policy:
+      type: string
+      description: The login restriction policy for this business unit.
+AddressBookSettingsForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/AddressBookSettings'
+    - type: object
+      properties:
+        modifySourcesAllowed:
+          type: boolean
+          description: If sources are allowed for modifying.
+          default: false
+        modifyCollaborationAllowed:
+          type: boolean
+          description: Defines whether the Shared Folders collaboration is enabled
+            for the business unit successors.
+          default: false
+FileMaintenanceSettingsForBU:
+  allOf:
+    - $ref: 'inheritance.yaml#/FileMaintenanceSettings'
+    - type: object
+      properties:
+        allowPolicyModifying:
+          type: boolean
+          description: This property defines whether the modification of File Maintenance
+            settings at account level is enabled/disabled.
+          default: false
+        warnNotifyEmails:
+          type: string
+          description: This property represents comma-separated email addresses for warning notifications recipients.
+        deletionNotifyEmails:
+          type: string
+          description: This property represents comma-separated email addresses for deletion notifications recipients.
+BusinessUnitResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/BusinessUnit'

@@ -1,0 +1,524 @@
+ServerStatuses:
+  type: object
+  properties:
+    serverStatuses:
+      type: array
+      items:
+        $ref: '#/ServerStatus'
+ServerStatus:
+  type: object
+  properties:
+    serverName:
+      type: string
+      description: Server name.
+    message:
+      type: string
+      description: Message for the performed server operation.
+    isSuccessful:
+      type: boolean
+      description: Whether or not the server operation was successful.
+      default: false
+ServerConfigurations:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/FtpServerConfiguration'
+          - $ref: '#/HttpServerConfiguration'
+          - $ref: '#/SshServerConfiguration'
+          - $ref: '#/As2ServerConfiguration'
+          - $ref: '#/PesitServerConfiguration'
+        discriminator:
+          propertyName: protocol
+          mapping:
+            ftp: '#/FtpServerConfiguration'
+            http: '#/HttpServerConfiguration'
+            ssh: '#/SshServerConfiguration'
+            as2: '#/As2ServerConfiguration'
+            pesit: '#/PesitServerConfiguration'
+ServerConfiguration:
+  required:
+    - protocol
+    - serverName
+  type: object
+  properties:
+    id:
+      type: string
+      description: The server's unique identifier.
+    protocol:
+      type: string
+      description: The server's protocol. Acts as a discriminator.
+      enum:
+        - http
+        - ftp
+        - ssh
+        - as2
+        - pesit
+    serverName:
+      type: string
+      description: The server name
+    isActive:
+      type: boolean
+      description: Current state of the server.
+      default: false
+  discriminator:
+    propertyName: protocol
+FtpServerConfiguration:
+  allOf:
+    - $ref: '#/ServerConfiguration'
+    - type: object
+      properties:
+        protocol:
+          type: string
+          default: ftp
+        host:
+          type: string
+          description: FTP server bind host.
+        ciphers:
+          type: string
+          description: Comma-separated list of FTP enabled ciphers.
+        enabledSslProtocols:
+          type: string
+          description: |
+            The suite of protocols available for the FTP server. The option is ignored if FIPS mode is turned on for the FTP server (SSLv2 and SSLv3 are disabled). Possible values are : TLSv1, TLSv1.1, TLSv1.2, TLSv1.3, SSLv3, SSLv2Hello. Comma-separated list.
+          default: TLSv1.2, TLSv1.3
+        sslKeyAlgorithm:
+          type: string
+          description: FTP server SSL key algorithm.
+        sslProtocol:
+          type: string
+          description: FTP server SSL protocol.
+        sslTrustAlgorithm:
+          type: string
+          description: FTP SSL trust algorithm.
+        port:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: FTP server bind port.
+        certificateAlias:
+          type: string
+          description: Server certificate alias for FTP server, used for FTPS connections.
+        clientCertificateResolution:
+          type: string
+          description: Controls the status of FTPS client certificate authentication.
+          default: none
+          enum:
+            - none
+            - optional
+            - required
+        isFipsEnabled:
+          type: boolean
+          description: FTPS FIPS transfer mode.
+          default: false
+        isFtpEnabled:
+          type: boolean
+          description: Controls whether FTP is enabled.
+          default: false
+        isFtpsEnabled:
+          type: boolean
+          description: Controls whether FTPS is enabled.
+          default: false
+        passivePortBase:
+          type: integer
+          description: Passive mode base port, 0 means 'let system choose port'.
+        passivePortNumber:
+          type: integer
+          description: Passive mode port range, 0 means 'there are no port range
+            restrictions'.
+HttpServerConfiguration:
+  allOf:
+    - $ref: '#/ServerConfiguration'
+    - type: object
+      properties:
+        protocol:
+          type: string
+          default: http
+        httpPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: HTTP server bind port.
+        httpsPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: HTTP server bind port.
+        isHttpEnabled:
+          type: boolean
+          description: HTTP status.
+          default: false
+        isHttpsEnabled:
+          type: boolean
+          description: HTTPS status.
+          default: false
+        httpHost:
+          type: string
+          description: HTTP host
+        httpsHost:
+          type: string
+          description: HTTPS host
+        loginFormat:
+          type: string
+          description: |
+            How will the client get challenged for authentication. HTML - present an HTML login form, no BA; BA - use HTTP BA; ERR - no challenge: must use config/auth agents; PREAUTH - config/auth agents + HTML login page in case of failed login.
+          default: HTML
+          enum:
+            - HTML
+            - BA
+            - ERR
+            - PREAUTH
+        clientCertificateResolution:
+          type: string
+          description: Controls the status of HTTPS client certificate authentication.
+          enum:
+            - none
+            - optional
+            - required
+        certificateAlias:
+          type: string
+          description: Server certificate alias for HTTP server, used for HTTPS
+            connections.
+        isFipsEnabled:
+          type: boolean
+          description: HTTPS FIPS transfer mode.
+          default: false
+        sslProtocol:
+          type: string
+          description: HTTP SSL protocol.
+        enabledSslProtocols:
+          type: string
+          description: Comma-separated list of enabled HTTP SSL protocols.
+          default: TLSv1.2, TLSv1.3
+        ciphers:
+          type: string
+          description: Comma-separated list of HTTP enabled ciphers.
+        allowedAuthenticationParameters:
+          type: string
+          description: HTTP allowed authentication parameters represented as a semicolon
+            separated list.
+        allowedAuthenticationParametersMaxSize:
+          minimum: 0
+          type: integer
+          description: HTTP allowed authentication parameters maximum size in bytes.
+        isHstsEnabled:
+          type: boolean
+          description: Enable or disable HSTS for HTTP Server. On change, the HTTP
+            server must be restart.
+          default: true
+        contentSecurityPolicy:
+          type: string
+          description: Specifies the value of the Content-Security-Policy header
+            for the HTTP server.
+        xssProtection:
+          type: string
+          description: |
+            Specifies the value of the X-XSS-Protection header for the HTTP server. Accepted values are: 0 | 1 | 1; mode=block |1; report=<reporting url>
+          default: 1; mode=block
+        contentTypeOptions:
+          type: string
+          description: |
+            Specifies the value of the X-Content-Type-Options header for the HTTP server. Accepted value: nosniff
+          default: nosniff
+        referrerPolicy:
+          type: string
+          description: |
+            Specifies the value of the Referrer-Policy header for the HTTP server. Accepted values are: no-referrer|no-referrer-when-downgrade|origin|origin-when-cross-origin |same-origin|strict-origin|strict-origin-when-cross-origin|unsafe-url
+          enum:
+            - no-referrer
+            - no-referrer-when-downgrade
+            - origin
+            - origin-when-cross-origin
+            - same-origin
+            - strict-origin
+            - strict-origin-when-cross-origin
+            - unsafe-url
+        expectCt:
+          type: string
+          description: |
+            Specifies the value of the Expect-CT header for the HTTP server. Accepted value is: max-age=<age>; enforce; report-uri=<uri>. The enforce and report-uri directives are optional.
+        httpSecuritySameSite:
+          type: string
+          description: |
+            Specifies value for the SameSite cookie attribute for http. Valid values: None, Lax, Strict. Default value when not set: Strict.
+          default: Strict
+        redirectHostname:
+          type: string
+          description: |
+            When set, all subsequent to first requests to the ST Web client will be bound to that hostname. This should be used in the case where a DNS switch occurs to avoid requests getting split across different nodes.
+SshServerConfiguration:
+  allOf:
+    - $ref: '#/ServerConfiguration'
+    - type: object
+      properties:
+        protocol:
+          type: string
+          default: ssh
+        clientCertificateResolution:
+          type: string
+          description: Controls the status of users client certificate SSH authentication.
+          enum:
+            - none
+            - optional
+            - required
+        clientPasswordAuth:
+          type: string
+          description: Controls if password authentication is enabled as a user authentication method on the SSH server.
+          enum:
+            - default
+            - disabled
+        certificateAlias:
+          type: string
+          description: SSH Key Alias.
+        port:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: SSH server bind port.
+        host:
+          type: string
+          description: SSH server bind host.
+        isScpEnabled:
+          type: boolean
+          description: Secure Copy (SCP) status.
+          default: false
+        isSftpEnabled:
+          type: boolean
+          description: Secure File Transfer Protocol (SFTP) status.
+          default: false
+        isFipsEnabled:
+          type: boolean
+          description: SSH FIPS transfer mode.
+        ciphers:
+          type: string
+          description: |
+            Comma-separated list of SSH enabled ciphers. This option is not honored when FIPS mode is enabled. The first one will be set as preferred Cipher algorithm.
+          default: aes256-cbc,aes192-cbc,aes128-cbc,aes128-ctr,aes192-ctr,aes256-ctr
+        keyExchangeAlgorithms:
+          type: string
+          description: |
+            Comma-separated list of supported Key Exchange algorithms for the current SSH server. This option is not honored when FIPS mode is enabled.
+          default: diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha256
+        minDiffieHellmanGroupExchangeKeySize:
+          type: integer
+          description: |
+            Define the minimum key size for Diffie-Hellman exchange algorithms group supported by the current SSH server. This value is honored if Diffie-Hellman key exchange algorithm is defined as supported in keyExchangeAlgorithms parameter value.
+          default: 2048
+        maxDiffieHellmanGroupExchangeKeySize:
+          type: integer
+          description: |
+            Define the maximum key size for Diffie-Hellman exchange algorithms group supported by the current SSH server. This value is honored if Diffie-Hellman key exchange algorithm is defined as supported in keyExchangeAlgorithms parameter value.
+          default: 8192
+        publicKeys:
+          type: string
+          description: |
+            Comma-separated list of supported public keys for client certificate authentication to current SSH server. This option is not honored when FIPS mode is enabled. The first entry will be set as preferred public key for authentication to SSH daemon.
+          default: ssh-rsa,ssh-dss,x509v3-sign-rsa,x509v3-sign-rsa-sha1
+          readOnly: true
+        allowedMacs:
+          type: string
+          description: |
+            Comma-separated list of supported MAC algorithms for current SSH server. The first one will be set as preferred MAC algorithm. This option is not honored when FIPS mode is enabled.
+          default: hmac-sha1, hmac-md5, hmac-sha1-96, hmac-md5-96
+As2ServerConfiguration:
+  allOf:
+    - $ref: '#/ServerConfiguration'
+    - type: object
+      properties:
+        protocol:
+          type: string
+          default: as2
+        clientCertificateResolution:
+          type: string
+          description: Controls the status of users client certificate AS2 authentication.
+          enum:
+           - none
+           - optional
+           - required
+        nonSslListenerEnabled:
+          type: boolean
+          description: AS2 non-SSL listener status.
+          default: false
+        nonSslListenerHost:
+          type: string
+          description: AS2 non-SSL host.
+          default: "0"
+        nonSslListenerPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: AS2 non-SSL port.
+        sslListenerEnabled:
+          type: boolean
+          description: AS2 SSL listener status.
+          default: true
+        sslListenerHost:
+          type: string
+          description: AS2 SSL host.
+          default: AS2 SSL host.
+        sslListenerPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: AS2 SSL port.
+        enabledCipherSuites:
+          type: string
+          description: Comma-separated list of AS2 enabled ciphers.
+        isHstsEnabled:
+          type: boolean
+          description: Enable or disable HSTS for AS2 Server. On change, the AS2
+            server must be restarted.
+          default: true
+        isFipsEnabled:
+          type: boolean
+          description: AS2 FIPS transfer mode.
+          default: false
+        keyAlgorithm:
+          type: string
+          description: AS2 key algorithm.
+        keyAlias:
+          type: string
+          description: AS2 key alias.
+        enabledSslProtocols:
+          type: string
+          description: Comma-separated list of enabled AS2 SSL protocols.
+          default: TLSv1.2, TLSv1.3
+        isReceiverEnabled:
+          type: boolean
+          description: Disable/enable AS2 receiving.
+          default: true
+PesitServerConfiguration:
+  allOf:
+    - $ref: '#/ServerConfiguration'
+    - type: object
+      properties:
+        protocol:
+          type: string
+          default: pesit
+        clientCertificateResolution:
+          type: string
+          description: Controls the status of users client certificate PeSIT authentication.
+          enum:
+            - none
+            - optional
+            - required
+        isPesitEnabled:
+          type: boolean
+          description: PeSIT plain port enabled/disabled status.
+          default: false
+        isPesitSslEnabled:
+          type: boolean
+          description: PeSIT SSL port enabled/disabled status.
+          default: false
+        isCftSslEnabled:
+          type: boolean
+          description: PeSIT CFT SSL port enabled/disabled status.
+          default: false
+        isPtcpEnabled:
+          type: boolean
+          description: PeSIT over parallel-TCP plain port enabled/disabled status.
+          default: false
+        isPtcpSslEnabled:
+          type: boolean
+          description: PeSIT over parallel-TCP SSL port enabled/disabled status.
+          default: false
+        host:
+          type: string
+          description: PeSIT server bind host.
+        pesitPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: PeSIT plain port.
+        pesitSslPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: PeSIT SSL port (non CFT compatible).
+        cftSslPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: PeSIT CFT SSL port (CFT compatible).
+        ptcpPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: PeSIT over parallel-TCP plain port.
+        ptcpSslPort:
+          maximum: 65535
+          minimum: 1
+          type: integer
+          description: PeSIT over parallel-TCP SSL port.
+        cftSslKeyAlgorithm:
+          type: string
+          description: PeSIT CFT ssl key algorithm.
+        cftSslKeyAlias:
+          type: string
+          description: PeSIT CFT ssl key alias.
+        cftSslProtocol:
+          type: string
+          description: PeSIT CFT ssl protocol.
+        cftSslTrustAlgorithm:
+          type: string
+          description: PeSIT CFT ssl trust algorithm.
+        ptcpKeyAlgorithm:
+          type: string
+          description: PeSIT pTCP SSL key algorithm.
+        ptcpKeyAlias:
+          type: string
+          description: PeSIT pTCP SSL key alias.
+        ptcpProtocol:
+          type: string
+          description: PeSIT pTCP SSL protocol.
+        ptcpTrustAlgorithm:
+          type: string
+          description: PeSIT pTCP SSL trust algorithm.
+        pesitKeyAlgorithm:
+          type: string
+          description: PeSIT SSL key algorithm.
+        pesitKeyAlias:
+          type: string
+          description: PeSIT SSL key alias.
+        pesitSslProtocol:
+          type: string
+          description: PeSIT SSL protocol.
+        pesitTrustAlgorithm:
+          type: string
+          description: PeSIT SSL trust algorithm.
+        ciphers:
+          type: string
+          description: Comma-separated list of enabled SSL ciphers for PeSIT.
+        enabledSslProtocols:
+          type: string
+          description: Comma-separated list enabled SSL protocols for PeSIT.
+          default: TLSv1.2, TLSv1.3
+        isFipsEnabled:
+          type: boolean
+          description: PeSIT FIPS support enabled/disabled status.
+          default: false
+        autodetectTlsModeListenerPort:
+          type: integer
+          maximum: 65535
+          minimum: 1
+          description: The PeSIT autodetect TLS mode listener port.
+        autodetectTlsModeListenerEnabled:
+          type: boolean
+          description: Whether the PeSIT autodetect TLS mode is enabled.
+          default: false
+        autodetectTlsModeListenerTrustAlgorithm:
+          type: string
+          description: The autodetect TLS mode listener trust algorithm.
+        autodetectTlsModeListenerKeyAlgorithm:
+          type: string
+          description: The autodetect TLS mode listener key algorithm.
+        autodetectTlsModeListenerKeyAlias:
+          type: string
+          description: The autodetect TLS mode listener key alias.
+        autodetectTlsModeListenerProtocol:
+          type: string
+          description: The autodetect TLS mode listener protocol.

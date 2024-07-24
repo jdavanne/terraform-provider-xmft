@@ -19,11 +19,11 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-func ModelToSchema(ctx context.Context, modelName string, model interface{}) schema.Schema {
-	return schema.Schema{Attributes: _modelToAttributes(ctx, modelName, reflect.TypeOf(reflect.ValueOf(model).Elem().Interface()))}
+func ModelToSchema(ctx context.Context, goPath string, apiPath string, model interface{}) schema.Schema {
+	return schema.Schema{Attributes: _modelToAttributes(ctx, goPath, apiPath, false, reflect.TypeOf(reflect.ValueOf(model).Elem().Interface()))}
 }
 
-func _modelToAttributes(ctx context.Context, modelName string, value reflect.Type) map[string]schema.Attribute {
+func _modelToAttributes(ctx context.Context, goPath string, apiPath string, parentFold bool, value reflect.Type) map[string]schema.Attribute {
 	attrs := make(map[string]schema.Attribute)
 	switch value.Kind() {
 	case reflect.Struct:
@@ -33,17 +33,22 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 		reflectType := value
 		// reflectValue := reflect.ValueOf(v)
 		for i := 0; i < reflectType.NumField(); i++ {
-			fieldName := reflectType.Field(i).Name
+			goName := reflectType.Field(i).Name
 			tag := reflectType.Field(i).Tag
 			tfsdk := tag.Get(tfsdkTagName)
 			flags := tag.Get(helperTagName)
-			name := FlagsTfsdkGetName(tfsdk)
+			tfName := FlagsTfsdkGetName(tfsdk)
+			apiName := FlagsHelperName(tfsdk, flags)
 
-			mustCheckSupportedAttributes(modelName+"."+fieldName, flags)
+			mustCheckSupportedAttributes(goPath+"."+goName, flags)
 			required := FlagsHas(flags, "required")
 			computed := FlagsHas(flags, "computed")
 			sensitive := FlagsHas(flags, "sensitive")
 			elementtype, _ := FlagsGet(flags, "elementtype")
+			_, fold := FlagsGet(flags, "fold")
+			if parentFold {
+				apiName = "[type=" + apiName + "]"
+			}
 
 			state := FlagsHas(flags, "state")
 			def, defok := FlagsGet(flags, "default")
@@ -77,16 +82,16 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								f, _ := types.ListValue(types.StringType, make([]attr.Value, 0))
 								d = listdefault.StaticValue(f)
 							} else if defok {
-								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
 							}
-							attrs[name] = schema.ListAttribute{
+							attrs[tfName] = schema.ListAttribute{
 								ElementType: types.StringType,
 								Required:    required,
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
 								Default:     d,
-								Description: flagsDescription(flags, "[]"),
+								Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							}
 						case "basetypes.Int64Value":
 							var d defaults.List
@@ -94,19 +99,19 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								f := types.ListNull(types.Int64Type)
 								d = listdefault.StaticValue(f)
 							} else if defok {
-								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
 							}
-							attrs[name] = schema.ListAttribute{
+							attrs[tfName] = schema.ListAttribute{
 								ElementType: types.Int64Type,
 								Required:    required,
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
 								Default:     d,
-								Description: flagsDescription(flags, "[]"),
+								Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName),
 							}
 						default:
-							panic("unsupported slice type: " + typestr + "(" + modelName + "." + fieldName + ")")
+							panic("unsupported slice type: " + typestr + "(" + goPath + "." + goName + ")")
 						}
 					} else {
 						var d defaults.List
@@ -114,22 +119,22 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							f, _ := types.ListValue(types.ObjectType{}, make([]attr.Value, 0))
 							d = listdefault.StaticValue(f)
 						} else if defok {
-							panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+							panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
 						}
-						attrs[name] = schema.ListNestedAttribute{
+						attrs[tfName] = schema.ListNestedAttribute{
 							NestedObject: schema.NestedAttributeObject{
-								Attributes: _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
+								Attributes: _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName+".#", fold, reflectType.Field(i).Type.Elem()),
 							},
 							Required:    required,
 							Optional:    optional,
 							Computed:    computed,
 							Sensitive:   sensitive,
 							Default:     d,
-							Description: flagsDescription(flags, "[]"),
+							Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName),
 						}
 					}
 				default:
-					panic("unsupported: Slice" + kind2.String() + " (" + modelName + "." + fieldName + ")")
+					panic("unsupported: Slice" + kind2.String() + " (" + goPath + "." + goName + ")")
 				}
 
 			case reflect.Struct:
@@ -137,34 +142,23 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 					switch typestr {
 					case "basetypes.MapValue":
 						if elementtype == "string" {
-							attrs[name] = schema.MapAttribute{
+							attrs[tfName] = schema.MapAttribute{
 								ElementType: types.StringType,
 								Required:    required,
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
-								Description: flagsDescription(flags, "{}"),
+								Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
 							}
 						} else {
-							panic("unsupported element type: '" + elementtype + "' (" + modelName + "." + fieldName + ")")
+							panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
 						}
 					case "basetypes.ObjectValue":
 						elementModel := registeredTypes[elementtype]
 						if elementModel == nil {
-							panic("unsupported element type: '" + elementtype + "' (" + modelName + "." + fieldName + ")")
+							panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
 						}
-						// el := reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface())
-						// elementAttrs := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 
-						/*
-							elementAttrs := structNameToTFType(elementtype)
-							attrs[name] = schema.ObjectAttribute{
-								AttributeTypes: elementAttrs,
-								Required:       required,
-								Optional:       optional,
-								Computed:       computed,
-								Sensitive:      sensitive,
-							}*/
 						var d defaults.Object
 						if defok && def == "" {
 							// var v types.Object
@@ -172,15 +166,15 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							d = objectdefault.StaticValue(v)
 						}
 
-						elementAttrs2 := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
-						attrs[name] = schema.SingleNestedAttribute{
-							Attributes:  elementAttrs2,
+						elementAttrs := _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
+						attrs[tfName] = schema.SingleNestedAttribute{
+							Attributes:  elementAttrs,
 							Required:    required,
 							Optional:    optional,
 							Computed:    computed,
 							Sensitive:   sensitive,
 							Default:     d,
-							Description: flagsDescription(flags, "{}"),
+							Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
 						}
 
 					case "basetypes.ListValue":
@@ -190,32 +184,32 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								f := types.ListNull(types.StringType)
 								d = listdefault.StaticValue(f)
 							} else if defok {
-								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
 							}
-							attrs[name] = schema.ListAttribute{
+							attrs[tfName] = schema.ListAttribute{
 								ElementType: types.StringType,
 								Required:    required,
 								Optional:    optional,
 								Computed:    computed,
 								Sensitive:   sensitive,
 								Default:     d,
-								Description: flagsDescription(flags, "[]"),
+								Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							}
 						} else {
 							elementModel := registeredTypes[elementtype]
 							if elementModel == nil {
-								panic("unsupported element type: '" + elementtype + "' (" + modelName + "." + fieldName + ")")
+								panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
 							}
-							elementAttrs := _modelToAttributes(ctx, modelName+"."+fieldName, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
+							elementAttrs := _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName+".#", fold, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 
 							var d defaults.List
 							if defok && def == "" {
 								f := types.ListNull(types.ObjectType{})
 								d = listdefault.StaticValue(f)
 							} else if defok {
-								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
 							}
-							attrs[name] = schema.ListNestedAttribute{
+							attrs[tfName] = schema.ListNestedAttribute{
 								NestedObject: schema.NestedAttributeObject{
 									Attributes: elementAttrs,
 								},
@@ -224,7 +218,7 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 								Computed:    computed,
 								Sensitive:   sensitive,
 								Default:     d,
-								Description: flagsDescription(flags, "[]"),
+								Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							}
 						}
 					/*case "basetypes.ObjectValue":
@@ -241,13 +235,13 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							d = stringdefault.StaticString(def)
 						}
 
-						attrs[name] = schema.StringAttribute{
+						attrs[tfName] = schema.StringAttribute{
 							Required:      required,
 							Optional:      optional,
 							Computed:      computed,
 							Sensitive:     sensitive,
 							Default:       d,
-							Description:   flagsDescription(flags, "''"),
+							Description:   flagsDescription(ctx, flags, "''", apiPath+"."+apiName),
 							PlanModifiers: s,
 						}
 					case "basetypes.BoolValue":
@@ -258,18 +252,18 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 							} else if def == "false" {
 								d = booldefault.StaticBool(false)
 							} else {
-								panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
+								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
 							}
 						} else if defok && def == "" {
 							d = booldefault.StaticBool(false)
 						}
-						attrs[name] = schema.BoolAttribute{
+						attrs[tfName] = schema.BoolAttribute{
 							Required:    required,
 							Optional:    optional,
 							Computed:    computed,
 							Sensitive:   sensitive,
 							Default:     d,
-							Description: flagsDescription(flags, "false"),
+							Description: flagsDescription(ctx, flags, "false", apiPath+"."+apiName),
 						}
 					case "basetypes.Int64Value":
 						var d defaults.Int64
@@ -282,16 +276,16 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 						} else if defok && def == "" {
 							d = int64default.StaticInt64(0)
 						}
-						attrs[name] = schema.Int64Attribute{
+						attrs[tfName] = schema.Int64Attribute{
 							Required:    required,
 							Optional:    optional,
 							Computed:    computed,
 							Sensitive:   sensitive,
 							Default:     d,
-							Description: flagsDescription(flags, "0"),
+							Description: flagsDescription(ctx, flags, "0", apiPath+"."+apiName),
 						}
 					default:
-						panic("unsupported type: " + typestr + "(" + modelName + "." + fieldName + ")")
+						panic("unsupported type: " + typestr + "(" + goPath + "." + goName + ")")
 					}
 				} else {
 					/*var d defaults.Object
@@ -302,31 +296,31 @@ func _modelToAttributes(ctx context.Context, modelName string, value reflect.Typ
 						d = defaults.Object{}
 					}*/
 
-					attrs[name] = schema.SingleNestedAttribute{
-						Attributes:  _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type),
+					attrs[tfName] = schema.SingleNestedAttribute{
+						Attributes:  _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type),
 						Required:    required,
 						Optional:    optional,
 						Computed:    computed,
 						Sensitive:   sensitive,
-						Description: flagsDescription(flags, "{}"),
+						Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
 						// Default:    d,
 					}
 				}
 			case reflect.Ptr:
-				attrs[name] = schema.SingleNestedAttribute{
-					Attributes:  _modelToAttributes(ctx, modelName+"."+fieldName, reflectType.Field(i).Type.Elem()),
+				attrs[tfName] = schema.SingleNestedAttribute{
+					Attributes:  _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type.Elem()),
 					Required:    required,
 					Optional:    optional,
 					Computed:    computed,
 					Sensitive:   sensitive,
-					Description: flagsDescription(flags, "{}"),
+					Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
 				}
 			default:
-				panic("unsupported: type" + kind.String() + " (" + modelName + "." + fieldName + ")")
+				panic("unsupported: type" + kind.String() + " (" + goPath + "." + goName + ")")
 			}
 		}
 	default:
-		panic("unsupported: type" + value.Kind().String() + " (" + modelName + ")")
+		panic("unsupported: type" + value.Kind().String() + " (" + goPath + ")")
 	}
 	return attrs
 }

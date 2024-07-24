@@ -2,6 +2,8 @@ package provider
 
 import (
 	"context"
+	_ "embed"
+	"encoding/json"
 	"fmt"
 	"log/slog"
 	"reflect"
@@ -40,6 +42,9 @@ type stResource struct {
 	ignoreDeleteNotFoundErrors bool
 	onlyReplace                bool
 	alwaysRecreate             bool
+
+	swaggerDiscriminator string // for swagger comparison
+	swaggerUri           string // for swagger comparison
 }
 
 func NewSTResource(obj interface{}, name string, kind string, uriCreate, uriReplace string) *stResource {
@@ -97,9 +102,35 @@ func (r *stResource) AlwaysRecreate() *stResource {
 	return r
 }
 
+func (r *stResource) AddDiscriminator(disc string) *stResource {
+	r.swaggerDiscriminator += disc
+	return r
+}
+
+func (r *stResource) UseSwaggerUri(uri string) *stResource {
+	r.swaggerUri = uri
+	return r
+}
+
+//go:embed provider_st_field_descriptions.json
+var providerStFieldDescriptions []byte
+var providerStFieldDescriptionsMap map[string]string
+
+func init() {
+	err := json.Unmarshal(providerStFieldDescriptions, &providerStFieldDescriptionsMap)
+	if err != nil {
+		panic(err)
+	}
+}
+
 // Schema defines the schema for the resource.
 func (r *stResource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = tfhelper.ModelToSchema(ctx, r.name, r.obj)
+	uri := r.uriReplace
+	if r.swaggerUri != "" {
+		uri = r.swaggerUri
+	}
+	ctx2 := context.WithValue(ctx, "fieldDescription", providerStFieldDescriptionsMap)
+	resp.Schema = tfhelper.ModelToSchema(ctx2, r.name, uri[9:]+r.swaggerDiscriminator, r.obj)
 }
 
 func (r *stResource) createOrUpdate(ctx context.Context, pland *tfsdk.Plan, reqState *tfsdk.State, respState *tfsdk.State, odiags *diag.Diagnostics, create bool) {

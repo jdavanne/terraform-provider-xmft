@@ -1,0 +1,50 @@
+UserClass:
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the user class.
+      readOnly: true
+    className:
+      type: string
+      description: User class name.
+      maxLength: 32
+    userType:
+      type: string
+      description: User class type.
+      enum:
+        - '*'
+        - real
+        - virtual
+    order:
+      type: integer
+      description: The order in which user class is saved in database
+    enabled:
+      type: boolean
+      description: Is user class currently enabled.
+      default: false
+    userName:
+      type: string
+      description: User class username.
+      maxLength: 255
+    group:
+      type: string
+      description: Group of user class
+      maxLength: 255
+    address:
+      type: string
+      description: User class host.
+      maxLength: 255
+    expression:
+      type: string
+      description: User class expression.
+      maxLength: 1024
+UserClassResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/UserClass'

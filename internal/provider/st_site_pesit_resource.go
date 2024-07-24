@@ -136,7 +136,7 @@ type stTransferSitePesitModel struct {
 }
 
 func NewSTTransferSitePesitModelResource() resource.Resource {
-	return NewSTResource(&stTransferSitePesitModel{}, "st_site_pesit", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}")
+	return NewSTResource(&stTransferSitePesitModel{}, "st_site_pesit", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}").AddDiscriminator("[type=pesit]")
 }
 
 func init() {

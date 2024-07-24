@@ -1,0 +1,110 @@
+Event:
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the event.
+    agentTrigger:
+      type: string
+      description: Event's trigger.
+    agentType:
+      type: string
+      description: Event type.
+    arrivalTime:
+      type: integer
+      format: int64
+      description: Event arrival time.
+    clusterNode:
+      type: string
+      description: The cluster node on which the event is processing.
+    eventGroup:
+      type: string
+      description: Event group.
+    limited:
+      type: boolean
+      description: Client initiated transfers.
+    nextProcessingTime:
+      type: integer
+      format: int64
+      description: Next processing time.
+    processorType:
+      type: string
+      enum:
+        - DEFAULT
+        - ADVANCED_ROUTING
+        - PESIT
+      description: Defines which task processor should take care of a task.
+    recovered:
+      type: boolean
+      description: Whether the event is recovered or not.
+    retryCount:
+      type: integer
+      description: Event retry number.
+    status:
+      type: string
+      description: Event status.
+    subscriptionId:
+      type: string
+      description: Subscription id which event is associated with.
+    accountId:
+      type: string
+      description: Account id which event is associated with.
+    accountName:
+      type: string
+      description: Account name which event is associated with.
+    fullTarget:
+      type: string
+      description: File location.
+    lastHeartbeat:
+      type: integer
+      format: int64
+      description: The last updated heartbeat timestamp in UTC for the persisted event.
+EventDetails:
+  allOf:
+    - $ref: '#/Event'
+    - type: object
+      properties:
+        data:
+          type: object
+          description: |
+            Data defined with "key": "value" pairs.
+        sessionData:
+          type: object
+          description: |
+            Session data defined with "key": "value" pairs.
+EventDelete:
+  type: object
+  required:
+    - ids
+  properties:
+    ids:
+      type: array
+      items:
+        type: string
+EventDeleteObject:
+  type: object
+  properties:
+    id:
+      type: string
+      description: Identifier of the event.
+    status:
+      type: string
+      description: Status of the delete operation for the event. Possible values "deleted", "not found".
+EventDeleteResult:
+  type: object
+  properties:
+    events:
+      type: array
+      items:
+        allOf:
+          - $ref: '#/EventDeleteObject'
+EventResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        allOf:
+          - $ref: 'event.yaml#/Event'

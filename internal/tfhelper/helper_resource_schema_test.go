@@ -22,7 +22,7 @@ func TestGenerateToResourseSchema(t *testing.T) {
 	var v TestResourceModel
 
 	// Call the GenerateToSchema function
-	generated := ModelToSchema(ctx, "testresource", &v)
+	generated := ModelToSchema(ctx, "testresource", "/api", &v)
 
 	expected := schema.Schema{
 		Attributes: map[string]schema.Attribute{

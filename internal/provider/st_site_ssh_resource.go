@@ -146,7 +146,7 @@ type stTransferSiteSSHModel struct {
 }
 
 func NewSTTransferSiteSSHModelResource() resource.Resource {
-	return NewSTResource(&stTransferSiteSSHModel{}, "st_site_ssh", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}")
+	return NewSTResource(&stTransferSiteSSHModel{}, "st_site_ssh", "", "/api/v2.0/sites", "/api/v2.0/sites/{id}").AddDiscriminator("[type=ssh]")
 }
 
 func init() {

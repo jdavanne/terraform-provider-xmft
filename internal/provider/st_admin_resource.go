@@ -98,7 +98,7 @@ type stAdminModel struct {
 }
 
 func NewSTAdminModelResource() resource.Resource {
-	return NewSTResource(&stAdminModel{}, "st_admin", "", "/api/v2.0/administrators", "/api/v2.0/administrators/{loginName}")
+	return NewSTResource(&stAdminModel{}, "st_admin", "", "/api/v2.0/administrators", "/api/v2.0/administrators/{loginName}").UseSwaggerUri("/api/v2.0/administrators/{name}")
 }
 
 func init() {

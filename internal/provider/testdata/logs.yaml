@@ -1,0 +1,469 @@
+AuditLogEntry:
+  required:
+    - configurationId
+    - dateModified
+    - id
+    - operationType
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the audit log entity
+    dateModified:
+      type: string
+      description: The modification date of the audit log entity
+    configurationId:
+      type: string
+      description: The configuration id of the node
+    operationType:
+      type: string
+      description: The type of the operation logged with the audit log entity
+      enum:
+        - CREATE
+        - UPDATE
+        - DELETE
+        - CREATE_OR_UPDATE
+    objectType:
+      type: string
+      description: The type of the object for which audit log entity is added
+    objectIdentifier:
+      type: string
+      description: The id of the audited object
+    objectName:
+      type: string
+      description: The name of the audited object
+    objectString:
+      type: string
+      description: The string representation of the audited object
+    userName:
+      type: string
+      description: The name of the user who did the operation audited
+    remoteAddress:
+      type: string
+      description: The IP address of the remote client that sent the request
+    description:
+      type: string
+      description: The audit log comment.
+ServerLogEntry:
+  type: object
+  properties:
+    id:
+      $ref: '#/ServerLogEntryId'
+    time:
+      type: string
+      description: "The time of the log in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss\
+            \ Z. Note: This property is read only property. \n"
+    node:
+      type: string
+      description: The node
+    level:
+      type: string
+      description: The level of the log
+      enum:
+        - ALL
+        - DEBUG
+        - ERROR
+        - FATAL
+        - INFO
+        - TRACE
+        - WARN
+    component:
+      type: string
+      description: The component
+      enum:
+        - TM;
+        - AS2D;
+        - SSHD;
+        - SOCKS;
+        - ADMIN;
+        - AUDIT;
+        - FTPD;
+        - HTTPD;
+        - PESITD;
+    thread:
+      type: string
+      description: The thread
+    filename:
+      type: string
+      description: The filename
+    className:
+      type: string
+      description: The class name
+    method:
+      type: string
+      description: The method
+    line:
+      type: string
+      description: The line
+    message:
+      type: string
+      description: The log message
+    exception:
+      type: string
+      description: The exception.
+ServerLogEntryId:
+  type: object
+  properties:
+    mConfigurationId:
+      type: string
+    mEventId:
+      type: integer
+      format: int64
+    mTimestamp:
+      type: integer
+      format: int64
+    urlrepresentation:
+      type: string
+TransferLogEntry:
+  type: object
+  properties:
+    id:
+      $ref: '#/TransferId'
+    status:
+      type: string
+      description: The status of the transfer
+      enum:
+        - In Progress
+        - Processed
+        - Failed
+        - Aborted
+        - Pending receipt
+        - Failed Subtransmission
+        - Paused
+        - Failed Transfer Resubmit
+        - Waiting
+    resubmitted:
+      type: boolean
+      description: Defines whether the transfer was resubmitted
+    secure:
+      type: boolean
+      description: Defines whether the transfer occurred over secure connection
+      default: false
+    account:
+      type: string
+      description: The name of the account that performed the transfer
+    login:
+      type: string
+      description: The user login name used for this transfer
+    serverName:
+      type: string
+      description: The name of the server processing the transfer
+    incoming:
+      type: boolean
+      description: Define whether the transfer direction is incoming or outgoing
+    serverInitiated:
+      type: string
+      description: Defines whether the transfer is server or client initiated
+    filename:
+      type: string
+      description: The name of the transferred file
+    localFilename:
+      type: string
+      description: The local name of the transferred file
+    filesize:
+      type: integer
+      description: Transfered file size
+      format: int64
+    protocol:
+      type: string
+      description: The protocol used to transfer the file
+    startTime:
+      type: string
+      description: The time when transfer started
+    duration:
+      type: string
+      description: Defines the time when transfer is finished
+    operationIndex:
+      type: string
+      description: The operation index of the transfer. It could be '(none)' or
+        some ID.
+    remoteDir:
+      type: string
+      description: Remote directory.
+    remotePartner:
+      type: string
+      description: Remote partner that gets/sends the file.
+    coreId:
+      type: string
+      description: The core id of the transfer
+    cycleId:
+      type: string
+      description: The sentinel cycle id for the transfer
+    securityParameters:
+      type: string
+      description: Negotiated during handshake session security parameters.
+    site:
+      $ref: '#/TransferSite'
+    transferProfile:
+      type: string
+      description: Transfer profile of the site(PeSIT related).
+    remoteAlternativeAddresses:
+      type: array
+      items:
+        $ref: '#/RemoteAlternativeAddress'
+TransferId:
+  type: object
+  properties:
+    transferStatusId:
+      type: string
+      description: Transfer status ID.
+    transferStartTime:
+      type: string
+      description: Transfer start time.
+TransferSite:
+  type: object
+  properties:
+    id:
+      type: string
+      description: ID of the transfer site
+    name:
+      type: string
+      description: Name of the transfer site
+RemoteAlternativeAddress:
+  type: object
+  properties:
+    address:
+      type: string
+      description: Alternative Address
+    state:
+      type: string
+      description: Alternative Address State
+TransferLogDetails:
+  type: object
+  properties:
+    status:
+      type: string
+      description: The status of the transfer
+    startTime:
+      type: string
+      description: The time when the transfer started
+    duration:
+      type: string
+      description: The transfer duration
+    account:
+      type: string
+      description: The name of the account that performed the transfer
+    login:
+      type: string
+      description: The user login name used for this transfer
+    userClass:
+      type: string
+      description: The user class. By default the user class can be `VirtClass`
+        or `RealClass`
+    userType:
+      type: string
+      description: The user type
+    application:
+      type: string
+      description: The application of the transfer
+    transferType:
+      type: string
+      description: The transfer type
+      enum:
+        - Unspecified
+        - Internal
+        - Partner
+    transferSite:
+      type: string
+      description: The transfer site
+    transferProfile:
+      type: string
+      description: Transfer profile of the site(PeSIT related).
+    file:
+      type: string
+      description: The transferred file
+    localFilename:
+      type: string
+      description: The local name of the transferred file
+    serverName:
+      type: string
+      description: The name of the listener processing the transfer
+    size:
+      type: integer
+      description: The size of the transferred file
+      format: int64
+    protocol:
+      type: string
+      description: The protocol of the transfer
+    mode:
+      type: string
+      description: The transfer mode
+      enum:
+        - BINARY
+        - ASCII
+        - EBCDIC
+        - EBCDIC NATIVE
+    remoteHost:
+      type: string
+      description: The remote host
+    remoteFolder:
+      type: string
+      description: The remote folder
+    remotePartner:
+      type: string
+      description: Remote partner that gets/sends the file.
+    accountFolder:
+      type: string
+      description: The account folder
+    realFile:
+      type: string
+      description: The real file path
+    transferId:
+      type: string
+      description: The id of the transfer
+    sessionId:
+      type: string
+      description: The session ID of the transfer
+    archivedAs:
+      type: string
+      description: The name under which the transferred file is archived
+    successMessage:
+      type: string
+      description: The transfer success message
+    errorMessage:
+      type: string
+      description: The transfer error message
+    pesitAcknowledge:
+      type: string
+      description: The PeSIT acknowledge
+    pesitAcknowledgeDirection:
+      type: string
+      description: The PeSIT acknowledgement direction
+      enum:
+        - Incoming
+        - Outgoing
+    icapDetails:
+      type: string
+      description: ICAP Details
+    operationIndex:
+      type: string
+      description: The transfer's operation index
+    protocolCommands:
+      type: string
+      description: The transfer protocol commands
+    coreId:
+      type: string
+      description: The core id of the transfer
+    cycleId:
+      type: string
+      description: The sentinel cycle id for the transfer
+    securityParameters:
+      type: string
+      description: Negotiated during handshake session security parameters.
+    subtransmissionStatuses:
+      type: array
+      items:
+        $ref: '#/SubtransmissionStatus'
+    requestEntity:
+      type: string
+      description: Representation of the rest api call that initiated the transfer(if
+        submitted through the ST RESTful API).
+    additionalInformation:
+      type: string
+      description: The additional information related to this transfer.
+    xffHeader:
+      type: string
+      description: The X-Forwarded-For header value.
+    transferData:
+      type: array
+      items:
+        $ref: '#/TransferData'
+SubtransmissionStatus:
+  type: object
+  properties:
+    completion:
+      type: string
+      description: Operation status value
+    comment:
+      type: string
+      description: Subtransmission comment
+    result:
+      type: string
+      description: The result of the operation (usually a filename)
+    operationType:
+      type: string
+      description: The subtransmisstion operation type.
+ResubmissionStatus:
+  type: object
+  properties:
+    message:
+      type: string
+      description: The resubmission status result.
+    status:
+      type: string
+      description: The overall status of the transfer.
+      enum:
+        - OK
+        - ERROR
+TransferData:
+  type: object
+  properties:
+    data:
+      type: string
+      description: The transferred data
+    startTime:
+      type: string
+      description: The time when the transfer started
+    type:
+      type: string
+      description: Type of the data
+    transferId:
+      type: string
+      description: The id of the transfer
+    receipt:
+      type: boolean
+      description: Defines whether the data is a receipt or not. If it is true, then this data represents mdn.
+      default: false
+ReceiptVerificationResult:
+  type: object
+  properties:
+    fileIntegrityResult:
+      type: string
+      description: The file integrity result
+    signatureResult:
+      type: string
+      description: The signature result.
+TransferResult:
+  required:
+    - message
+  type: object
+  properties:
+    message:
+      type: string
+      description: The transfer result message
+    link:
+      type: string
+      description: The transfer log link.
+AckMessage:
+  type: object
+  properties:
+    userMessage:
+      type: string
+      description: Ack/Nack message.
+AuditLogEntryResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/AuditLogEntry'
+ServerLogEntryResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/ServerLogEntry'
+TransferLogEntryResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/TransferLogEntry'

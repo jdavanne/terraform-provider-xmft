@@ -6,6 +6,7 @@ package provider
 import (
 	"context"
 	"os"
+	"reflect"
 	"slices"
 
 	"terraform-provider-xmft/internal/cftapi"
@@ -236,6 +237,11 @@ var (
 )
 
 func registerResource(f func() resource.Resource) {
+	for _, v := range localProviderResources {
+		if reflect.ValueOf(v).Pointer() == reflect.ValueOf(f).Pointer() {
+			panic("duplicate resource")
+		}
+	}
 	localProviderResources = append(localProviderResources, f)
 }
 

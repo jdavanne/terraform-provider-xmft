@@ -1,0 +1,183 @@
+Zone:
+  required:
+    - name
+  type: object
+  properties:
+    name:
+      maxLength: 255
+      minLength: 0
+      pattern: ^([^\/\\;\']*)$
+      type: string
+      description: |
+        The name of the DMZ zone. Zone name can not contain characters "\", "/", ";" and "'"
+      default: string
+    description:
+      maxLength: 255
+      minLength: 0
+      type: string
+      description: The description of DMZ Zone.
+    publicURLPrefix:
+      maxLength: 255
+      minLength: 0
+      type: string
+      description: |
+        The public URL prefix for public access to the DMZ via HTTP(s).
+    ssoSpEntityId:
+      maxLength: 255
+      minLength: 0
+      type: string
+      description: |
+        The SSO Service Provider EntityId to identify to an Identity Provider.
+    isDnsResolutionEnabled:
+      type: boolean
+      description: |
+        Define whether DNS resolution on Edge is enabled or not (true if DNS resolution on Edge is enabled and false-otherwise).
+      default: false
+    isDefault:
+      type: boolean
+      description: Define whether the DMZ zone is set to default or not.
+      default: false
+    edges:
+      type: array
+      items:
+        $ref: '#/Edge'
+Edge:
+  required:
+    - title
+  type: object
+  properties:
+    title:
+      maxLength: 255
+      minLength: 0
+      pattern: ^([^\/\\;\']*)$
+      type: string
+      description: |
+        Title of the DMZ edge. Edge title can not contain characters "\", "/", ";" and "'"
+      default: string
+    notes:
+      maxLength: 255
+      minLength: 0
+      type: string
+      description: Notes for the DMZ edge
+    deploymentSite:
+      type: string
+      description: The cluster deployment site of the edge
+    enabledProxy:
+      type: boolean
+      description: |
+        Check status of the proxy whether it is enabled/disabled (true if proxy is enabled, false otherwise)
+      default: false
+    protocols:
+      type: array
+      items:
+        $ref: '#/EdgeProtocol'
+    proxies:
+      type: array
+      items:
+        $ref: '#/EdgeProxy'
+    isAutoDiscoverable:
+      type: boolean
+      description: |
+        **Note:** Beta Feature - Do not use in Production. Check 'Beta.Dmz.DynamicNodeIpDiscovery.Enabled' configuration option.
+        **Note:** The property is available only for zones different than the 'Private' one and only on Backend.
+        
+        Check whether the zone type is auto-discoverable or static (true if zone is auto-discoverable, false - if static).
+      default: false
+    dynamicNodeIpDiscoveryFqdn:
+      type: string
+      description: |
+        **Note:** Beta Feature - Do not use in Production. Check 'Beta.Dmz.DynamicNodeIpDiscovery.Enabled' configuration option.
+        **Note:** The property is available only for zones different than the 'Private' one and only on Backend.
+        
+        Fqdn to be used for resolving multiple node addresses.
+    ipAddresses:
+      type: array
+      description: IP addresses for the DMZ edge
+      items:
+        $ref: '#/EdgeIpAddress'
+    configurationId:
+      type: string
+      description: The identifier of the machine
+    descriptor:
+      type: string
+      description: |
+        The unique identifier for current node (IP or hostname ..etc).
+EdgeIpAddress:
+  required:
+    - ipAddress
+  type: object
+  properties:
+    ipAddress:
+      type: string
+      description: The IP address for DMZ edge.
+EdgeProtocol:
+  required:
+    - streamingProtocol
+    - port
+  type: object
+  properties:
+    streamingProtocol:
+      type: string
+      description: The streaming protocol for DMZ edge
+      enum:
+        - HTTP
+        - FTP
+        - AS2
+        - SSH
+        - PESIT
+        - ADMIN
+    port:
+      maximum: 65535
+      minimum: 1024
+      type: integer
+      description: The number of port for DMZ edge on the current protocol
+      format: int32
+    isEnabled:
+      type: boolean
+      description: Define whether the protocol is enabled to be used from the
+        edge
+      default: false
+    sslAlias:
+      type: string
+      description: Certificate reference for DMZ edge on the current protocol.
+EdgeProxy:
+  required:
+    - proxyProtocol
+    - port
+  type: object
+  properties:
+    proxyProtocol:
+      type: string
+      description: The proxy protocol
+      enum:
+        - SOCKS_PROXY
+        - HTTP_PROXY
+    port:
+      type: integer
+      description: The number of port for the proxi
+      format: int32
+    isEnabled:
+      type: boolean
+      description: Define whether the proxy is enabled
+      default: false
+    username:
+      type: string
+      description: The user name to authenticate to the proxy
+    isUsePassword:
+      type: boolean
+      description: |
+        Shows if the password should be preserved/overwritten or removed (true if the password should be preserved/overwritten with non empty one and false when the password should be removed)
+      default: false
+    password:
+      type: string
+      description: |
+        The password for the edge proxy. Password can be set only if 'isUsePassword' is set to 'true'. This property can not be get via the ST REST API.
+ZoneResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/Zone'

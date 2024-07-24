@@ -17,24 +17,26 @@ description: |-
 
 ### Required
 
-- `account` (String)
-- `name` (String)
+- `account` (String) The account for which the transfer profile is created.
+- `name` (String) The name of the transfer profile.
 
 ### Optional
 
-- `additional_attributes` (Map of String)
-- `default` (Boolean) default:false
-- `file_label_option` (String) enum:/DONT_SEND/SEND_FILENAME/SEND_FILENAME_AND_PATH, default:DONT_SEND
-- `multi_select` (Boolean) default:false
-- `padding_strip_enabled` (Boolean) default:false
-- `receive_mapping` (String) default:/${pesit.fileLabel}
-- `record_format` (String) enum:/Variable/Fixed, default:Variable
-- `record_length` (Number) max:32767, default:32767
-- `send_mapping` (String) default:/*
-- `sending_acknowledgment_enabled` (Boolean) default:false
-- `transfer_mode` (String) enum:/BINARY/ASCII/EBCDIC/EBCDIC_NATIVE, default:BINARY
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `default` (Boolean) default:false, Defines whether this transfer profile is default or not.
+- `file_label_option` (String) enum:/DONT_SEND/SEND_FILENAME/SEND_FILENAME_AND_PATH, default:DONT_SEND, Determines whether the file name and the path, relative to the account's home folder, are sent. Corresponds to PI 37.
+- `multi_select` (Boolean) default:false, Determines the files to retrieve - all files that match the specified pattern (true) or just the first one (false).
+- `padding_strip_enabled` (Boolean) default:false, Enables/disables padding character removal. Can be used only when advancedSettings.enabled is false.
+- `receive_mapping` (String) default:/${pesit.fileLabel}, Determines the name of the received file. It is either a file name or an expression language pattern. The expression must not contain '*' or '?'.
+- `record_format` (String) enum:/Variable/Fixed, default:Variable, Sets the record format of the transferred file. Can be used only when advancedSettings.enabled is false.
+- `record_length` (Number) max:32767, default:32767, Sets the record length of the transferred file. It must be a positive integer. Can be used only when advancedSettings.enabled is false.
+- `send_mapping` (String) default:/*, Determines the files to send. It is either a file name (for Client Initiated Transfers only), a wildcard pattern or an EL expression.
+- `sending_acknowledgment_enabled` (Boolean) default:false, If set to true, SecureTransport automatically acknowledges the transfer after its processing completes successfully.
+- `transfer_mode` (String) enum:/BINARY/ASCII/EBCDIC/EBCDIC_NATIVE, default:BINARY, The transfer mode used when advancedSettings.enabled is false.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The id of the transfer profile.
 - `last_updated` (String)

@@ -17,37 +17,39 @@ description: |-
 
 ### Required
 
-- `account` (String)
-- `name` (String)
+- `account` (String) The account for which the site is created
+- `name` (String) The type of the site. Acts as a discriminator.
 
 ### Optional
 
-- `access_level` (String) default:PRIVATE
-- `additional_attributes` (Map of String)
+- `access_level` (String) default:PRIVATE, The access level for this site.
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
-- `default` (Boolean) default:false
-- `download_folder` (String) default:''
-- `download_folder_advanced_expression_enabled` (Boolean) default:false
-- `download_pattern` (String) default:*
-- `download_pattern_advanced_expression_enabled` (Boolean) default:false
+- `default` (Boolean) default:false, Defines whether it is a default site. Only site from type PeSIT can be marked as 'Default'
+- `download_folder` (String) default:'', Specify the download folder. When 'download.folder.advanced.expression.enabled' is checked the download folder is evaluated using expression language.
+- `download_folder_advanced_expression_enabled` (Boolean) default:false, When it is 'true' the download folder is evaluated using expression language.
+- `download_pattern` (String) default:*, Specify the download pattern.
+- `download_pattern_advanced_expression_enabled` (Boolean) default:false, When it is 'true' the download pattern is evaluated using expression language.
 - `download_pattern_case_sensitive` (Boolean) default:true
-- `download_pattern_type` (String) default:glob
+- `download_pattern_type` (String) default:glob, Specify the download pattern type. Pattern matching expression supports 'glob' and 'regex' syntaxes.When the pattern type is "File Globbing" then the String representation of the filename is matched using a limited pattern language that resembles regular expressions but with a simpler syntax.
 - `download_subfolder_max_depth` (Number) default:1
-- `download_subfolder_pattern` (String) default:''
+- `download_subfolder_pattern` (String) default:'', Specify the pattern used to match folder names to determine whether to apply the download pattern to the folder.
 - `download_subfolder_pattern_case_sensitive` (Boolean) default:true
-- `download_subfolder_pattern_type` (String) default:glob
-- `max_concurrent_connection` (Number) default:0
-- `protocol` (String) default:folder
-- `transfer_type` (String) default:internal
-- `type` (String) default:folder
-- `upload_folder` (String) default:''
+- `download_subfolder_pattern_type` (String) default:glob, Specify the dowlnload pattern type. Pattern matching expression supports 'glob' and 'regex' syntaxes. When the pattern type is "File Globbing" then the String representation of the filename is matched using a limited pattern language that resembles regular expressions but with a simpler syntax.
+- `max_concurrent_connection` (Number) default:0, The max concurrent connection of the site
+- `protocol` (String) default:folder, Protocol of the site.
+- `transfer_type` (String) default:internal, The transfer type of the site. It can be unspecified (N), internal (I), partner(E)
+- `type` (String) default:folder, Type of the site.
+- `upload_folder` (String) default:'', Specify the upload folder.
 - `upload_folder_autocreate` (Boolean) default:false
 - `upload_folder_expression_support` (Boolean) default:false
 - `upload_folder_overridable` (Boolean) default:false
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The id of the site.
 - `last_updated` (String)
 
 <a id="nestedatt--alternative_addresses"></a>

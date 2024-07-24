@@ -1,0 +1,339 @@
+BandwidthLimits:
+  type: object
+  required:
+    - policy
+    - inboundLimit
+    - outboundLimit
+  properties:
+    policy:
+      type: string
+      enum:
+        - default
+        - custom
+        - disabled
+      description: Bandwidth policy.
+    inboundLimit:
+      type: integer
+      format: int32
+      minimum: 0
+      description: Bandwidth's inbound limit.
+    outboundLimit:
+      type: integer
+      format: int32
+      minimum: 0
+      description: Bandwidth's outbound limit.
+AccountMaintenanceSettings:
+  type: object
+  required:
+    - policy
+  properties:
+    criteria:
+      $ref: '#/Criteria'
+    action:
+      $ref: '#/Action'
+    emailNotificationBeforeAction:
+      $ref: '#/EmailNotificationBeforeAction'
+    emailNotificationForUserPassword:
+      $ref: '#/EmailNotificationForUserPassword'
+    emailNotificationForUserCertificate:
+      $ref: '#/EmailNotificationForUserCertificate'
+    policy:
+      type: string
+      description: This property defines which Account Maintenance settings will
+        be applied for current account.
+      default: default
+      enum:
+        - default
+        - custom
+        - disabled
+Criteria:
+  type: object
+  properties:
+    daysAfterCreation:
+      type: integer
+      format: int32
+      minimum: 1
+      description: The criteria representing the amount of days after account creation or first maintenance job run.
+    daysOfInactivity:
+      type: integer
+      format: int32
+      minimum: 1
+      description: The criteria representing the amount of days of account inactivity.
+BusinessUnitAccountMaintenanceSettings:
+  type: object
+  required:
+    - policy
+  properties:
+    criteria:
+      $ref: '#/BusinessCriteria'
+    action:
+      $ref: '#/Action'
+    emailNotificationBeforeAction:
+      $ref: '#/EmailNotificationBeforeAction'
+    emailNotificationForUserPassword:
+      $ref: '#/EmailNotificationForUserPassword'
+    emailNotificationForUserCertificate:
+      $ref: '#/EmailNotificationForUserCertificate'
+    policy:
+      type: string
+      description: This property defines which Account Maintenance settings will
+        be applied for current account.
+      default: default
+      enum:
+        - default
+        - custom
+        - disabled
+    policyModifyingAllowed:
+      type: boolean
+      description: Whether the account under BU can have custom configuration of account time to live maintenance.
+      default: false
+BusinessCriteria:
+  type: object
+  properties:
+    daysAfterCreation:
+      type: integer
+      format: int32
+      minimum: 1
+      description: The criteria representing the amount of days after account creation or first maintenance job run.
+    daysOfInactivity:
+      type: integer
+      format: int32
+      minimum: 1
+      description: The criteria representing the amount of days of account inactivity.
+    specificDate:
+      type: string
+      pattern: (0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])[- /.](19|20)\d\d
+      description: Specific date.
+Action:
+  type: object
+  properties:
+    action:
+      type: string
+      enum:
+        - DELETE
+        - DISABLE
+        - PURGE
+      description: Applicable for account. The action which should be performed when Account Maintenance criteria is met.
+    daysDeleteDisabled:
+      type: integer
+      format: int32
+      minimum: 1
+      description: Applicable for account. The sub-action criteria representing the amount of days for deletion of accounts disabled by Account Maintenance application only. It is valid if action is set to "DISABLE".
+EmailNotificationBeforeAction:
+  type: object
+  properties:
+    emailTemplate:
+      type: string
+      description: Applicable for account. The email template name which will be used in Account Maintenance report email notifications.
+      default: AccountMaintenanceNotification.xhtml
+      enum:
+        - AccountMaintenanceNotification.xhtml
+        - FileMaintenanceNotification.xhtml
+        - LoginThresholdReport.xhtml
+        - AdhocDefault.xhtml
+        - LoginThresholdNotification.xhtml
+        - RoutingFailedNotification.xhtml
+        - RoutingSucceededNotification.xhtml
+        - RoutingTriggeredNotification.xhtml
+    notifyDays:
+      type: string
+      description: The comma-separated periods for notifications.
+    notifyAccount:
+      type: boolean
+      description: If the account matches a criteria and an action to be performed
+        in X days or sooner, a notification mail should be sent to the email address
+        configured for that user.
+      default: false
+EmailNotificationForUserPassword:
+  type: object
+  properties:
+    emailTemplate:
+      type: string
+      description: Applicable for account. The email template name which will be used in Account Maintenance password email notifications.
+      default: AccountMaintenanceNotification.xhtml
+      enum:
+        - AccountMaintenanceNotification.xhtml
+        - FileMaintenanceNotification.xhtml
+        - LoginThresholdReport.xhtml
+        - AdhocDefault.xhtml
+        - LoginThresholdNotification.xhtml
+        - RoutingFailedNotification.xhtml
+        - RoutingSucceededNotification.xhtml
+        - RoutingTriggeredNotification.xhtml
+    notifyDays:
+      type: string
+      description: The comma-separated periods for account password expiration notifications.
+    notifyAccount:
+      type: boolean
+      description: If the account matches a criteria and an action to be performed
+        in X days or sooner, a notification mail should be sent to the email address
+        configured for that user.
+      default: false
+EmailNotificationForUserCertificate:
+  type: object
+  properties:
+    emailTemplate:
+      type: string
+      description: Applicable for account. The email template name which will be used in Account Maintenance certificate email notifications.
+      default: AccountMaintenanceNotification.xhtml
+      enum:
+        - AccountMaintenanceNotification.xhtml
+        - FileMaintenanceNotification.xhtml
+        - LoginThresholdReport.xhtml
+        - AdhocDefault.xhtml
+        - LoginThresholdNotification.xhtml
+        - RoutingFailedNotification.xhtml
+        - RoutingSucceededNotification.xhtml
+        - RoutingTriggeredNotification.xhtml
+    notifyDays:
+      type: string
+      description: The comma-separated periods for account certificates expiration notifications.
+    notifyAccount:
+      type: boolean
+      description: If the account matches a criteria and an action to be performed
+        in X days or sooner, a notification mail should be sent to the email address
+        configured for that user.
+      default: false
+AddressBookSettings:
+  type: object
+  required:
+    - policy
+  properties:
+    policy:
+      type: string
+      enum:
+        - default
+        - custom
+        - disabled
+      description: AddressBook policy.
+    nonAddressBookCollaborationAllowed:
+      type: boolean
+      description: Allow address book collaboration.
+      default: false
+    sources:
+      type: array
+      items:
+        $ref: '#/AddressBookSource'
+AddressBookSource:
+  required:
+    - enabled
+    - id
+    - name
+    - parentGroup
+    - type
+  type: object
+  properties:
+    id:
+      type: string
+    name:
+      type: string
+    type:
+      type: string
+      enum:
+        - LOCAL
+        - LDAP
+        - CUSTOM
+    parentGroup:
+      type: string
+    enabled:
+      type: boolean
+      default: false
+    customProperties:
+      type: object
+      additionalProperties:
+        type: string
+  description: Address book source object.
+GlobalAddressBookSourceResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/AddressBookSource'
+FileMaintenanceSettings:
+  type: object
+  required:
+    - policy
+  properties:
+    policy:
+      type: string
+      enum:
+        - default
+        - custom
+        - disabled
+      description: This property defines which File Maintenance settings will be applied for current account or business unit.
+    deleteFilesDays:
+      type: integer
+      format: int32
+      description: This property represents file retention period for account or business unit. All files older
+        than the property value will be deleted.
+    pattern:
+      type: string
+      description: This property represents file name pattern for account or business unit. All file names match of the property value will be regarded by the application.
+    expirationPeriod:
+      type: boolean
+      description: |
+        If this property is set to true, the deletion of files based on file expiration period will be enabled. The file expiration period will be set as flow file attribute EXPIRE.ON.
+      default: false
+    removeFolders:
+      type: boolean
+      description: If this property is set to true, the deletion of folders remain
+        empty after File Maintence will be enabled.
+      default: false
+    warningNotifications:
+      type: boolean
+      description: If this property is set to true, the warning notifications
+        feature will be enabled.
+      default: false
+    sendSentinelAlert:
+      type: boolean
+      description: If this property is set to true, the warning TO_BE_DELETED
+        state will be reported to Sentinel server.
+      default: false
+    warnNotifyAccount:
+      type: boolean
+      description: If this property is set to true, the warning notifications
+        will be sent to account email.
+      default: false
+    warningNotificationsTemplate:
+      type: string
+      description: The email template name which will be used in File Maintenance
+        warning email notifications for account.
+      default: FileMaintenanceNotification.xhtml
+      enum:
+        - FileMaintenanceNotification.xhtml
+        - AccountMaintenanceNotification.xhtml
+        - LoginThresholdReport.xhtml
+        - AdhocDefault.xhtml
+        - LoginThresholdNotification.xhtml
+        - RoutingFailedNotification.xhtml
+        - RoutingSucceededNotification.xhtml
+        - RoutingTriggeredNotification.xhtml
+    notifyDays:
+      type: string
+      description: This property represents warning notifications period when
+        emails will be sent to the recipients.
+    deletionNotifications:
+      type: boolean
+      description: If this property is set to true, the deletion notifications feature will be enabled for the account.
+      default: false
+    deletionNotifyAccount:
+      type: boolean
+      description: If this property is set to true, the deletion notifications will be sent to account email.
+      default: false
+    deletionNotificationsTemplate:
+      type: string
+      description: The email template name which will be used in File Maintenance
+        report email notifications for account or business unit.
+      default: FileMaintenanceNotification.xhtml
+      enum:
+        - FileMaintenanceNotification.xhtml
+        - AccountMaintenanceNotification.xhtml
+        - LoginThresholdReport.xhtml
+        - AdhocDefault.xhtml
+        - LoginThresholdNotification.xhtml
+        - RoutingFailedNotification.xhtml
+        - RoutingSucceededNotification.xhtml
+        - RoutingTriggeredNotification.xhtml

@@ -43,7 +43,7 @@ var supportedAttributes = []string{
 
 	"emptyIsNull",
 	"testazerty", "testazerty:",
-	"enum:",
+	"enum", "enum:",
 	"max", "max:",
 	"min", "min:",
 	"length", "length:",

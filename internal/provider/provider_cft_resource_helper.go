@@ -53,7 +53,7 @@ func (r *cftResource) Metadata(_ context.Context, req resource.MetadataRequest, 
 
 // Schema defines the schema for the resource.
 func (r *cftResource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = tfhelper.ModelToSchema(ctx, r.name, r.obj)
+	resp.Schema = tfhelper.ModelToSchema(ctx, r.name, r.uriReplace, r.obj)
 }
 
 func (r *cftResource) resolveURI(uri, name string) string {

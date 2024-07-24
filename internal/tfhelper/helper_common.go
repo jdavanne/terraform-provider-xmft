@@ -1,6 +1,7 @@
 package tfhelper
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"strings"
@@ -145,7 +146,7 @@ func structToObjectValue(modelName string, model interface{}) (types.Object, map
 	return obj, typs
 }
 
-func flagsDescription(flags string, def string) string {
+func flagsDescription(ctx context.Context, flags string, def string, apiPath string) string {
 	k := []string{"enum", "min", "max", "default", "regex", "length"}
 	var description []string
 	for _, v := range k {
@@ -161,6 +162,20 @@ func flagsDescription(flags string, def string) string {
 		}
 	}
 
+	if ctx != nil {
+		m := ctx.Value("fieldDescription")
+		if m != nil {
+			if v, ok := m.(map[string]string); ok {
+				if v2, ok := v[apiPath]; ok {
+					if v2 != "" {
+						description = append(description, v2)
+					}
+				} else {
+					// description = append(description, apiPath)
+				}
+			}
+		}
+	}
 	desc, _ := FlagsGet(flags, "desc")
 	if desc == "" {
 		return strings.Join(description, ", ")

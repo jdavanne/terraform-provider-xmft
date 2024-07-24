@@ -17,19 +17,19 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) User class name.
 
 ### Optional
 
-- `address` (String) default:*
-- `enabled` (Boolean) default:true
-- `expression` (String) default:''
-- `group` (String) default:*
-- `order` (Number) default:1
-- `user_name` (String) default:*
-- `user_type` (String) enum:/*/real/virtual, default:*
+- `address` (String) default:*, User class host.
+- `enabled` (Boolean) default:true, Is user class currently enabled.
+- `expression` (String) default:'', User class expression.
+- `group` (String) default:*, Group of user class
+- `order` (Number) default:1, The order in which user class is saved in database
+- `user_name` (String) default:*, User class username.
+- `user_type` (String) enum:/*/real/virtual, default:*, User class type.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The id of the user class.
 - `last_updated` (String)

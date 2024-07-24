@@ -1,0 +1,693 @@
+MultiPartFlow:
+  type: object
+  properties:
+    transferProfileBody:
+      $ref: '#/TransferProfile'
+    callerTranscodingTable:
+      type: string
+      format: binary
+    receiverTranscodingTable:
+      type: string
+      format: binary
+TransferProfileOld:
+  required:
+    - account
+    - name
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the transfer profile.
+    name:
+      type: string
+      description: The name of the transfer profile.
+    account:
+      type: string
+      description: The account for which the transfer profile is created.
+    default:
+      type: boolean
+      description: Defines whether this transfer profile is default or not.
+      default: false
+    sendMapping:
+      maxLength: 250
+      type: string
+      description: Determines the files to send. It is either a file name (for Client Initiated Transfers only), a wildcard pattern or an EL expression.
+    receiveMapping:
+      maxLength: 250
+      pattern: ^([^\*\?])$
+      type: string
+      description: Determines the name of the received file. It is either a file name or an expression language pattern. The expression must not contain '*' or '?'.
+      default: string
+    fileLabelOption:
+      type: string
+      description: Determines whether the file name and the path, relative to the account's home folder, are sent. Corresponds to PI 37.
+      enum:
+        - DONT_SEND
+        - SEND_FILENAME
+        - SEND_FILENAME_AND_PATH
+    multiSelect:
+      type: boolean
+      description: Determines the files to retrieve - all files that match the specified pattern (true) or just the first one (false).
+      default: false
+    transferMode:
+      type: string
+      description: The transfer mode used when advancedSettings.enabled is false.
+      enum:
+        - BINARY
+        - ASCII
+        - EBCDIC
+        - EBCDIC_NATIVE
+    recordFormat:
+      type: string
+      description: Sets the record format of the transferred file. Can be used only when advancedSettings.enabled is false.
+      default: "Variable"
+      enum:
+        - Variable
+        - Fixed
+    recordLength:
+      maximum: 32767
+      minimum: 1
+      type: integer
+      description: Sets the record length of the transferred file. It must be a positive integer. Can be used only when advancedSettings.enabled is false.
+      format: int32
+      default: 2048
+    sendingAcknowledgmentEnabled:
+      type: boolean
+      description: If set to true, SecureTransport automatically acknowledges the transfer after its processing completes successfully.
+      default: false
+    paddingStripEnabled:
+      type: boolean
+      description: Enables/disables padding character removal. Can be used only when advancedSettings.enabled is false.
+      default: false
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+TransferProfile:
+  allOf:
+    - $ref: 'transferProfile.yaml#/TransferProfileOld'
+    - type: object
+      properties:
+        advancedSettings:
+          $ref: 'transferProfile.yaml#/AdvancedSettings'
+TransferProfileWithAsciiAndEbcdic:
+  allOf:
+    - $ref: 'transferProfile.yaml#/TransferProfileOld'
+    - type: object
+      properties:
+        advancedSettings:
+          $ref: 'transferProfile.yaml#/AdvancedSettingsAsciiAndEbcdic'
+TransferProfileWithEbcdicPredefinedAndPredefined:
+  allOf:
+    - $ref: 'transferProfile.yaml#/TransferProfileOld'
+    - type: object
+      properties:
+        advancedSettings:
+          $ref: 'transferProfile.yaml#/AdvancedSettingsEbcdicPredefinedAndPredefined'
+TransferProfileResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/TransferProfileOld'
+          - $ref: '#/TransferProfile'
+          - $ref: '#/TransferProfileWithAsciiAndEbcdic'
+          - $ref: '#/TransferProfileWithEbcdicPredefinedAndPredefined'
+AdvancedSettings:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      description: Determines whether advancedSettings are enabled.
+      default: false
+    callerTranscoding:
+      $ref: 'transferProfile.yaml#/CallerTranscoding'
+    receiverTranscoding:
+      $ref: 'transferProfile.yaml#/ReceiverTranscoding'
+AdvancedSettingsAsciiAndEbcdic:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      description: Determines whether advancedSettings are enabled.
+      default: true
+    callerTranscoding:
+      $ref: 'transferProfile.yaml#/CallerAsciiNonePesitTranscoding'
+    receiverTranscoding:
+      $ref: 'transferProfile.yaml#/ReceiverEbcdicPesitTranscoding'
+AdvancedSettingsEbcdicPredefinedAndPredefined:
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      description: Determines whether advancedSettings are enabled.
+      default: true
+    callerTranscoding:
+      $ref: 'transferProfile.yaml#/CallerEbcdicPredefinedPesitTranscoding'
+    receiverTranscoding:
+      $ref: 'transferProfile.yaml#/ReceiverPredefinedPesitTranscoding'
+CallerTranscoding:
+  type: object
+  oneOf:
+    - $ref: 'transferProfile.yaml#/CallerBinaryPesitTranscoding'
+    - $ref: 'transferProfile.yaml#/CallerAsciiNonePesitTranscoding'
+    - $ref: 'transferProfile.yaml#/CallerAsciiPredefinedPesitTranscoding'
+#    - $ref: 'transferProfile.yaml#/CallerAsciiCustomTablePesitTranscoding'
+    - $ref: 'transferProfile.yaml#/CallerEbcdicNonePesitTranscoding'
+    - $ref: 'transferProfile.yaml#/CallerEbcdicPredefinedPesitTranscoding'
+#    - $ref: 'transferProfile.yaml#/CallerEbcdicCustomTablePesitTranscoding'
+  discriminator:
+    propertyName: type
+    mapping:
+      binary: 'transferProfile.yaml#/CallerBinaryPesitTranscoding'
+      ascii: 'transferProfile.yaml#/CallerAsciiNonePesitTranscoding'
+      ascii_predefined: 'transferProfile.yaml#/CallerAsciiPredefinedPesitTranscoding'
+#      ascii_custom_table: 'transferProfile.yaml#/CallerAsciiCustomTablePesitTranscoding'
+      ebcdic: 'transferProfile.yaml#/CallerEbcdicNonePesitTranscoding'
+      ebcdic_predefined: 'transferProfile.yaml#/CallerEbcdicPredefinedPesitTranscoding'
+#      ebcdic_custom_table: 'transferProfile.yaml#/CallerEbcdicCustomTablePesitTranscoding'
+ReceiverTranscoding:
+  type: object
+  oneOf:
+    - $ref: 'transferProfile.yaml#/ReceiverBinaryPesitTranscoding'
+    - $ref: 'transferProfile.yaml#/ReceiverAsciiPesitTranscoding'
+    - $ref: 'transferProfile.yaml#/ReceiverEbcdicPesitTranscoding'
+    - $ref: 'transferProfile.yaml#/ReceiverPredefinedPesitTranscoding'
+#    - $ref: 'transferProfile.yaml#/ReceiverEbcdicCustomTablePesitTranscoding'
+  discriminator:
+    propertyName: type
+    mapping:
+      binary: 'transferProfile.yaml#/ReceiverBinaryPesitTranscoding'
+      ascii: 'transferProfile.yaml#/ReceiverAsciiPesitTranscoding'
+      ebcdic: 'transferProfile.yaml#/ReceiverEbcdicPesitTranscoding'
+      predefined: 'transferProfile.yaml#/ReceiverPredefinedPesitTranscoding'
+#      ebcdic_custom_table: 'transferProfile.yaml#/ReceiverEbcdicCustomTablePesitTranscoding'
+BaseCallerPesitTranscoding:
+    properties:
+      type:
+        type: string
+        description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+        enum:
+        - binary
+        - ascii
+        - ascii_predefined
+        - ascii_custom_table
+        - ebcdic
+        - ebcdic_predefined
+        - ebcdic_custom_table
+CallerBinaryPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: binary
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: BINARY
+        networkDataCode:
+          type: string
+          description: Read-only field populated based on "type". Defines the value of PI 16 - the data coding of the network file.
+          default: BINARY
+        outputRecordFormat:
+          type: string
+          description: Read-only field populated based on "type". The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: Read-only field populated based on "type". The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+CallerAsciiNonePesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: ascii
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: ASCII
+        networkDataCode:
+          type: string
+          description: Read-only field populated based on "type". Defines the value of PI 16 - the data coding of the network file.
+          default: ASCII
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+CallerAsciiPredefinedPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: ascii_predefined
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: ASCII
+        transcoding:
+          type: string
+          description: Read-only field displayed only when predefined "type" is used.
+          default: PREDEFINED
+        networkDataCode:
+          type: string
+          description: Defines the value of PI 16 - the data coding of the network file.
+          enum:
+            - ASCII
+            - EBCDIC
+        sourceEncodingScheme:
+          type: string
+          default: "UTF-8"
+          description:  The encoding scheme of the source file. Can be one of the system supported charsets.
+        outputEncodingScheme:
+          type: string
+          default: "UTF-8"
+          description: The encoding scheme of the output file. Can be one of the system supported charsets.
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+CallerAsciiCustomTablePesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: ascii_custom_table
+        transcoding:
+          type: string
+          description: Read-only field displayed only when predefined "type" is used.
+          default: CUSTOM_TABLE
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: ASCII
+        networkDataCode:
+          type: string
+          description: Defines the value of PI 16 - the data coding of the network file.
+          default: ASCII
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+        translationTable:
+          type: string
+          format: binary
+          description: The custom transcoding table, specified in the sending section of the transfer profile.
+        translationCustomTableFileName:
+          type: string
+          description: The Transcoding Custom Table File name, specified in the sending section of the transfer profile
+CallerEbcdicNonePesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: ebcdic
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: EBCDIC
+        networkDataCode:
+          type: string
+          description: Read-only field populated based on "type". Defines the value of PI 16 - the data coding of the network file.
+          default: EBCDIC
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+CallerEbcdicPredefinedPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: ebcdic_predefined
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: EBCDIC
+        transcoding:
+          type: string
+          description: Read-only field displayed only when predefined "type" is used.
+          default: PREDEFINED
+        networkDataCode:
+          type: string
+          description: Defines the value of PI 16 - the data coding of the network file.
+          enum:
+            - EBCDIC
+            - ASCII
+        sourceEncodingScheme:
+          type: string
+          default: "IBM1047"
+          description:  The encoding scheme of the source file. Can be one of the system supported charsets.
+        outputEncodingScheme:
+          type: string
+          default: "IBM1047"
+          description: The encoding scheme of the output file. Can be one of the system supported charsets.
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+CallerEbcdicCustomTablePesitTranscoding:
+  allOf:
+    - $ref: '#/BaseCallerPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+          default: ebcdic_predefined
+        transcoding:
+          type: string
+          description: Read-only field displayed only when predefined "type" is used.
+          default: CUSTOM_TABLE
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: EBCDIC
+        networkDataCode:
+          type: string
+          description: Defines the value of PI 16 - the data coding of the network file.
+          enum:
+            - EBCDIC
+            - ASCII
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile. Corresponds to PI 31 code.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the sending side of the transfer profile. It should be positive
+            number. Corresponds to PI 32 code.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+        translationTable:
+          type: string
+          format: binary
+          description: The custom transcoding table, specified in the sending section of the transfer profile.
+        translationCustomTableFileName:
+          type: string
+          description: The Transcoding Custom Table File name, specified in the sending section of the transfer profile.
+BaseReceiverPesitTranscoding:
+    type: object
+    properties:
+      type:
+        type: string
+        description: Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+        enum:
+          - binary
+          - ascii
+          - ebcdic
+          - predefined
+          - custom_tablee
+ReceiverBinaryPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseReceiverPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+          default: binary
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: BINARY
+ReceiverAsciiPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseReceiverPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+          default: ascii
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: ASCII
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the receiving side of the transfer profile. It should be positive
+            number.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+        lineEndingFormat:
+          type: string
+          description: Line ending of the receiving side of the transfer profile.
+          default: "DEFAULT"
+          enum:
+              - DEFAULT
+              - WINDOWS
+              - UNIX
+ReceiverEbcdicPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseReceiverPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+          default: ebcdic
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: EBCDIC
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the receiving side of the transfer profile. It should be positive
+            number.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+        lineEndingFormat:
+          type: string
+          description: Line ending of the receiving side of the transfer profile.
+          default: "DEFAULT"
+          enum:
+            - DEFAULT
+            - WINDOWS
+            - UNIX
+ReceiverPredefinedPesitTranscoding:
+  allOf:
+    - $ref: '#/BaseReceiverPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+          default: predefined
+        transcoding:
+          type: string
+          description: Read-only field displayed only when predefined "type" is used.
+          default: PREDEFINED
+        sourceEncodingScheme:
+          type: string
+          default: "UTF-8"
+          description:  The encoding scheme of the source file. Can be one of the system supported charsets.
+        outputEncodingScheme:
+          type: string
+          default: "UTF-8"
+          description: The encoding scheme of the output file. Can be one of the system supported charsets.
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the receiving side of the transfer profile. It should be positive
+            number.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+        lineEndingFormat:
+          type: string
+          description: Line ending of the receiving side of the transfer profile.
+          default: "DEFAULT"
+          enum:
+            - DEFAULT
+            - WINDOWS
+            - UNIX
+ReceiverCustomTablePesitTranscoding:
+  allOf:
+    - $ref: '#/BaseReceiverPesitTranscoding'
+    - type: object
+      properties:
+        type:
+          type: string
+          description: Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+          default: custom_table
+        transcoding:
+          type: string
+          description: Read-only field displayed only when predefined "type" is used.
+          default: CUSTOM_TABLE
+        localDataCode:
+          type: string
+          description: Read-only field populated based on "type". The data coding of the file on the local file system.
+          default: ASCII
+        outputRecordFormat:
+          type: string
+          description: The record format of the transfer profile.
+          default: "VARIABLE"
+          enum:
+            - VARIABLE
+            - FIXED
+        outputRecordLength:
+          maximum: 32767
+          minimum: 1
+          type: integer
+          description: The record length of the receiving side of the transfer profile. It should be positive
+            number.
+          format: int32
+          default: 2048
+        paddingCharacter:
+          type: string
+          description: The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+        translationTable:
+          type: string
+          format: binary
+          description: The custom transcoding table, specified in the sending section of the transfer profile.
+        translationCustomTableFileName:
+          type: string
+          description: The Transcoding Custom Table File name, specified in the sending section of the transfer profile

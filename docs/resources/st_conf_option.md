@@ -17,9 +17,16 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) The name of the configuration option entity.
 - `value` (String)
 
 ### Read-Only
 
+- `composite` (Boolean) Define if the configuration option is composite.
+- `description` (String) The description of the configuration option entity.
+- `disabled` (Boolean) Define if the configuration option is disabled.
+- `encrypted` (Boolean) Define if the configuration option value is encrypted.
+- `is_local` (Boolean) Define if the configuration option value is local.
 - `last_updated` (String)
+- `read_only` (Boolean) Define if the configuration option value can be modified.
+- `specified` (Boolean) Define if the configuration option value is specified.

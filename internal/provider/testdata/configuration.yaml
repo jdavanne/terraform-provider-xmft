@@ -1,0 +1,472 @@
+ConfigurationOption:
+  required:
+    - disabled
+    - encrypted
+    - name
+    - readOnly
+    - composite
+    - specified
+  type: object
+  properties:
+    name:
+      type: string
+      description: The name of the configuration option entity.
+    values:
+      type: array
+      description: The configuration option values.
+      items:
+        type: string
+    description:
+      type: string
+      description: The description of the configuration option entity.
+    isLocal:
+      type: boolean
+      description: Define if the configuration option value is local.
+      default: false
+    encrypted:
+      type: boolean
+      description: Define if the configuration option value is encrypted.
+      default: false
+    readOnly:
+      type: boolean
+      description: Define if the configuration option value can be modified.
+      default: false
+    composite:
+      type: boolean
+      description: Define if the configuration option is composite.
+      default: false
+    specified:
+      type: boolean
+      description: Define if the configuration option value is specified.
+      default: false
+    disabled:
+      type: boolean
+      description: Define if the configuration option is disabled.
+      default: false
+DatabaseSettings:
+  type: object
+  properties:
+    componentType:
+      type: string
+      description: Component type.
+    databaseType:
+      type: string
+      description: Database type.
+    username:
+      type: string
+      description: Database Username.
+    host:
+      type: string
+      description: Database Host.
+    port:
+      type: string
+      description: Database Port.
+    databaseName:
+      type: string
+      description: Database Name.
+    useCustomJdbcUrl:
+      type: boolean
+      description: Use Custom JDBC Url flag.
+    jdbcUrlTemplate:
+      type: string
+      description: Custom JDBC Url Template.
+    secureConnectionEnabled:
+      type: boolean
+      description: Enctypt Connection flag.
+    serverCertificateDn:
+      type: string
+      description: Server Certificate Dn to be used for connection ecnryption.
+    enabledProtocols:
+      type: string
+      description: Comma-separated list of enabled Protocols. E.g. TLSv1.2.
+    enabledCipherSuites:
+      type: string
+      description: Comma-separated list of Enabled Cipher Suites.
+    databaseRunning:
+      type: boolean
+      description: Is Database Running status.
+    kerberosMode:
+      type: boolean
+      description: Using Oracle Kerberos Authentication.
+    useKerberosFile:
+      type: boolean
+      description: Using Kerberos configuration file when in Kerberos mode.
+    krbConfigurationFile:
+      type: string
+      description: The absolute path to the Kerberos configuration file.
+    krbCacheFilePath:
+      type: string
+      description: The path to the Kerberos credential cache.
+    useProxy:
+      type: boolean
+      description: Using Oracle Proxy Authentication.
+    proxyUser:
+      type: string
+      description: The username of the proxied user.
+Sentinel:
+  required:
+    - eventStates
+    - host
+    - overflowFilePath
+    - overflowFileSize
+    - overflowFileThreshold
+    - port
+  type: object
+  properties:
+    enabled:
+      type: boolean
+      description: Whether the reporting to Axway Sentinel is enabled.
+      default: false
+    host:
+      type: string
+      description: The IP address of the remote Axway Sentinel host.
+    port:
+      maximum: 65535
+      minimum: 1
+      type: integer
+      format: int32
+      description: Port of the remote Axway Sentinel host.
+    useSecureConnection:
+      type: boolean
+      description: Whether SecureTransport server should send messages to the
+        Sentinel server over a secure channel.
+      default: false
+    shouldVerifyCert:
+      type: boolean
+      description: Whether the SecureTransport server to check the validity, trust
+        status and hostname of the certificate presented by Axway Sentinel server
+        upon establishing connection. If it is “false”, connections could be established
+        even if the certificate is expired or the certificate attributes are not
+        correct.
+      default: false
+    fipsEnabled:
+      type: boolean
+      description: Enables the communication between SecureTransport and Axway
+        Sentinel in a mode that is fully compliant with FIPS 140-2. This setting
+        overrides the AxwaySentinel.SecureConnection.Protocol and AxwaySentinel.SecureConnection.EnabledCipherSuites.
+      default: false
+    heartbeatEnabled:
+      type: boolean
+      description: If true the SecureTransport server sends a message to the Axway
+        Sentinel server to tell it that SecureTransport is alive and connected.
+      default: false
+    heartbeatDelay:
+      minimum: 1
+      type: integer
+      format: int32
+      default: 10
+      description: Time between the heartbeat messages.
+    heartbeatTimeUnit:
+      type: string
+      description: Time unit for the time between the heartbeat messages.
+      default: seconds
+      enum:
+        - seconds
+        - minutes
+        - hours
+    eventStates:
+      type: object
+      properties: {}
+      description: Whether SecureTransport should enable the reporting of the
+        specified events. The events are specified as properties of the eventStates
+        object, whereas the value of the properties is one of the following strings
+        - <true|false|required>. Available states - ACKED, AVAILABLE(ST_VAS),
+        AVAILABLE(XFBTransfer), CANCELED, DECRYPTED, DECRYPTING, DELETED, ENCRYPTED,
+        ENCRYPTING, ENDED_TO_ACK, ERROR, FAILED, FORWARDED, FORWARDING, INTERRUPTED,
+        POST_PROC/ARCHIVED, POST_PROC/ICAP_DENIED, POST_PROC/ICAP_SCANNED, POST_PROC/ICAP_SCANNING,
+        POST_PROC/ROUTED, POST_PROC/ROUTING, PRESERVED, RECEIVED, RECEIVING, RENAMED,
+        ROUTED, SENDING, SENT, SUBMITTED, TO_EXECUTE, TO_BE_DELETED, WAITING.
+    mappingRules:
+      type: object
+      properties: {}
+      description: The Axway Sentinel attributes where SecureTransport reports
+        related values.
+    overflowFilePath:
+      type: string
+      description: File path to the file where SecureTransport writes events in
+        case it cannot connect to Axway Sentinel.
+    overflowFileSize:
+      minimum: 1
+      type: integer
+      format: int64
+      description: Maximum size of overflow file in MB.
+    overflowFilePolicy:
+      type: string
+      description: Possible values (ignore - Stops Collecting New Events | stop
+        - Pauses All File Transfers Sent From and Received by SecureTransport).
+        The default value is ignore.
+      default: ignore
+      enum:
+        - ignore
+        - stop
+    overflowFileThreshold:
+      maximum: 94
+      minimum: 1
+      type: integer
+      format: int32
+      description: Represents the percent of file size at which warnings are sent.
+    shouldPersistLinkData:
+      type: boolean
+      description: If true SecureTransport server will maintain link data when
+        reporting is disabled.
+      default: false
+LoginSettings:
+  type: object
+  properties:
+    certificateIssuer:
+      type: string
+      description: Certificate issuer type. Acts as a discriminator.
+      enum:
+        - internal
+        - trusted
+        - selected
+        - other
+    userSSO:
+      type: string
+      description: Whether sso is required for user.
+      default: disabled
+      enum:
+        - disabled
+        - required
+    requirePassword:
+      type: string
+      description: Whether password is required. If set to "requiredForUserClasses" and  requirePasswordUserClasses is
+         not specified, the value will fall back to the default.
+      default: optional
+      enum:
+        - optional
+        - required
+        - requiredForUserClasses
+    requireCertificateForUserClasses:
+      type: string
+      description: Whether certificate is required for user classes.
+      default: disabled
+      enum:
+        - disabled
+        - enabled
+    requirePasswordUserClasses:
+      type: string
+      description: User classes for which password is required.
+      default: empty
+    ldapOption:
+      type: string
+      description: Ldap option value.
+      default: disabled
+      enum:
+        - disabled
+        - optional
+        - required
+    siteMinderOption:
+      type: string
+      description: SiteMinder option value.
+      default: disabled
+      enum:
+        - disabled
+        - optional
+    adminSSO:
+      type: string
+      description: Whether sso is required for admin.
+      default: disabled
+      enum:
+        - disabled
+        - required
+    adminCertificateOption:
+      type: string
+      description: Administrator certificate option.
+      enum:
+        - optional
+        - required
+        - none
+    adminSelectedCertificates:
+      type: array
+      description: List with IDs of the selected issuers.
+      items:
+        type: string
+    userAuthStatus:
+      type: array
+      description: Pluggable authentication status. This is a read only property.
+      items:
+        type: string
+    adminAuthStatus:
+      type: array
+      description: Pluggable authentication status. This is a read only property.
+      items:
+        type: string
+  discriminator:
+    propertyName: certificateIssuer
+InternalLoginSettings:
+  allOf:
+    - $ref: '#/LoginSettings'
+    - type: object
+      properties:
+        certificateIssuer:
+          type: string
+          default: internal
+TrustedLoginSettings:
+  allOf:
+    - $ref: '#/LoginSettings'
+    - type: object
+      properties:
+        certificateIssuer:
+          type: string
+          default: trusted
+SelectedLoginSettings:
+  allOf:
+    - $ref: '#/LoginSettings'
+    - type: object
+      properties:
+        certificateIssuer:
+          type: string
+          default: selected
+OtherLoginSettings:
+  allOf:
+    - $ref: '#/LoginSettings'
+    - type: object
+      properties:
+        certificateIssuer:
+          type: string
+          default: other
+        adminCertificateFileOrPath:
+          type: string
+          description: Administrator certificate file or path.
+        adminCertificateDepthLimit:
+          type: integer
+          format: int32
+          minimum: 0
+          description: Administrator certificate depth limit.
+AllowedSTServers:
+  type: array
+  items:
+    type: string
+    description: Allowed st servers.
+AllowedSTServersResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        $ref: '#/AllowedSTServers'
+AdminUIConfig:
+  required:
+    - adminUiConfig
+    - adminUiConfigLocal
+  type: object
+  properties:
+    adminUiConfig:
+      type: string
+      description: A stringified JSON containing the Admin UI settings.
+    adminUiConfigLocal:
+      type: string
+      description: A stringified JSON containing the Admin UI settings.
+KeystorePassword:
+  required:
+    - oldPassword
+    - newPassword
+    - confirmPassword
+  type: object
+  properties:
+    oldPassword:
+      type: string
+    newPassword:
+      type: string
+    confirmPassword:
+      type: string
+FileArchiving:
+  required:
+    - archiveFolder
+    - deleteFilesOlderThan
+    - deleteFilesOlderThanUnit
+  type: object
+  properties:
+    isEnabled:
+      type: boolean
+      default: false
+      description: Whether file archiving is enabled.
+    globalArchivingPolicy:
+      type: string
+      default: disabled
+      enum:
+        - disabled
+        - enabled
+      description: Global archiving policy.
+    archiveFolder:
+      type: string
+      description: Archive folder.
+    encryptionCertificate:
+      type: string
+      default: empty
+      description: Encryption certificate.
+    deleteFilesOlderThan:
+      type: integer
+      format: int32
+      minimum: 1
+      description: Delete files older than x days.
+    deleteFilesOlderThanUnit:
+      type: string
+      enum:
+        - days
+        - hours
+      description: Retention period unit.
+    maximumFileSizeAllowedToArchive:
+      type: integer
+      default: 0
+      format: int64
+      description: Maximum allowed file size to archive.
+ClusterNode:
+  type: object
+  properties:
+    status:
+      type: string
+    serverAddress:
+      type: string
+    lastSynchronized:
+      type: string
+    lastReportedAlive:
+      type: string
+    configurationId:
+      type: string
+    descriptor:
+      type: string
+    localNode:
+      type: string
+    mode:
+      type: string
+    stVersion:
+      $ref: 'version.yaml#/VersionInformation'
+ClusterInformation:
+  type: object
+  properties:
+    isCluster:
+      type: boolean
+      description: |
+        Define whether this a cluster environment i.e. at least one inserted node (true if in cluster environment, otherwise false).
+      default: false
+    clusterMode:
+      type: string
+      description: The cluster mode.
+    clusterNodes:
+      type: array
+      description: List of current cluster nodes.
+      items:
+        $ref: '#/ClusterNode'
+NodeThreshold:
+  type: object
+  properties:
+    numberOfNodes:
+      type: integer
+      format: int32
+      minimum: 1
+    sendNotification:
+      type: boolean
+    subject:
+      type: string
+    notification:
+      type: string
+DatabaseConfigurationFailure:
+  type: object
+  properties:
+    message:
+      type: string
+      description: Database Configuration failure message.

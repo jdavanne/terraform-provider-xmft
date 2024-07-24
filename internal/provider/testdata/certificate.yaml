@@ -1,0 +1,260 @@
+Certificate:
+  required:
+    - caPassword
+    - keySize
+    - subject
+    - type
+    - usage
+    - validityPeriod
+  type: object
+  properties:
+    id:
+      type: string
+      description: The ID of the certificate entity.
+    name:
+      maxLength: 80
+      type: string
+      description: The name of the certificate.
+    subject:
+      type: string
+      description: |
+        The the certificate subject DN (distinguished name) in RFC2253 format. Example: 'CN=test,OU=Axway_TT,O=Axway,L=Sofia,ST=Sofia,C=Bulgaria'.
+    type:
+      type: string
+      description: The type of the certificate entity as string.
+      enum:
+        - x509
+        - pgp
+        - ssh
+    usage:
+      type: string
+      description: The usage of the certificate entity as string.
+      enum:
+        - login
+        - trusted
+        - partner
+        - local
+        - private
+    expirationTime:
+      type: string
+      description: |
+        The certificate expiration time in Unix Timestamp format. This is a read only property and it is automatically calculated depending on the 'validityPeriod' property
+    creationTime:
+      type: integer
+      description: The creation time of the certificate entity in Unix Timestamp format.
+      format: int64
+    signAlgorithm:
+      type: string
+      description: The certificate signature algorithm as string
+      default: SHA256withRSA
+      enum:
+        - SHA1withRSA
+        - SHA256withRSA
+        - SHA384withRSA
+        - SHA512withRSA
+    keySize:
+      type: integer
+      description: |
+        The size of the key. Valid values are: 1024, 2048, 3072, 4096. For PGP keys the value applies to the master key.
+      format: int32
+      default: 2048
+    keyAlgorithm:
+      type: string
+      description: |
+        The name of the algorithm for generated key. Only for certificate entities of type 'pgp' this property can be set (for certificate entities of type 'x509' this property is automatically being set to 'RSA' when generate a 'x509' certificate.
+    issuer:
+      type: string
+      description: The issuer of the certificate. This is a auto generating read only property.
+    serialNumber:
+      type: string
+      description: The serial number. This is a auto generating read only property.
+    validityPeriod:
+      maximum: 1E+5
+      minimum: 1
+      type: integer
+      description: The certificate validity in days.
+      format: int32
+    fingerprint:
+      type: string
+      description: The certificate fingerprint. This is a auto generating read only property.
+    account:
+      type: string
+      description: The account, the certificate owner.
+    accessLevel:
+      type: string
+      description: The access level to this certificate for other accounts.
+      enum:
+        - PRIVATE
+        - PUBLIC
+        - BUSINESS_UNIT
+    overwrite:
+      type: boolean
+      description: Define whether to overwrite the certificate if a certificate with the same name, type and usage already exists.
+      default: false
+    caPassword:
+      type: string
+      description: The password of the CA for the certificate generation.
+    exportPrivateKey:
+      type: boolean
+      description: Define whether to export the private key or not.
+      default: false
+    exportSSHPublicKey:
+      type: boolean
+      description: Define whether to export the SSH public key or not.
+      default: false
+    password:
+      type: string
+      description: The private key password.
+    validationStatus:
+      type: string
+      description: The certificate validation status.
+    version:
+      type: integer
+      description: The certificate version.
+      format: int32
+    additionalAttributes:
+      type: object
+      description: |
+        Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+        and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+        a reserved word. Both key and value cannot be blank.
+      additionalProperties:
+        minLength: 1
+        maxLength: 4000
+        type: string
+  discriminator:
+    propertyName: usage
+PrivateCertificate:
+  description: A representation of a private certificate.
+  allOf:
+    - $ref: '#/Certificate'
+    - type: object
+      properties:
+        usage:
+          type: string
+          default: private
+LocalCertificate:
+  description: A representation of a local certificate.
+  allOf:
+    - $ref: '#/Certificate'
+    - type: object
+      properties:
+        usage:
+          type: string
+          default: local
+PartnerCertificate:
+  description: A representation of a partner certificate.
+  allOf:
+    - $ref: '#/Certificate'
+    - type: object
+      properties:
+        usage:
+          type: string
+          default: partner
+LoginCertificate:
+  description: A representation of a login certificate.
+  allOf:
+    - $ref: '#/Certificate'
+    - type: object
+      properties:
+        usage:
+          type: string
+          default: login
+TrustedCertificate:
+  description: A representation of a trusted certificate.
+  allOf:
+    - $ref: '#/Certificate'
+    - type: object
+      properties:
+        usage:
+          type: string
+          default: trusted
+CertificateRequest:
+  required:
+    - keySize
+    - subject
+    - usage
+  type: object
+  properties:
+    id:
+      type: string
+      description: The certificate id.
+    subject:
+      type: string
+      description: |
+        The the certificate subject DN (distinguished name) in RFC2253 format. Example: 'CN=test,OU=Axway_TT,O=Axway,L=Sofia,ST=Sofia,C=Bulgaria'.
+    usage:
+      type: string
+      description: The certificate usage.
+      enum:
+        - local
+        - private
+    fingerprint:
+      type: string
+      description: The certificate fingerprint.
+    keySize:
+      type: integer
+      description: |
+        The size of the key. Valid values are: 1024, 2048, 3072, 4096.
+      format: int32
+      default: 2048
+    account:
+      type: string
+      description: The account, the certificate owner.
+    signAlgorithm:
+      type: string
+      description: The certificate signature algorithm as string.
+      enum:
+        - SHA1withRSA
+        - SHA256withRSA
+        - SHA384withRSA
+        - SHA512withRSA
+MultiPart:
+  type: object
+  properties:
+    CertificateBody:
+      $ref: '#/Certificate'
+    CerificateContent:
+      type: string
+      format: binary
+MultiPartCertificateRequest:
+  type: object
+  properties:
+    CertificateBody:
+      $ref: '#/CertificateRequest'
+    CerificateContent:
+      type: string
+      format: binary
+CertificateResult:
+  type: object
+  properties:
+    resultSet:
+      $ref: 'responses.yaml#/ResultSet'
+    result:
+      type: array
+      items:
+        anyOf:
+          - $ref: '#/PrivateCertificate'
+          - $ref: '#/LocalCertificate'
+          - $ref: '#/PartnerCertificate'
+          - $ref: '#/LoginCertificate'
+          - $ref: '#/TrustedCertificate'
+        discriminator:
+          propertyName: usage
+          mapping:
+            private: '#/PrivateCertificate'
+            local: '#/LocalCertificate'
+            partner: '#/PartnerCertificate'
+            login: '#/LoginCertificate'
+            trusted: '#/TrustedCertificate'
+PostCertificate:
+  allOf:
+    - $ref: '#/Certificate'
+    - type: object
+      properties:
+         keySize:
+            type: integer
+            description: |
+              The size of the key. Valid values are: 1024, 2048, 3072, 4096. For PGP keys: if RSA, the value applies to both the master key and the subkey; if DSA/ElGamal, the value applies only to the subkey, while the master key has a fixed value of 1024.
+            format: int32
+            default: 2048

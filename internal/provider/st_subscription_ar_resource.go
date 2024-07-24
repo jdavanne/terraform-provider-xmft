@@ -162,37 +162,10 @@ type stSubscriptionModel struct {
 	ScheduledFolderMonitor     types.String `tfsdk:"scheduled_folder_monitor" helper:"scheduledFolderMonitor,default"`
 	SubscriptionEncryptMode    types.String `tfsdk:"subscription_encrypt_mode" helper:"subscriptionEncryptMode,default:DEFAULT"`
 	FileRetentionPeriod        types.Int64  `tfsdk:"file_retention_period" helper:"fileRetentionPeriod,default:0"`
-	// FlowAttributes             types.Object `tfsdk:"flow_attributes" helper:"flowAttributes"`
-	Schedules []struct {
-		Tag            types.String   `tfsdk:"tag" helper:"tag"`
-		Type           types.String   `tfsdk:"type" helper:"type"`
-		ExecutionTimes []types.String `tfsdk:"execution_times" helper:"executionTimes"`
-		StartDate      types.String   `tfsdk:"start_date" helper:"startDate"`
-		SkipHolidays   types.Bool     `tfsdk:"skip_holidays" helper:"skipHolidays"`
-	} `tfsdk:"schedules" helper:"schedules"`
+	FlowAttributes             types.Map    `tfsdk:"flow_attributes" helper:"flowAttributes,elementtype:string,optional"`
+	Schedules                  []Schedule   `tfsdk:"schedules" helper:"schedules,fold:type,optional"`
 
-	/*TransferConfigurations []struct {
-		Tag                 types.String `tfsdk:"tag" helper:"tag"`
-		Outbound            types.Bool   `tfsdk:"outbound" helper:"outbound"`
-		Site                types.String `tfsdk:"site" helper:"site"`
-		TransferProfile     types.String `tfsdk:"transfer_profile" helper:"transferProfile"`
-		DataTransformations []struct {
-			Type                             types.String `tfsdk:"type" helper:"type"`
-			AsciiArmor                       types.Bool   `tfsdk:"ascii_armor" helper:"asciiArmor"`
-			CompressionAlgorithm             types.Int64  `tfsdk:"compression_algorithm" helper:"compressionAlgorithm"`
-			CompressionLevel                 types.Int64  `tfsdk:"compression_level" helper:"compressionLevel"`
-			EncryptEnabled                   types.Bool   `tfsdk:"encrypt_enabled" helper:"encryptEnabled"`
-			LocalSignCertificate             types.String `tfsdk:"local_sign_certificate" helper:"localSignCertificate"`
-			OriginalNameExpression           types.String `tfsdk:"original_name_expression" helper:"originalNameExpression"`
-			OriginalNameExpressionEnabled    types.Bool   `tfsdk:"original_name_expression_enabled" helper:"originalNameExpressionEnabled"`
-			PartnerEncryptCertificate        types.String `tfsdk:"partner_encrypt_certificate" helper:"partnerEncryptCertificate"`
-			RequireEncryption                types.Bool   `tfsdk:"require_encryption" helper:"requireEncryption"`
-			RequireSignature                 types.Bool   `tfsdk:"require_signature" helper:"requireSignature"`
-			SigningEnabled                   types.Bool   `tfsdk:"signing_enabled" helper:"signingEnabled"`
-			TransformedNameExpression        types.String `tfsdk:"transformed_name_expression" helper:"transformedNameExpression"`
-			TransformedNameExpressionEnabled types.Bool   `tfsdk:"transformed_name_expression_enabled" helper:"transformedNameExpressionEnabled"`
-		} `tfsdk:"data_transformations" helper:"dataTransformations"`
-	} `tfsdk:"transfer_configurations" helper:"transferConfigurations"`*/
+	TransferConfigurations []stTransferConfiguration `tfsdk:"transfer_configurations" helper:"transferConfigurations"`
 
 	/*PostClientDownloads struct {
 		PostClientDownloadActionType                                   types.String `tfsdk:"post_client_download_action_type" helper:"postClientDownloadActionType"`
@@ -215,7 +188,7 @@ type stSubscriptionModel struct {
 }
 
 func NewSTSubscriptionARModelResource() resource.Resource {
-	return NewSTResource(&stSubscriptionModel{}, "st_subscription_ar", "", "/api/v2.0/subscriptions", "/api/v2.0/subscriptions/{id}")
+	return NewSTResource(&stSubscriptionModel{}, "st_subscription_ar", "", "/api/v2.0/subscriptions", "/api/v2.0/subscriptions/{id}").AddDiscriminator("[type=AdvancedRouting]")
 }
 
 func init() {

@@ -17,12 +17,13 @@ description: |-
 
 ### Optional
 
-- `archive_folder` (String)
-- `delete_files_older_than` (Number) default:1
-- `delete_files_older_than_unit` (String) default:days
-- `encryption_certificate` (String) default:''
-- `global_archiving_policy` (String) default:disabled
-- `maximum_file_size_allowed_to_archive` (Number) default:0
+- `archive_folder` (String) Archive folder.
+- `delete_files_older_than` (Number) default:1, Delete files older than x days.
+- `delete_files_older_than_unit` (String) default:days, Retention period unit.
+- `encryption_certificate` (String) default:'', Encryption certificate.
+- `global_archiving_policy` (String) default:disabled, Global archiving policy.
+- `is_enabled` (Boolean) default:true, Whether file archiving is enabled.
+- `maximum_file_size_allowed_to_archive` (Number) default:0, Maximum allowed file size to archive.
 - `name` (String) default:sentinel
 
 ### Read-Only
