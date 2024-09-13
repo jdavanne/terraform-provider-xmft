@@ -56,13 +56,13 @@ type stTransferSiteSSHModel struct {
 		DeleteOnSuccessIn   types.Bool   `tfsdk:"delete_on_success_in" helper:"deleteOnSuccessIn,default:false"`
 		DeleteOnPermFailOut types.Bool   `tfsdk:"delete_on_perm_fail_out" helper:"deleteOnPermFailOut,default:false"`
 		DeleteOnPermFailIn  types.Bool   `tfsdk:"delete_on_perm_fail_in" helper:"deleteOnPermFailIn,default:false"`
-		DoAsOut             types.String `tfsdk:"do_as_out" helper:"doAsOut,default"`
-		DoAsIn              types.String `tfsdk:"do_as_in" helper:"doAsIn,default"`
-		MoveOnTempFailOut   types.String `tfsdk:"move_on_temp_fail_out" helper:"moveOnTempFailOut,default"`
-		MoveOnPermFailOut   types.String `tfsdk:"move_on_perm_fail_out" helper:"moveOnPermFailOut,default"`
-		MoveOnSuccessOut    types.String `tfsdk:"move_on_success_out" helper:"moveOnSuccessOut,default"`
-		MoveOnPermFailIn    types.String `tfsdk:"move_on_perm_fail_in" helper:"moveOnPermFailIn,default"`
-		MoveOnSuccessIn     types.String `tfsdk:"move_on_success_in" helper:"moveOnSuccessIn,default"`
+		DoAsOut             types.String `tfsdk:"do_as_out" helper:"doAsOut,emptyIsNull,default"`
+		DoAsIn              types.String `tfsdk:"do_as_in" helper:"doAsIn,emptyIsNull,default"`
+		MoveOnTempFailOut   types.String `tfsdk:"move_on_temp_fail_out" helper:"moveOnTempFailOut,emptyIsNull,default"`
+		MoveOnPermFailOut   types.String `tfsdk:"move_on_perm_fail_out" helper:"moveOnPermFailOut,emptyIsNull,default"`
+		MoveOnSuccessOut    types.String `tfsdk:"move_on_success_out" helper:"moveOnSuccessOut,emptyIsNull,default"`
+		MoveOnPermFailIn    types.String `tfsdk:"move_on_perm_fail_in" helper:"moveOnPermFailIn,emptyIsNull,default"`
+		MoveOnSuccessIn     types.String `tfsdk:"move_on_success_in" helper:"moveOnSuccessIn,emptyIsNull,default"`
 	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,computed,default:"`
 
 	AlternativeAddresses []struct {

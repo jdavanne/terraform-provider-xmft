@@ -9,15 +9,15 @@ import (
 
 type stSiteMailBoxSubscriptionPostTransmissionActions struct {
 	PtaOnTempfailInDoDelete  types.Bool   `tfsdk:"pta_on_tempfail_in_do_delete" helper:"ptaOnTempfailInDoDelete,default:false"`
-	PtaOnTempfailInDoMove    types.String `tfsdk:"pta_on_tempfail_in_do_move" helper:"ptaOnTempfailInDoMove,default:"`
+	PtaOnTempfailInDoMove    types.String `tfsdk:"pta_on_tempfail_in_do_move" helper:"ptaOnTempfailInDoMove,emptyIsNull,default:"`
 	PtaOnPermfailInDoDelete  types.Bool   `tfsdk:"pta_on_permfail_in_do_delete" helper:"ptaOnPermfailInDoDelete,default:"`
-	PtaOnPermfailInDoMove    types.String `tfsdk:"pta_on_permfail_in_do_move" helper:"ptaOnPermfailInDoMove,default:"`
+	PtaOnPermfailInDoMove    types.String `tfsdk:"pta_on_permfail_in_do_move" helper:"ptaOnPermfailInDoMove,emptyIsNull,default:"`
 	PtaOnSuccessInDoDelete   types.Bool   `tfsdk:"pta_on_success_in_do_delete" helper:"ptaOnSuccessInDoDelete,default:"`
-	PtaOnSuccessInDoMove     types.String `tfsdk:"pta_on_success_in_do_move" helper:"ptaOnSuccessInDoMove,default:"`
+	PtaOnSuccessInDoMove     types.String `tfsdk:"pta_on_success_in_do_move" helper:"ptaOnSuccessInDoMove,emptyIsNull,default:"`
 	PtaOnPermfailOutDoDelete types.Bool   `tfsdk:"pta_on_permfail_out_do_delete" helper:"ptaOnPermfailOutDoDelete,default:"`
-	PtaOnPermfailOutDoMove   types.String `tfsdk:"pta_on_permfail_out_do_move" helper:"ptaOnPermfailOutDoMove,default:"`
+	PtaOnPermfailOutDoMove   types.String `tfsdk:"pta_on_permfail_out_do_move" helper:"ptaOnPermfailOutDoMove,emptyIsNull,default:"`
 	PtaOnSuccessOutDoDelete  types.Bool   `tfsdk:"pta_on_success_out_do_delete" helper:"ptaOnSuccessOutDoDelete,default:"`
-	PtaOnSuccessOutDoMove    types.String `tfsdk:"pta_on_success_out_do_move" helper:"ptaOnSuccessOutDoMove,default:"`
+	PtaOnSuccessOutDoMove    types.String `tfsdk:"pta_on_success_out_do_move" helper:"ptaOnSuccessOutDoMove,emptyIsNull,default:"`
 }
 
 type stSiteMailBoxSubscriptionModel struct {

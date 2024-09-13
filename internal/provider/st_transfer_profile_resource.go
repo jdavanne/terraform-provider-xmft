@@ -95,7 +95,7 @@ type stTransferProfileModel struct {
 				Type                 types.String `tfsdk:"type" helper:"type,default:ebcdic_predefined"`
 				LocalDataCode        types.String `tfsdk:"local_data_code" helper:"localDataCode,default:EBCDIC"`
 				NetworkDataCode      types.String `tfsdk:"network_data_code" helper:"networkDataCode,enum:/EBCDIC/ASCII,default:EBCDIC"`
-				Transcoding          types.String `tfsdk:"transcoding" helper:"transcoding,default:PREDEFINED"`
+				Transcoding          types.String `tfsdk:"transcoding" helper:"transcoding,default:predefined"`
 				OutputRecordLength   types.Int64  `tfsdk:"output_record_length" helper:"outputRecordLength,default:2048"`
 				OutputRecordFormat   types.String `tfsdk:"output_record_format" helper:"outputRecordFormat,enum:/VARIABLE/FIXED,default:VARIABLE"`
 				PaddingCharacter     types.String `tfsdk:"padding_character" helper:"paddingCharacter,default:@"`

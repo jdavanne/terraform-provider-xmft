@@ -34,9 +34,9 @@ type stTransferConfiguration struct {
 type stSubscriptionPostTransmissionActions struct {
 	MoveOverwrite                                     types.Bool   `tfsdk:"move_overwrite" helper:"moveOverwrite,default:false"`
 	PtaOnTempfailInDoDelete                           types.Bool   `tfsdk:"pta_on_tempfail_in_do_delete" helper:"ptaOnTempfailInDoDelete,optional"`
-	PtaOnTempfailInDoMove                             types.String `tfsdk:"pta_on_tempfail_in_do_move" helper:"ptaOnTempfailInDoMove,optional"`
+	PtaOnTempfailInDoMove                             types.String `tfsdk:"pta_on_tempfail_in_do_move" helper:"ptaOnTempfailInDoMove,emptyIsNull,default:"`
 	PtaOnPermfailInDoDelete                           types.Bool   `tfsdk:"pta_on_permfail_in_do_delete" helper:"ptaOnPermfailInDoDelete,optional"`
-	PtaOnPermfailInDoMove                             types.String `tfsdk:"pta_on_permfail_in_do_move" helper:"ptaOnPermfailInDoMove,optional"`
+	PtaOnPermfailInDoMove                             types.String `tfsdk:"pta_on_permfail_in_do_move" helper:"ptaOnPermfailInDoMove,emptyIsNull,default:"`
 	PtaOnPermfailDoAdvancedRouting                    types.Bool   `tfsdk:"pta_on_permfail_do_advanced_routing" helper:"ptaOnPermfailDoAdvancedRouting,optional"`
 	PtaOnPermfailInDoAdvancedRoutingFailedFile        types.Bool   `tfsdk:"pta_on_permfail_in_do_advanced_routing_failed_file" helper:"ptaOnPermfailInDoAdvancedRoutingFailedFile,optional"`
 	PtaOnPermfailInDoAdvancedRoutingWildcardPull      types.Bool   `tfsdk:"pta_on_permfail_in_do_advanced_routing_wildcard_pull" helper:"ptaOnPermfailInDoAdvancedRoutingWildcardPull,optional"`
@@ -46,20 +46,20 @@ type stSubscriptionPostTransmissionActions struct {
 	PtaOnSuccessDoInAdvancedRoutingWildcardPull       types.Bool   `tfsdk:"pta_on_success_do_in_advanced_routing_wildcard_pull" helper:"ptaOnSuccessDoInAdvancedRoutingWildcardPull,optional"`
 	PtaOnSuccessTriggerRouteExecutionOnPeSITAck       types.Bool   `tfsdk:"pta_on_success_trigger_route_execution_on_pesit_ack" helper:"ptaOnSuccessTriggerRouteExecutionOnPeSITAck,optional"`
 	PtaOnSuccessInDoDelete                            types.Bool   `tfsdk:"pta_on_success_in_do_delete" helper:"ptaOnSuccessInDoDelete,optional"`
-	PtaOnSuccessInDoMove                              types.String `tfsdk:"pta_on_success_in_do_move" helper:"ptaOnSuccessInDoMove,optional"`
+	PtaOnSuccessInDoMove                              types.String `tfsdk:"pta_on_success_in_do_move" helper:"ptaOnSuccessInDoMove,emptyIsNull,default:"`
 	PtaOnSuccessInDoMoveOverwrite                     types.Bool   `tfsdk:"pta_on_success_in_do_move_overwrite" helper:"ptaOnSuccessInDoMoveOverwrite,optional"`
 	PtaOnPermfailOutDoDelete                          types.Bool   `tfsdk:"pta_on_permfail_out_do_delete" helper:"ptaOnPermfailOutDoDelete,optional"`
-	PtaOnPermfailOutDoMove                            types.String `tfsdk:"pta_on_permfail_out_do_move" helper:"ptaOnPermfailOutDoMove,optional"`
+	PtaOnPermfailOutDoMove                            types.String `tfsdk:"pta_on_permfail_out_do_move" helper:"ptaOnPermfailOutDoMove,emptyIsNull,default:"`
 	PtaOnSuccessOutDoDelete                           types.Bool   `tfsdk:"pta_on_success_out_do_delete" helper:"ptaOnSuccessOutDoDelete,optional"`
-	PtaOnSuccessOutDoMove                             types.String `tfsdk:"pta_on_success_out_do_move" helper:"ptaOnSuccessOutDoMove,optional"`
+	PtaOnSuccessOutDoMove                             types.String `tfsdk:"pta_on_success_out_do_move" helper:"ptaOnSuccessOutDoMove,emptyIsNull,default:"`
 	PtaOnSuccessOutDoMoveOverwrite                    types.Bool   `tfsdk:"pta_on_success_out_do_move_overwrite" helper:"ptaOnSuccessOutDoMoveOverwrite,optional"`
 	PtaOnTempfailOutDoDelete                          types.Bool   `tfsdk:"pta_on_tempfail_out_do_delete" helper:"ptaOnTempfailOutDoDelete,optional"`
-	PtaOnTempfailOutDoMove                            types.String `tfsdk:"pta_on_tempfail_out_do_move" helper:"ptaOnTempfailOutDoMove,optional"`
+	PtaOnTempfailOutDoMove                            types.String `tfsdk:"pta_on_tempfail_out_do_move" helper:"ptaOnTempfailOutDoMove,emptyIsNull,default:"`
 	TriggerOnConditionEnabled                         types.Bool   `tfsdk:"trigger_on_condition_enabled" helper:"triggerOnConditionEnabled,optional"`
-	TriggerOnConditionExpression                      types.String `tfsdk:"trigger_on_condition_expression" helper:"triggerOnConditionExpression,optional"`
+	TriggerOnConditionExpression                      types.String `tfsdk:"trigger_on_condition_expression" helper:"triggerOnConditionExpression,emptyIsNull,default:"`
 	TriggerOnSuccessfulWildcardPull                   types.Bool   `tfsdk:"trigger_on_successful_wildcard_pull" helper:"triggerOnSuccessfulWildcardPull,optional"`
 	SubmitFilterType                                  types.String `tfsdk:"submit_filter_type" helper:"submitFilterType,enum:/TRIGGER_FILE_CONTENT/FILENAME_PATTERN,default:TRIGGER_FILE_CONTENT"`
-	SubmitFilenamePatternExpression                   types.String `tfsdk:"submit_filename_pattern_expression" helper:"submitFilenamePatternExpression,optional"`
+	SubmitFilenamePatternExpression                   types.String `tfsdk:"submit_filename_pattern_expression" helper:"submitFilenamePatternExpression,emptyIsNull,default:"`
 	TriggerFileOption                                 types.String `tfsdk:"trigger_file_option" helper:"triggerFileOption,enum:/fail/continue/retry,default:fail"`
 	TriggerFileRetriesNumber                          types.Int64  `tfsdk:"trigger_file_retries_number" helper:"triggerFileRetriesNumber,optional"`
 	TriggerFileRetryDelay                             types.Int64  `tfsdk:"trigger_file_retry_delay" helper:"triggerFileRetryDelay,optional"`

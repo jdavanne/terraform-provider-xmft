@@ -80,15 +80,15 @@ Optional:
 - `pta_on_permfail_in_do_advanced_routing_failed_file` (Boolean) Defines whether to trigger advanced routing with file copy in case of a PTA permanent failure.
 - `pta_on_permfail_in_do_advanced_routing_wildcard_pull` (Boolean) Defines whether to trigger wildcard pull with advanced routing in case of a PTA permanent failure.
 - `pta_on_permfail_in_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
-- `pta_on_permfail_in_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
+- `pta_on_permfail_in_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
 - `pta_on_permfail_out_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
-- `pta_on_permfail_out_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on permanent failure. An expression language can be used to specify a file name/folder.
+- `pta_on_permfail_out_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on permanent failure. An expression language can be used to specify a file name/folder.
 - `pta_on_success_do_in_advanced_routing_wildcard_pull` (Boolean) Defines whether to trigger wildcard pull with advanced routing in case of a PTA success.
 - `pta_on_success_in_do_delete` (Boolean) Defines whether to delete the source file on success after the transmission.
-- `pta_on_success_in_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
+- `pta_on_success_in_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
 - `pta_on_success_in_do_move_overwrite` (Boolean) When the "Allow Overwrite Existing File" option is enabled and the rename operation fails because the target file exists, ST will delete the target file and repeat the rename operation.
 - `pta_on_success_out_do_delete` (Boolean) Defines whether to delete the file on success after the transmission.
-- `pta_on_success_out_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
+- `pta_on_success_out_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
 - `pta_on_success_out_do_move_overwrite` (Boolean) When the "Allow Overwrite Existing File" option is enabled and the rename operation fails because the target file exists, ST will delete the target file and repeat the rename operation.
 - `pta_on_success_trigger_route_execution_on_pesit_ack` (Boolean) When enabled, the route execution triggers on any of the following events:
 
@@ -101,10 +101,10 @@ This event does not affect the contents of the subscription folder. It only trig
 - `pta_on_tempfail_in_do_advanced_routing_process_failed_file` (Boolean) Defines whether to trigger advanced routing with file copy in case of a PTA permanent failure.
 - `pta_on_tempfail_in_do_advanced_routing_wildcard_pull` (Boolean) Defines whether to trigger wildcard pull with advanced routing in case of a PTA temporary failure.
 - `pta_on_tempfail_in_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
-- `pta_on_tempfail_in_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on temporary failure. An expression language can be used to specify a file name/folder.
+- `pta_on_tempfail_in_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on temporary failure. An expression language can be used to specify a file name/folder.
 - `pta_on_tempfail_out_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
-- `pta_on_tempfail_out_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
-- `submit_filename_pattern_expression` (String) Specify the file name pattern. An expression language can be used.
+- `pta_on_tempfail_out_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
+- `submit_filename_pattern_expression` (String) default:'', Specify the file name pattern. An expression language can be used.
 - `submit_filter_type` (String) enum:/TRIGGER_FILE_CONTENT/FILENAME_PATTERN, default:TRIGGER_FILE_CONTENT, Specify the submit filter type. It could be 'FILENAME_PATTERN' or 'TRIGGER_FILE_CONTENT'.
 If 'FILENAME_PATTERN' is selected and 'submitFilenamePatternExpression' is with value '*' all files will be submitted for processing in the subscription folder.
 
@@ -122,7 +122,7 @@ This option is available when 'triggerFileOption' option is set to 'retry'.
 
 This option is available when 'triggerFileOption' option is set to 'retry'.
 - `trigger_on_condition_enabled` (Boolean) If checked, processing of files in the subscription folder will be triggered upon a specific condition.
-- `trigger_on_condition_expression` (String) Specify the condition on which to trigger file processing. An expression language can be used.
+- `trigger_on_condition_expression` (String) default:'', Specify the condition on which to trigger file processing. An expression language can be used.
 - `trigger_on_successful_wildcard_pull` (Boolean) Setting for trigger on successful wildcard pull.
 
 

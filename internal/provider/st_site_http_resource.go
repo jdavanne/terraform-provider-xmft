@@ -46,8 +46,8 @@ type stTransferSiteHTTPModel struct {
 		DeleteOnPermFailOut types.Bool   `tfsdk:"delete_on_perm_fail_out" helper:"deleteOnPermFailOut,default:false"`
 		DeleteOnSuccessIn   types.Bool   `tfsdk:"delete_on_success_in" helper:"deleteOnSuccessIn,default:false"`
 		DeleteOnTempFailOut types.Bool   `tfsdk:"delete_on_temp_fail_out" helper:"deleteOnTempFailOut,default:false"`
-		DoAsOut             types.String `tfsdk:"do_as_out" helper:"doAsOut,default"`
-		DoAsIn              types.String `tfsdk:"do_as_in" helper:"doAsIn,default"`
+		DoAsOut             types.String `tfsdk:"do_as_out" helper:"doAsOut,emptyIsNull,default"`
+		DoAsIn              types.String `tfsdk:"do_as_in" helper:"doAsIn,emptyIsNull,default"`
 	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,computed,default:"`
 	AlternativeAddresses []struct {
 		Id       types.String `tfsdk:"id" helper:",computed,state"`

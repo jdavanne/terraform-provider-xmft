@@ -128,7 +128,7 @@ Optional:
 - `output_record_length` (Number) default:2048, The record length of the sending side of the transfer profile. It should be positive number. Corresponds to PI 32 code.
 - `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
 - `source_encoding_scheme` (String) default:IBM1047, The encoding scheme of the source file. Can be one of the system supported charsets.
-- `transcoding` (String) default:PREDEFINED, Read-only field displayed only when predefined "type" is used.
+- `transcoding` (String) default:predefined, Read-only field displayed only when predefined "type" is used.
 - `type` (String) default:ebcdic_predefined, Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
 
 
