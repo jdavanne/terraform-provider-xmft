@@ -28,18 +28,19 @@ description: |-
 and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
-- `buffer_size` (Number) default:8192
-- `cft_compatible_ssl_mode` (Boolean) default:false
-- `checkpoint_interval` (Number) default:1024
-- `checkpoint_window` (Number) default:4
+- `buffer_size` (Number) default:8192, Specify the PeSIT buffer size. This option is used when SecureTransport is acting as a PeSIT client. Specifies the maximum size of a PeSIT data element (PI 25). Should be greater than 800 bytes and less than 65535.
+- `cft_compatible_ssl_mode` (Boolean) default:false, Enable Legasy transfer CFT compatible SSL mode. This property can be set if TLS/SSL (issecure) is used and the 'Clear Command Channel' is enabled.
+- `checkpoint_interval` (Number) default:1024, Specify the checkpoint interval.
+- `checkpoint_window` (Number) default:4, Specify the checkpoint window.
 - `cipher_suites` (String) Cipher suites for ssh site.
 - `compression` (String) enum:/none/vertical/horizontal/both, default:none, Specify the transfer compression. It can be 0 (None), 1 (Horizontal), 2 (Vertical) or 3 (Both).
-- `configure_preconnection` (Boolean) default:false
-- `connection_timeout` (Number) default:60
+- `configure_preconnection` (Boolean) default:false, Specify if Pre-Connection should be set.
+- `connection_timeout` (Number) default:60, Overwrites the value specified in Pesit.Client.Inactivity.Timeout configuration option. It is used to determine how much time (in seconds) ST will wait for acknowledgment command for transfer end, when pushing file to a server, when ST acts as a PeSIT client.
 - `default` (Boolean) default:false, Defines whether it is a default site. Only site from type PeSIT can be marked as 'Default'
 - `dmz` (String) default:'', Specify the remote partner network zone. It can be 'any', 'none', 'Default' or custom network zone.
 - `final_destination` (String) default:'', Advanced PeSIT Setting. Use this field to override the final destination (PI62) of the transfer. To preserve the original value use ${pesit.pi.finalDestinationID}. To make a Store and Forward PeSIT transfer specify the final destination and choose the intermediate partner (ipart parameter in Axway Transfer CFT) in the transfer site list.
-- `is_secure` (Boolean) default:false
+- `fips_mode` (Boolean) default:false, Specify if the FIPS Transfer Mode is enabled or disabled. This property can be set if TLS/SSL (issecure) is used.
+- `is_secure` (Boolean) default:false, Specify if TLS/SSL is used or not.
 - `login_certificate` (String) default:'', The client certificate ID used for mutual authentication.
 - `max_concurrent_connection` (Number) default:0, The max concurrent connection of the site
 - `originator` (String) default:'', Advanced PeSIT Setting. Use this field to override the original sender (PI61) of the transfer. To preserve the original value use ${pesit.pi.originalSenderID}.
@@ -53,26 +54,26 @@ a reserved word. Both key and value cannot be blank.
 - `preconnection_server_password` (String) default:'', Specify the server password encrypted in 'AES128'. It is used for preconnection.
 - `protocol` (String) default:pesit, <nil>
 - `protocols` (String) Enabled SSL protocols for ssh site.
-- `ptcp_connect_retry_count` (Number) default:10
-- `ptcp_connections` (Number) default:1
-- `ptcp_packet_size` (Number) default:3000
+- `ptcp_connect_retry_count` (Number) default:10, This option is used when SecureTransport is acting as a PeSIT client. It specifies the maximum times the SecureTransport will attempt to re-establish a connection with the remote server in case of "Unknown session" error.
+- `ptcp_connections` (Number) default:1, Specify the number of parallel TCP connections.
+- `ptcp_packet_size` (Number) default:3000, Specify the TCP packet size
 - `receive_message` (String) default:'', Specify a user receive message.
-- `resync_allowed` (Boolean) default:false
+- `resync_allowed` (Boolean) default:false, Specify if the resync is allowed.
 - `send_message` (String) default:'', Specify a user send message. An expression language can be used e.g. ${pesit.serverID}.
 - `server_password` (String) default:'', Specify the server password encrypted in 'AES128'. This property should be set if 'useServerPassword' is 'true'.
-- `socket_send_receive_buffersize` (Number) default:65536
+- `socket_send_receive_buffersize` (Number) default:65536, This option is used when SecureTransport is acting as a PeSIT client. Specifies the TCP Socket maximum send and receive buffer size in bytes. This setting corresponds to SO_SNDBUF and SO_RCVBUF socket parameters.
 - `store_and_forward_mode` (String) default:START_NEW, Advanced PeSIT Setting. All the advanced PeSIT settings are included or all are ommitted. "Preserve" Store and Forward mode will preserve the current Store and Forward transfer (if any). "Start new" will initiate a new Store and Forward transfer and the current transfer (if any) will be acknowledged.
 - `transfer_type` (String) default:internal, The transfer type of the site. It can be unspecified (N), internal (I), partner(E)
-- `type` (String) default:pesit, Type of the site.
-- `use_partner_password` (Boolean) default:false
+- `type` (String) default:pesit, <nil>
+- `use_partner_password` (Boolean) default:false, Specify if the partner password should be set.
 - `use_partner_password_expr` (Boolean) default:false, Specify whether to have partner password expressions or not.
-- `use_preconnection_partner_password` (Boolean) default:false
+- `use_preconnection_partner_password` (Boolean) default:false, Specify if the Pre-Connection partner password should be set.
 - `use_preconnection_partner_password_expr` (Boolean) default:false, Specify whether to have Pre-Connection partner password expressions or not.
-- `use_preconnection_server_password` (Boolean) default:false
+- `use_preconnection_server_password` (Boolean) default:false, Specify if the Pre-Connection server password should be set.
 - `use_preconnection_server_password_expr` (Boolean) default:false, Specify whether to have Pre-Connection server password expressions or not.
-- `use_server_password` (Boolean) default:false
+- `use_server_password` (Boolean) default:false, Specify if the server password should be set.
 - `use_server_password_expr` (Boolean) default:false, Specify whether to have server password expressions or not.
-- `verify_cert` (Boolean) default:false
+- `verify_cert` (Boolean) default:false, This option is used when SecureTransport is acting as a PeSIT client. Verify whether the server certificate of the partner is chained to a trusted root. This property can be set if TLS/SSL (issecure) is used.
 
 ### Read-Only
 

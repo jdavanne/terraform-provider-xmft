@@ -5,22 +5,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-/*
-{
-  "isEnabled": false,
-  "globalArchivingPolicy": "disabled",
-  "archiveFolder": "string",
-  "encryptionCertificate": "empty",
-  "deleteFilesOlderThan": 1,
-  "deleteFilesOlderThanUnit": "days",
-  "maximumFileSizeAllowedToArchive": 0
-}
-*/
-
 type stConfigurationFileArchivingModel struct {
 	// Id          types.String `tfsdk:"id" helper:",computed,state"`
 	LastUpdated types.String `tfsdk:"last_updated" helper:",computed,noread,nowrite"`
-	Name        types.String `tfsdk:"name" helper:",default:sentinel,noread,nowrite"`
+	Name        types.String `tfsdk:"name" helper:",default:FileArchiving,noread,nowrite"`
 
 	IsEnabled                       types.Bool   `tfsdk:"is_enabled" helper:"isEnabled,default:true"`
 	GlobalArchivingPolicy           types.String `tfsdk:"global_archiving_policy" helper:"globalArchivingPolicy,default:disabled"`

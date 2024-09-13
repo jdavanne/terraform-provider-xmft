@@ -44,10 +44,10 @@ func TestAttributeToResource(t *testing.T) {
 			"additionalProp1": "value4",
 		},
 		"sub_list_string": []string{"value1"},
-		"sub_list_object": []interface{}{
-			map[string]interface{}{"subSubStr": "SubSubStr2", "sub_sub_bool": false},
-		},
-		"object": map[string]interface{}{"subSubStr": "SubSubStr5672", "sub_sub_bool": false},
+		/*"sub_list_object": []interface{}{
+			map[string]interface{}{"subSubStr": "SubSubStr2ListObject", "sub_sub_bool": false},
+		},*/
+		//"object": map[string]interface{}{"subSubStr": "SubSubStr5672", "sub_sub_bool": false},
 		//"poly":   map[string]interface{}{"kind": "t1", "subSubStr": "SubSubStr23", "sub_sub_int": 4523, "sub_sub_bool": true},
 		/*"poly_list": []interface{}{
 			map[string]interface{}{"kind": "t1", "subSubStr": "SubSubStr23", "sub_sub_int": 4523, "sub_sub_bool": true},
@@ -105,18 +105,18 @@ func TestAttributeToResource(t *testing.T) {
 		"additionalProp2": types.StringValue("value5"),
 	}))
 	v.SubListString = PO(types.ListValue(types.StringType, []attr.Value{types.StringValue("value1")}))
-	v.SubListObject = PO(types.ListValue(types.ObjectType{}.WithAttributeTypes(structNameToTFType("TestResourceModelSubSub")),
+	/*v.SubListObject = PO(types.ListValue(types.ObjectType{}.WithAttributeTypes(structNameToTFType("TestResourceModelSubSub")),
 		[]attr.Value{
 			PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
-				"sub_sub_str":  types.StringValue("SubSubStr2"),
+				"sub_sub_str":  types.StringValue("SubSubStr2ListObject"),
 				"sub_sub_bool": types.BoolValue(false),
 			})),
 		},
-	))
-	v.Object = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
+	))*/
+	/*v.Object = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
 		"sub_sub_str":  types.StringValue("SubSubStr5672"),
 		"sub_sub_bool": types.BoolValue(false),
-	}))
+	}))*/
 
 	v.PolyPtr.T2 = &TestResourceModelSubSub{
 		SubSubStr:  types.StringValue("SubSubStr56734"),

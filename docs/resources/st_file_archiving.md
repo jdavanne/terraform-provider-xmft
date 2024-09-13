@@ -24,7 +24,7 @@ description: |-
 - `global_archiving_policy` (String) default:disabled, Global archiving policy.
 - `is_enabled` (Boolean) default:true, Whether file archiving is enabled.
 - `maximum_file_size_allowed_to_archive` (Number) default:0, Maximum allowed file size to archive.
-- `name` (String) default:sentinel
+- `name` (String) default:FileArchiving
 
 ### Read-Only
 

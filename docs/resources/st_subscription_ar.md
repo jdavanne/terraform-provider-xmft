@@ -31,6 +31,9 @@ a reserved word. Both key and value cannot be blank.
 - `flow_name` (String) default:'', Name of the CG flow
 - `folder_monitor_schedule_check` (String) default:'', Whether a folder monitor subscription is scheduled.
 - `max_parallel_sit_pulls` (Number) default:0, Custom attribute under which we store the option for maximum sit pulls to be executed simultaneously. Negative value or 0 - no limit, positive value 4 - limits simultaneously
+- `post_client_downloads` (Attributes) default:{} (see [below for nested schema](#nestedatt--post_client_downloads))
+- `post_processing_actions` (Attributes) default:{} (see [below for nested schema](#nestedatt--post_processing_actions))
+- `post_transmission_actions` (Attributes) default:{} (see [below for nested schema](#nestedatt--post_transmission_actions))
 - `scheduled_folder_monitor` (String) default:'', Specify if this subscription is targeted for a scheduled folder monitor.
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
 - `subscription_encrypt_mode` (String) default:DEFAULT, Encryption that will be used for subscription folder. Accepting one of default, enabled, disabled.
@@ -41,6 +44,87 @@ a reserved word. Both key and value cannot be blank.
 
 - `id` (String) The id of the subscription
 - `last_updated` (String)
+
+<a id="nestedatt--post_client_downloads"></a>
+### Nested Schema for `post_client_downloads`
+
+Optional:
+
+- `post_client_download_action_type` (String) default:'', Specify if Post Client Download Actions will be applied to each file successfully downloaded from the subscription folder. It can be 'DELETE' or no property at all.
+- `post_client_download_action_type_failure` (String) default:'', Advanced Routing setting for post client download action type option on failure.
+- `post_client_download_type_on_fail_do_advanced_routing` (Boolean) default:false, Defines whether to trigger advanced routing in case of a failed post client download.
+- `post_client_download_type_on_fail_do_advanced_routing_process_failed_file` (Boolean) default:false, Defines whether to trigger advanced routing with file copy in case of a failed post client download.
+- `post_client_download_type_on_permfail_do_delete` (Boolean) default:false, Defines whether to delete the file in case of a permanent failure of a post client download.
+- `post_client_download_type_on_success_do_advanced_routing` (Boolean) default:false, Defines whether to trigger advanced routing in case of a successful post client download.
+- `post_client_download_type_on_success_do_advanced_routing_process_file` (Boolean) default:false, Defines whether to trigger advanced routing with file copy in case of a successful post client download.
+
+
+<a id="nestedatt--post_processing_actions"></a>
+### Nested Schema for `post_processing_actions`
+
+Optional:
+
+- `ppa_on_fail_in_do_delete` (Boolean) default:false, Defines whether to delete the file on failure after the transmission. This action is applied to files arrived to this folder and processed by a route package.
+- `ppa_on_fail_in_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder. This action is applied to files arrived to this folder and processed by a route package.
+- `ppa_on_success_in_do_delete` (Boolean) default:false, Defines whether to delete the file on success after the transmission. This action is applied to files arrived to this folder and processed by a route package.
+- `ppa_on_success_in_do_move` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder. This action is applied to files arrived to this folder and processed by a route package.
+
+
+<a id="nestedatt--post_transmission_actions"></a>
+### Nested Schema for `post_transmission_actions`
+
+Optional:
+
+- `move_overwrite` (Boolean) default:false, Delete the target file and repeat the rename operation.
+- `pta_on_permfail_do_advanced_routing` (Boolean) Defines whether to trigger advanced routing in case of a PTA permanent failure.
+- `pta_on_permfail_in_do_advanced_routing_failed_file` (Boolean) Defines whether to trigger advanced routing with file copy in case of a PTA permanent failure.
+- `pta_on_permfail_in_do_advanced_routing_wildcard_pull` (Boolean) Defines whether to trigger wildcard pull with advanced routing in case of a PTA permanent failure.
+- `pta_on_permfail_in_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
+- `pta_on_permfail_in_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
+- `pta_on_permfail_out_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
+- `pta_on_permfail_out_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on permanent failure. An expression language can be used to specify a file name/folder.
+- `pta_on_success_do_in_advanced_routing_wildcard_pull` (Boolean) Defines whether to trigger wildcard pull with advanced routing in case of a PTA success.
+- `pta_on_success_in_do_delete` (Boolean) Defines whether to delete the source file on success after the transmission.
+- `pta_on_success_in_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
+- `pta_on_success_in_do_move_overwrite` (Boolean) When the "Allow Overwrite Existing File" option is enabled and the rename operation fails because the target file exists, ST will delete the target file and repeat the rename operation.
+- `pta_on_success_out_do_delete` (Boolean) Defines whether to delete the file on success after the transmission.
+- `pta_on_success_out_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
+- `pta_on_success_out_do_move_overwrite` (Boolean) When the "Allow Overwrite Existing File" option is enabled and the rename operation fails because the target file exists, ST will delete the target file and repeat the rename operation.
+- `pta_on_success_trigger_route_execution_on_pesit_ack` (Boolean) When enabled, the route execution triggers on any of the following events:
+
+- When a PeSIT acknowledgement is received.
+
+- When a transfer completes with a status for which the Route action is configured.
+
+This event does not affect the contents of the subscription folder. It only triggers the selected route, and all other subscription’s settings are not applicable. Make sure you set a route trigger condition (in the Route settings, select Condition: Expression Language).
+- `pta_on_tempfail_in_do_advanced_routing` (Boolean) Defines whether to trigger advanced routing in case of a PTA temporary failure.
+- `pta_on_tempfail_in_do_advanced_routing_process_failed_file` (Boolean) Defines whether to trigger advanced routing with file copy in case of a PTA permanent failure.
+- `pta_on_tempfail_in_do_advanced_routing_wildcard_pull` (Boolean) Defines whether to trigger wildcard pull with advanced routing in case of a PTA temporary failure.
+- `pta_on_tempfail_in_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
+- `pta_on_tempfail_in_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on temporary failure. An expression language can be used to specify a file name/folder.
+- `pta_on_tempfail_out_do_delete` (Boolean) Defines whether to delete the file on failure after the transmission.
+- `pta_on_tempfail_out_do_move` (String) Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
+- `submit_filename_pattern_expression` (String) Specify the file name pattern. An expression language can be used.
+- `submit_filter_type` (String) enum:/TRIGGER_FILE_CONTENT/FILENAME_PATTERN, default:TRIGGER_FILE_CONTENT, Specify the submit filter type. It could be 'FILENAME_PATTERN' or 'TRIGGER_FILE_CONTENT'.
+If 'FILENAME_PATTERN' is selected and 'submitFilenamePatternExpression' is with value '*' all files will be submitted for processing in the subscription folder.
+
+If 'FILENAME_PATTERN' is selected and 'submitFilenamePatternExpression' is with some filename pattern, only files matching specific filename pattern will be submitted for processing.
+
+If 'TRIGGER_FILE_CONTENT' is selected, data file names will be read from trigger file content. Each file name should be on new line. The whitespace characters before and after the file names are discarded. Also lines containing only whitespace characters are not considered as files.Trigger file format:file1.txt, file2.txt, file3.png
+- `trigger_file_option` (String) enum:/fail/continue/retry, default:fail, Specify the trigger file option. Possible values: 'fail', 'continue' or 'retry'. This property controls the behaviour of AR processing in case not all files listed in the trigger file are available.
+'fail' - AR processing should fail if any of the listed files is missing. This is the default behaviour.
+'continue' - AR processing should skip the missing files and continue with the existing ones.
+'retry' - if any of the files listed in the trigger file are not available, AR processing will be retried. The retry behaviour could be further configured with the 'triggerFileRetriesNumber' and 'triggerFileRetryDelay' properties.
+- `trigger_file_retries_number` (Number) Specify the trigger file maximum retries number. 
+
+This option is available when 'triggerFileOption' option is set to 'retry'.
+- `trigger_file_retry_delay` (Number) Specify the interval in seconds, when next trigger file retry will be executed.
+
+This option is available when 'triggerFileOption' option is set to 'retry'.
+- `trigger_on_condition_enabled` (Boolean) If checked, processing of files in the subscription folder will be triggered upon a specific condition.
+- `trigger_on_condition_expression` (String) Specify the condition on which to trigger file processing. An expression language can be used.
+- `trigger_on_successful_wildcard_pull` (Boolean) Setting for trigger on successful wildcard pull.
+
 
 <a id="nestedatt--schedules"></a>
 ### Nested Schema for `schedules`
@@ -60,8 +144,8 @@ Optional:
 
 Optional:
 
-- `daily_type` (String) enum:/EVERYDAY/EVERY_WEEK_DAY, default:EVERYDAY, The daily type
-- `end_date` (String) default:'', The end date in date-time format
+- `daily_type` (String) enum:/EVERYDAY/EVERY_WEEKDAY, default:EVERYDAY, The daily type
+- `end_date` (String) The end date in date-time format
 - `execution_times` (List of String) <nil>
 - `skip_holidays` (Boolean) default:false, Whether to skip holidays.
 - `start_date` (String) The start date in date-time format
@@ -78,7 +162,6 @@ Optional:
 
 - `cron_expression` (String) default:'', The cron expression.
 - `end_date` (String) The end date in date-time format
-- `execution_times` (List of String)
 - `skip_holidays` (Boolean) default:false, Whether to skip holidays.
 - `start_date` (String) The start date in date-time format
 - `tag` (String) The type of the application or subscription. 
@@ -110,7 +193,7 @@ For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTN
 Optional:
 
 - `days_of_month` (List of Number)
-- `days_of_week` (List of String) enum:enum, <nil>
+- `days_of_week` (List of String) enum:/SUNDAY/MONDAY/TUESDAY/WEDNESDAY/THURSDAY/FRIDAY/SATURDAY, <nil>
 - `end_date` (String) The end date in date-time format
 - `execution_times` (List of String) <nil>
 - `monthly_type` (String) enum:/EXACT/SEQUENCE_WEEKLY/SEQUENCE_MONTHLY, default:EXACT, The monthly type
@@ -120,6 +203,7 @@ Optional:
 For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
 For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
 - `type` (String) default:MONTHLY, The type of the schedule
+- `week_of_month` (String) enum:/FIRST/SECOND/THIRD/FOURTH/LAST, default:FIRST, The week of the month
 
 
 <a id="nestedatt--schedules--once"></a>
@@ -157,6 +241,7 @@ For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTN
 
 Optional:
 
+- `days_of_month` (List of Number)
 - `end_date` (String) The end date in date-time format
 - `execution_times` (List of String) <nil>
 - `months` (List of String) enum:/JANUARY/FEBRUARY/MARCH/APRIL/MAY/JUNE/JULY/AUGUST/SEPTEMBER/OCTOBER/NOVEMBER/DECEMBER, <nil>
@@ -204,7 +289,7 @@ Optional:
 - `require_signature` (Boolean) Specify if the file is required to contain a trusted signature or the transfer will fail.
 - `signing_enabled` (Boolean) default:false, Specify if the file should be signed using PGP key.
 - `transformed_name_expression` (String) Specify if the decrypted file is saved to a different name, location or both. You can use a file name expression.
-- `transformed_name_expression_enabled` (Boolean)
+- `transformed_name_expression_enabled` (Boolean) default:false, Specify if the file should be decrypted.
 - `type` (String) The type of the data transformation.
 
 Read-Only:

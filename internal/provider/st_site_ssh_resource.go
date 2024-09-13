@@ -5,78 +5,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-/*
-{
-  "name": "string",
-  "type": "ssh",
-  "protocol": "ssh",
-  "transferType": "internal",
-  "maxConcurrentConnection": 0,
-  "default": false,
-  "accessLevel": "PRIVATE",
-  "account": "string",
-  "additionalAttributes": {
-    "additionalProp1": "string",
-    "additionalProp2": "string",
-    "additionalProp3": "string"
-  },
-  "host": "string",
-  "port": "string",
-  "dmz": "none",
-  "downloadFolderAdvancedExpressionEnabled": false,
-  "downloadFolder": "string",
-  "downloadPatternAdvancedExpressionEnabled": false,
-  "downloadPatternType": "string",
-  "downloadPattern": "string",
-  "uploadFolderOverridable": false,
-  "uploadFolder": "string",
-  "uploadPermissions": 644,
-  "updatePermissionsWithChmodCommand": "",
-  "transferMode": "AUTO_DETECT",
-  "verifyFinger": false,
-  "fingerPrint": "string",
-  "fipsMode": false,
-  "userName": "string",
-  "usePassword": false,
-  "usePasswordExpr": false,
-  "password": "string",
-  "socketTimeout": 300,
-  "socketBufferSize": 65536,
-  "socketSendBufferSize": 65536,
-  "bufferSize": 32768,
-  "blockSize": 32768,
-  "tcpNoDelay": true,
-  "clientCertificate": "string",
-  "cipherSuites": "string",
-  "protocols": "string",
-  "allowedMacs": "string",
-  "keyExchangeAlgorithms": "string",
-  "publicKeys": "string",
-  "postTransmissionActions": {
-    "deleteOnTempFailOut": false,
-    "deleteOnSuccessIn": false,
-    "deleteOnPermFailOut": false,
-    "deleteOnPermFailIn": false,
-    "doAsOut": "string",
-    "doAsIn": "string",
-    "moveOnTempFailOut": "string",
-    "moveOnPermFailOut": "string",
-    "moveOnSuccessOut": "string",
-    "moveOnPermFailIn": "string",
-    "moveOnSuccessIn": "string",
-    "doMoveOverwriteIn": false,
-    "doMoveOverwriteOut": false
-  },
-  "alternativeAddresses": [
-    {
-      "host": "host",
-      "port": "string",
-      "position": 1
-    }
-  ]
-}
-*/
-
 type stTransferSiteSSHModel struct {
 	Id          types.String `tfsdk:"id" helper:",computed,state"`
 	Name        types.String `tfsdk:"name" helper:",required"`
@@ -100,7 +28,7 @@ type stTransferSiteSSHModel struct {
 	UploadFolderOverridable                  types.Bool   `tfsdk:"upload_folder_overridable" helper:"uploadFolderOverridable,default"`
 	UploadFolder                             types.String `tfsdk:"upload_folder" helper:"uploadFolder,default"`
 	UploadPermissions                        types.String `tfsdk:"upload_permissions" helper:"uploadPermissions,default:0644"`
-	UpdatePermissionsWithChmodCommand        types.String `tfsdk:"update_permissions_with_chmod_command" helper:"updatePermissionsWithChmodCommand,default"`
+	UpdatePermissionsWithChmodCommand        types.String `tfsdk:"update_permissions_with_chmod_command" helper:"updatePermissionsWithChmodCommand,emptyIsNull,default:"`
 	TransferMode                             types.String `tfsdk:"transfer_mode" helper:"transferMode,default:AUTO_DETECT"`
 	VerifyFinger                             types.Bool   `tfsdk:"verify_finger" helper:"verifyFinger,default:false"`
 	FingerPrint                              types.String `tfsdk:"finger_print" helper:"fingerPrint,default"`
@@ -116,12 +44,14 @@ type stTransferSiteSSHModel struct {
 	BlockSize                                types.Int64  `tfsdk:"block_size" helper:"blockSize,default:32768"`
 	TcpNoDelay                               types.Bool   `tfsdk:"tcp_no_delay" helper:"tcpNoDelay,default:true"`
 	ClientCertificate                        types.String `tfsdk:"client_certificate" helper:"clientCertificate,emptyIsNull,default:"`
+	ConnectionIdleTimeout                    types.Int64  `tfsdk:"connection_idle_timeout" helper:"connectionIdleTimeout,default:300"`
 	CipherSuites                             types.String `tfsdk:"cipher_suites" helper:"cipherSuites,computed,optional"`
 	Protocols                                types.String `tfsdk:"protocols" helper:"protocols,default:"`
 	AllowedMacs                              types.String `tfsdk:"allowed_macs" helper:"allowedMacs,computed,optional"`
 	KeyExchangeAlgorithms                    types.String `tfsdk:"key_exchange_algorithms" helper:"keyExchangeAlgorithms,computed,optional"`
 	PublicKeys                               types.String `tfsdk:"public_keys" helper:"publicKeys,computed,optional"`
-	/*PostTransmissionActions                  *struct {
+
+	PostTransmissionActions struct {
 		DeleteOnTempFailOut types.Bool   `tfsdk:"delete_on_temp_fail_out" helper:"deleteOnTempFailOut,default:false"`
 		DeleteOnSuccessIn   types.Bool   `tfsdk:"delete_on_success_in" helper:"deleteOnSuccessIn,default:false"`
 		DeleteOnPermFailOut types.Bool   `tfsdk:"delete_on_perm_fail_out" helper:"deleteOnPermFailOut,default:false"`
@@ -133,14 +63,14 @@ type stTransferSiteSSHModel struct {
 		MoveOnSuccessOut    types.String `tfsdk:"move_on_success_out" helper:"moveOnSuccessOut,default"`
 		MoveOnPermFailIn    types.String `tfsdk:"move_on_perm_fail_in" helper:"moveOnPermFailIn,default"`
 		MoveOnSuccessIn     types.String `tfsdk:"move_on_success_in" helper:"moveOnSuccessIn,default"`
-		DoMoveOverwriteIn   types.Bool   `tfsdk:"do_move_overwrite_in" helper:"doMoveOverwriteIn,default:false"`
-		DoMoveOverwriteOut  types.Bool   `tfsdk:"do_move_overwrite_out" helper:"doMoveOverwriteOut,default:false"`
-	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,computed,optional"`*/
+	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,computed,default:"`
+
 	AlternativeAddresses []struct {
+		Id       types.String `tfsdk:"id" helper:",computed,state"`
 		Host     types.String `tfsdk:"host" helper:",required"`
 		Port     types.String `tfsdk:"port" helper:",required"`
 		Position types.Int64  `tfsdk:"position" helper:",required"`
-	} `tfsdk:"alternative_addresses" helper:"alternativeAddresses"`
+	} `tfsdk:"alternative_addresses" helper:"alternativeAddresses,optional"`
 
 	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }

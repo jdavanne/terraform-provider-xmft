@@ -27,12 +27,12 @@ description: |-
 - `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
 and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
-- `client_certificate` (String) default:'', The client certificate ID used for mutual authentication.
+- `client_certificate` (String) The client certificate ID used for mutual authentication.
 - `custom_properties` (Map of String)
 - `default` (Boolean) default:false, Defines whether it is a default site. Only site from type PeSIT can be marked as 'Default'
 - `max_concurrent_connection` (Number) default:0, The max concurrent connection of the site
 - `transfer_type` (String) default:internal, The transfer type of the site. It can be unspecified (N), internal (I), partner(E)
-- `type` (String) default:ExternalPersistedCustomSite, Type of the site.
+- `type` (String) default:ExternalPersistedCustomSite, <nil>
 
 ### Read-Only
 

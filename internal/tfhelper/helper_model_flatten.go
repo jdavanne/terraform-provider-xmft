@@ -29,13 +29,13 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 			computed := FlagsHas(flags, "computed")
 			// sensitive := FlagsHas(flags, "sensitive")
 			elementtype, _ := FlagsGet(flags, "elementtype")
-			_, fold := FlagsGet(flags, "fold")
+			foldField, fold := FlagsGet(flags, "fold")
 			if parentFold {
 				apiName = "[type=" + apiName + "]"
 			}
 			// state := FlagsHas(flags, "state")
 			def, defok := FlagsGet(flags, "default")
-
+			enum, _ := FlagsGet(flags, "enum")
 			// optional := (!required && !computed) || FlagsHas(flags, "optional") || defok
 			computed = computed || defok
 
@@ -65,6 +65,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 								"type":        "array[string]",
 								"defaultOk":   fmt.Sprint(defok),
 								"default":     def,
+								"enum":        enum,
 								"description": flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							})
 
@@ -89,6 +90,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 								"type":        "array[int]",
 								"defaultOk":   fmt.Sprint(defok),
 								"default":     def,
+								"enum":        enum,
 								"description": flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							})
 
@@ -146,6 +148,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 								"type":        "map[string]string",
 								"default":     def,
 								"defaultOk":   fmt.Sprint(defok),
+								"enum":        enum,
 								"description": flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
 							})
 						} else {
@@ -190,6 +193,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 								"type":        "array[string]",
 								"default":     def,
 								"defaultOk":   fmt.Sprint(defok),
+								"enum":        enum,
 								"description": flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							})
 						} else {
@@ -220,6 +224,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 							"type":        "string",
 							"default":     def,
 							"defaultOk":   fmt.Sprint(defok),
+							"enum":        enum,
 							"description": flagsDescription(ctx, flags, "''", apiPath+"."+apiName),
 						})
 					case "basetypes.BoolValue":
@@ -231,6 +236,9 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 							Default:     d,
 							Description: flagsDescription(flags, "false"),
 						}*/
+						if defok && def == "" {
+							def = "false"
+						}
 						fields = append(fields, map[string]string{
 							"goPath":  goPath + "." + goName,
 							"tfPath":  tfPath + "." + tfname,
@@ -242,6 +250,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 							"type":        "boolean",
 							"default":     def,
 							"defaultOk":   fmt.Sprint(defok),
+							"enum":        enum,
 							"description": flagsDescription(ctx, flags, "false", apiPath+"."+apiName),
 						})
 					case "basetypes.Int64Value":
@@ -264,6 +273,7 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 							"type":        "int",
 							"default":     def,
 							"defaultOk":   fmt.Sprint(defok),
+							"enum":        enum,
 							"description": flagsDescription(ctx, flags, "0", apiPath+"."+apiName),
 						})
 					default:
@@ -291,7 +301,13 @@ func ModelFlatten(ctx context.Context, goPath string, tfPath string, apiPath str
 					Sensitive:   sensitive,
 					Description: flagsDescription(flags, "{}"),
 				}*/
-				fields = append(fields, ModelFlatten(ctx, goPath+"."+goName, tfPath+"."+tfname, apiPath+"."+apiName, fold, reflectType.Field(i).Type.Elem())...)
+				nApiPath := ""
+				if fold {
+					nApiPath = apiPath + ".[" + foldField + "=" + apiName + "]"
+				} else {
+					nApiPath = apiPath + "." + apiName
+				}
+				fields = append(fields, ModelFlatten(ctx, goPath+"."+goName, tfPath+"."+tfname, nApiPath, fold, reflectType.Field(i).Type.Elem())...)
 			default:
 				panic("unsupported: type" + kind.String() + " (" + goPath + "." + goName + ")")
 			}

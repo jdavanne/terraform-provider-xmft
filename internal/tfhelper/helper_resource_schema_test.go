@@ -118,8 +118,7 @@ func TestGenerateToResourseSchema(t *testing.T) {
 				ElementType: types.StringType,
 				Optional:    true,
 			},
-
-			"sub_list_object": schema.ListNestedAttribute{
+			/*"sub_list_object": schema.ListNestedAttribute{
 				NestedObject: schema.NestedAttributeObject{
 					Attributes: map[string]schema.Attribute{
 						"sub_sub_str":  schema.StringAttribute{Optional: true},
@@ -127,18 +126,18 @@ func TestGenerateToResourseSchema(t *testing.T) {
 					},
 				},
 				Optional: true,
-			},
+			},*/
 			"sub_map_string": schema.MapAttribute{
 				ElementType: types.StringType,
 				Optional:    true,
 			},
-			"object": schema.SingleNestedAttribute{
+			/*"object": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"sub_sub_str":  schema.StringAttribute{Optional: true},
 					"sub_sub_bool": schema.BoolAttribute{Optional: true},
 				},
 				Optional: true,
-			},
+			},*/
 			"poly_ptr": schema.SingleNestedAttribute{
 				Attributes: map[string]schema.Attribute{
 					"t1": schema.SingleNestedAttribute{

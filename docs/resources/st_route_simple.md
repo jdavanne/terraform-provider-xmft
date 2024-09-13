@@ -24,23 +24,23 @@ description: |-
 - `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
 and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
-- `condition` (String) An expression for route execution when conditionType is EL.
+- `condition` (String) default:'', An expression for route execution when conditionType is EL.
 - `condition_type` (String) default:ALWAYS, For routes of type TEMPLATE or COMPOSITE, the property determines whether all SIMPLE routes that
 match their conditions will be executed or just the first one.
 
 For routes of type SIMPLE, the property determines if the route gets executed always or based on the condition,
 specified in the condition property using expression language.
 - `description` (String) default:'', Route description
-- `failure_email_name` (String) E-mail Notifications on route failure
-- `failure_email_notification` (Boolean) Notify following e-mails on route failure.
-- `failure_email_template` (String) Notification template name on route failure
+- `failure_email_name` (String) default:'', E-mail Notifications on route failure
+- `failure_email_notification` (Boolean) default:false, Notify following e-mails on route failure.
+- `failure_email_template` (String) default:'', Notification template name on route failure
 - `steps` (Attributes List) (see [below for nested schema](#nestedatt--steps))
-- `success_email_name` (String) E-mail Notifications on route success
-- `success_email_notification` (Boolean) Notify following e-mails on route success.
-- `success_email_template` (String) Notification template name on route success
-- `triggering_email_name` (String) E-mail Notifications on route triggering
-- `triggering_email_notification` (Boolean) Notify following e-mails on route triggering.
-- `triggering_email_template` (String) Notification template name on route triggering
+- `success_email_name` (String) default:'', E-mail Notifications on route success
+- `success_email_notification` (Boolean) default:false, Notify following e-mails on route success.
+- `success_email_template` (String) default:'', Notification template name on route success
+- `triggering_email_name` (String) default:'', E-mail Notifications on route triggering
+- `triggering_email_notification` (Boolean) default:false, Notify following e-mails on route triggering.
+- `triggering_email_template` (String) default:'', Notification template name on route triggering
 - `type` (String) default:SIMPLE, Route types: TEMPLATE - Route Package Template, SIMPLE - Route in a Route Package Template, COMPOSITE - Assign a route with TEMPLATE type to a virtual account and its subscriptions
 
 ### Read-Only
@@ -82,21 +82,24 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `input_charset` (String) default:UTF-8, Specify the source file encoding. Example: UTF-8
 - `line_strip` (String) default:'', Line strip enablement. Use value "stripEnabled" to enable line strip. Other value will disable the line strip.
 - `output_charset` (String) default:UTF-8, Specify output file encoding. If not specified, source file encoding is used.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for step.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for step.
 - `replace_character_sequence` (String) default:'', Specify replace character sequence. Unicode notation (\uXXXX) can be used. Multiple replace character sequences separated with a comma (,) can be specified. Comma must be Unicode encoded (\002c) if used in the replace sequence.
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:CharactersReplace, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--compress"></a>
@@ -106,22 +109,25 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
+- `autostart` (Boolean) default:false, Step autostart.
 - `compression_level` (String) default:STORE, Compression level.
 - `compression_type` (String) enum:/ZIP/JAR/TAR/GZIP, default:ZIP, Compression type.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for compress step.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for compress step.
 - `single_archive_enabled` (Boolean) default:false, Enable single file archiving.
-- `single_archive_name` (String) default:'', Archive name or expression. Not used with compression type GZIP. Example: archive-${timestamp}.zip.
+- `single_archive_name` (String) Archive name or expression. Not used with compression type GZIP. Example: archive-${timestamp}.zip.
 - `status` (String) default:ENABLED, Route step status.
-- `type` (String) default:Compress, Route step type. ExecuteRoute step links the routes of type TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+- `type` (String) default:Compress, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 - `zip_password` (String) default:'', Zip file password. Used with compression type ZIP only.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--decompress"></a>
@@ -131,19 +137,22 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `filename_collision_resolution_type` (String) enum:/RENAME_OLD/OVERWRITE/FAIL, default:OVERWRITE, Action on file name collision.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for decompress step.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for decompress step.
 - `status` (String) default:ENABLED, Route step status.
-- `type` (String) default:Decompress, Route step type. ExecuteRoute step links the routes of type TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+- `type` (String) default:Decompress, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 - `zip_password` (String) default:'', Zip file password. Do not use the property if it is not needed in the step flow.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--encoding_conversion"></a>
@@ -153,19 +162,22 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `input_charset` (String) default:UTF-8, Specify the source file encoding.
 - `output_charset` (String) default:UTF-8, Specify output file encoding. If not specified, source file encoding is used.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression.
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:EncodingConversion, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--execute_route"></a>
@@ -192,8 +204,9 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `log_output` (Boolean) default:false, The script will genarate standard output to Server log.
 - `root_execution` (Boolean) default:false, Root execution property for external script.
 - `status` (String) default:ENABLED, Route step status.
@@ -202,6 +215,7 @@ Optional:
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--line_ending"></a>
@@ -211,21 +225,24 @@ Optional:
 
 - `action_on_step_failure` (String) default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
 - `condition_type` (String) default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `input_charset` (String) default:UTF-8, Specify the source file encoding. Example: UTF-8 \n
 - `input_eol_sequence` (String) default:\n, Input EOL sequence. Example: \r\n
-- `output_charset` (String) default:'', Specify output file encoding. If not specified, source file encoding is used.
+- `output_charset` (String) Specify output file encoding. If not specified, source file encoding is used.
 - `output_eol_sequence` (String) default:\n, Output EOL sequence. Example: \r\n
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for line ending step.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for line ending step.
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:LineEnding, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--line_folding"></a>
@@ -235,20 +252,23 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `file_fold_width` (Number) default:1, Maximum lane width in the file over which point it will be folded. A positive integer value.
 - `input_charset` (String) default:UTF-8, Specify the source file encoding. Example: UTF-8
-- `output_charset` (String) default:'', Specify output file encoding. If not specified, source file encoding is used.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for line folding step.
+- `output_charset` (String) Specify output file encoding. If not specified, source file encoding is used.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for line folding step.
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:LineFolding, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--line_padding"></a>
@@ -258,21 +278,24 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `input_charset` (String) default:'', Specify the source file encoding. Example: UTF-8
 - `line_padding_character` (String) default:\\u0032, Specify line padding character as valid Unicode escape sequence. Example : \u0043
 - `line_padding_length` (String) default:0, Line padding length.
 - `output_charset` (String) default:'', Specify output file encoding. If not specified, source file encoding is used
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for line padding step.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for line padding step.
 - `status` (String) default:ENABLED, Route step status.
-- `type` (String) default:LinePadding, Route step type. ExecuteRoute step links the routes of type TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+- `type` (String) default:LinePadding, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--line_truncating"></a>
@@ -282,20 +305,23 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `input_charset` (String) default:UTF-8, Specify the source file encoding. Example: UTF-8
-- `output_charset` (String) default:'', Specify output file encoding. If not specified, source file encoding is used.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for line truncating step.
+- `output_charset` (String) Specify output file encoding. If not specified, source file encoding is used.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for line truncating step.
 - `status` (String) default:ENABLED, Route step status.
 - `truncate_length` (Number) default:1, Line Truncate trims the file lines to have a limited maximum length. Use this setting to specify the lines maximum length in number of characters/symbols. This will cause extra characters to be discarded.
-- `type` (String) default:LineTruncating, Route step type. ExecuteRoute step links the routes of type TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+- `type` (String) default:LineTruncating, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--pgp_decryption"></a>
@@ -305,19 +331,22 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for step.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for step.
 - `require_encryption` (Boolean) default:false, Require encryption.
 - `require_trusted_signature` (Boolean) default:false, Require trusted signature.
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:PgpDecryption, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--pgp_encryption"></a>
@@ -327,28 +356,31 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
+- `autostart` (Boolean) default:false, Step autostart.
 - `compression_level` (String) default:2, The values are 2 for FAST, 5 for NORMAL, 7 for GOOD, 9 for BEST
 - `compression_type` (String) default:0, Numbers in string format used "0" - no compression, "-1" - use preferred, "1" - ZIP, "2" - ZLIB, "3" - BZIP2
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
-- `encrypt_key_expression` (String) default:'', PGP encryption name amongst PGP Public Keys (within the selected above account) or by entering an expression for this. Wild card symbols ( asterisk symbol and ?) can also be used when specifying the PGP key alias. If multiple keys match the pattern the first one will be picked up and used.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `encrypt_key_expression` (String) PGP encryption name amongst PGP Public Keys (within the selected above account) or by entering an expression for this. Wild card symbols ( asterisk symbol and ?) can also be used when specifying the PGP key alias. If multiple keys match the pattern the first one will be picked up and used.
 - `encrypt_key_expression_type` (String) enum:/ALIAS/EXPRESSION_WILDCARD, default:ALIAS, Account name or expression.
-- `encrypt_key_owner_expression` (String) default:'', You can specify either an account name or use an EL expression to determine the recipient based on the environment information (such as filename). If an account name is unknown (e.g. expression based) its PGP certificates will be determined on runtime. PGP certificates can be expression based as well. All the encrypt key related properties (expressions, owners, types) should be set if an encrypt key is used. Encrypt or sign key usage is mandatory.
+- `encrypt_key_owner_expression` (String) You can specify either an account name or use an EL expression to determine the recipient based on the environment information (such as filename). If an account name is unknown (e.g. expression based) its PGP certificates will be determined on runtime. PGP certificates can be expression based as well. All the encrypt key related properties (expressions, owners, types) should be set if an encrypt key is used. Encrypt or sign key usage is mandatory.
 - `encrypt_key_owner_expression_type` (String) enum:/NAME/EXPRESSION, default:'', Account name or expression.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
-- `post_transformation_action_rename_as_expression` (String) default:'', Post transformation action rename expression for step.
-- `sign_key_expression` (String) default:'', PGP encryption name amongst PGP Public Keys (within the selected above account) or by entering an expression for this. Wild card symbols ( asterisk symbol and ?) can also be used when specifying the PGP key alias. If multiple keys match the pattern the first one will be picked up and used.
+- `post_transformation_action_rename_as_expression` (String) Post transformation action rename expression for step.
+- `sign_key_expression` (String) PGP encryption name amongst PGP Public Keys (within the selected above account) or by entering an expression for this. Wild card symbols ( asterisk symbol and ?) can also be used when specifying the PGP key alias. If multiple keys match the pattern the first one will be picked up and used.
 - `sign_key_expression_type` (String) enum:/ALIAS/EXPRESSION_WILDCARD, default:'', PGP Key alias or expression.
-- `sign_key_owner_expression` (String) default:'', You can specify either an account name or use an EL expression to determine the recipient based on the environment information (such as filename). If an account name is unknown (e.g. expression based) its PGP certificates will be determined on runtime. PGP certificates can be expression based as well. All the sign key related properties (expressions, owners, types) should be set if a sign key is used.
+- `sign_key_owner_expression` (String) You can specify either an account name or use an EL expression to determine the recipient based on the environment information (such as filename). If an account name is unknown (e.g. expression based) its PGP certificates will be determined on runtime. PGP certificates can be expression based as well. All the sign key related properties (expressions, owners, types) should be set if a sign key is used.
 - `sign_key_owner_expression_type` (String) enum:/NAME/EXPRESSION, default:'', Account name or expression.
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:PgpEncryption, <nil>
 - `use_ascii_armour` (Boolean) default:false, Encode Using ASCII Armor
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--pluggable"></a>
@@ -358,8 +390,9 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `custom_properties` (Map of String)
 - `status` (String) default:ENABLED, Route step status.
 - `type` (String) default:Pluggable, <nil>
@@ -368,6 +401,7 @@ Read-Only:
 
 - `custom_properties_all` (Map of String)
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--publish_to_account"></a>
@@ -381,25 +415,28 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `disable_auto_create_target_folder` (Boolean) default:false, Disable auto create target folder for step.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `filename_collision_resolution_type` (String) enum:/RENAME_OLD/OVERWRITE/FAIL, default:OVERWRITE, File name collision resolution type.
-- `post_routing_action_rename_expression` (String) default:'', Post transformation action rename expression for step.
-- `post_routing_action_type` (String) default:d, Post routing action types
-- `publish_file_as` (String) default:'', New file name or expression for a new file name.
+- `post_routing_action_rename_expression` (String) Post transformation action rename expression for step.
+- `post_routing_action_type` (String) Post routing action types
+- `publish_file_as` (String) New file name or expression for a new file name.
 - `status` (String) default:ENABLED, Route step status.
 - `target_account_expression_type` (String) enum:/NAME/EXPRESSION, default:NAME, Target account name or expression will be used.
 - `target_folder_expression` (String) default:/, Folder in the account to publish the file to. Not existing folder will be automatically created. You can specify either a folder name or use an EL expression to determine the folder based on the environment information
 - `target_folder_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE, Target folder simple name or expression will be used.
 - `trigger_subscription` (Boolean) default:false, When 'true', file published to a subscription folder triggers the subscription folder. Set to 'false' if you do not want any actions to be triggered as part of the publish operations (e.g. when publishing to the same subscription the file was picked up from)
 - `type` (String) default:Publish, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--pull_from_partner"></a>
@@ -414,13 +451,14 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
-- `local_file_name_expression` (String) default:'', Value or expression that would be used when naming downloaded the files.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `local_file_name_expression` (String) Value or expression that would be used when naming downloaded the files.
 - `local_file_name_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE, Name or expression.
-- `local_folder_path_expression` (String) default:'', Path or expression translating to the path where the downloaded file(s) would be stored.
+- `local_folder_path_expression` (String) Path or expression translating to the path where the downloaded file(s) would be stored.
 - `local_folder_path_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE, Path or expression.
-- `remote_file_name_expression` (String) default:'', Name or expression translating to a name or a pattern that wold be used to filter the file(s) in the remote folder.
+- `remote_file_name_expression` (String) Name or expression translating to a name or a pattern that wold be used to filter the file(s) in the remote folder.
 - `remote_file_name_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, Name or expression.
 - `remote_folder_path_expression` (String) default:'', Path or expression translating to the path from where the file(s) would be downloaded from.
 - `remote_folder_path_expression_type` (String) enum:/SIMPLE/EXPRESSION, default:SIMPLE, Path or expression.
@@ -432,6 +470,7 @@ Optional:
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--rename"></a>
@@ -445,16 +484,19 @@ Optional:
 
 - `action_on_step_failure` (String) enum:/FAIL/PROCEED, default:FAIL, Action on step failure. If set to PROCEED, the route execution will continue even if the step execution fails.
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
-- `condition_type` (String) enum:ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
+- `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
 - `status` (String) default:ENABLED, Route step status.
-- `type` (String) default:Rename, Route step type. ExecuteRoute step links the routes of type TEMPLATE and SIMPLE. The next steps are used with SIMPLE route type.
+- `type` (String) default:Rename, <nil>
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.
 
 
 <a id="nestedatt--steps--send_to_partner"></a>
@@ -466,46 +508,49 @@ Optional:
 - `action_on_step_success` (String) enum:/PROCEED/STOP, default:PROCEED, Action on step success. Defines if the route will continue after the step success.
 - `archive_policy_on_failure` (String) Backup the files in the configured archive folder if the step execution fails. By default will archive the files based on the account configuration.
 - `archive_policy_on_success` (String) Backup the files in the configured archive folder if the step execution succeeds. By default will archive the files based on the account configuration.
-- `condition` (String) default:'', An expression for step execution when conditionType is EL.
+- `autostart` (Boolean) default:false, Step autostart.
+- `condition` (String) An expression for step execution when conditionType is EL.
 - `condition_type` (String) enum:/ALWAYS/EL, default:ALWAYS, Defines whether the step is executed always or based on a condition, specified in the condition property using expression language.
-- `data_encoding` (String) default:'', Advanced PeSIT Setting. Data encoding.
+- `data_encoding` (String) Advanced PeSIT Setting. Data encoding.
 - `file_filter_expression` (String) default:*, File name or file name expression. It is used with the file filter expression property.
 - `file_filter_expression_type` (String) enum:/GLOB/REGEXP/TEXT_FILES, default:GLOB, File filter expression type.
-- `file_label` (String) default:'', Advanced PeSIT Setting. Use this field to override the file label (PI37) predefined in the transfer profile. To preserve it use ${pesit.pi.fileLabel}. This configuration parameter corresponds to the nfname parameter in Axway Transfer CFT.
-- `final_destination` (String) default:'', Advanced PeSIT Setting. Use this field to override the final destination (PI62) of the transfer. To preserve the original value use ${pesit.pi.finalDestinationID}. To make a Store and Forward PeSIT transfer specify the final destination and choose the intermediate partner (ipart parameter in Axway Transfer CFT) in the transfer site list.
+- `file_label` (String) Advanced PeSIT Setting. Use this field to override the file label (PI37) predefined in the transfer profile. To preserve it use ${pesit.pi.fileLabel}. This configuration parameter corresponds to the nfname parameter in Axway Transfer CFT.
+- `final_destination` (String) Advanced PeSIT Setting. Use this field to override the final destination (PI62) of the transfer. To preserve the original value use ${pesit.pi.finalDestinationID}. To make a Store and Forward PeSIT transfer specify the final destination and choose the intermediate partner (ipart parameter in Axway Transfer CFT) in the transfer site list.
 - `max_number_of_retries` (Number) Number of times each transfer will be retried if it fails. The retries are executed synchronously and the step will not finish execution until all files are sent successfully or the retry count configured in this property is reached.
 - `max_parallel_clients` (Number) Maximum number of transfers that will be executed in parallel by the step.
-- `originator` (String) default:'', Advanced PeSIT Setting. Use this field to override the original sender (PI61) of the transfer. To preserve the original value use ${pesit.pi.originalSenderID}.
+- `originator` (String) Advanced PeSIT Setting. Use this field to override the original sender (PI61) of the transfer. To preserve the original value use ${pesit.pi.originalSenderID}.
 - `post_routing_action_rename_expression` (String) Post transformation action rename expression for step.
-- `post_routing_action_type` (String) enum:/DELETE/RENAME, default:'', Post routing action types: NONE, DELETE, RENAME. Default is no action (NONE).
-- `record_format` (String) default:'', Advanced PeSIT Setting. "Variable", "Fixed". Use this field to override the record format (PI31) predefined in the transfer profile. To preserve it use ${pesit.pi.recordFormat}. This configuration parameter corresponds to the frecfm parameter in Axway Transfer CFT.
-- `record_length` (String) default:'', Use this field to override the record length (PI32) predefined in the transfer profile. To preserve it use ${pesit.pi.recordLength}. This configuration parameter corresponds to the frecl parameter in Axway Transfer CFT.
-- `route_file_as` (String) default:'', Name or expression like ${basename(currentfulltarget)}.sent or ${basename(transfer.target)}.?.${timestamp}?${extension(transfer.target)}
+- `post_routing_action_type` (String) enum:/DELETE/RENAME, Post routing action types: NONE, DELETE, RENAME. Default is no action (NONE).
+- `record_format` (String) Advanced PeSIT Setting. "Variable", "Fixed". Use this field to override the record format (PI31) predefined in the transfer profile. To preserve it use ${pesit.pi.recordFormat}. This configuration parameter corresponds to the frecfm parameter in Axway Transfer CFT.
+- `record_length` (String) Use this field to override the record length (PI32) predefined in the transfer profile. To preserve it use ${pesit.pi.recordLength}. This configuration parameter corresponds to the frecl parameter in Axway Transfer CFT.
+- `route_file_as` (String) Name or expression like ${basename(currentfulltarget)}.sent or ${basename(transfer.target)}.?.${timestamp}?${extension(transfer.target)}
 - `sleep_between_retries` (Number) Time interval (in milliseconds) which will be awaited between retries.
 - `sleep_increment_between_retries` (Number) Time (in milliseconds) with which the sleep interval between retries will be increased after each retry.
 - `status` (String) enum:/ENABLED/DISABLED, default:ENABLED, Route step status.
-- `store_and_forward_mode` (String) default:'', Advanced PeSIT Setting. All the advanced PeSIT settings are included or all are ommitted. "Preserve" Store and Forward mode will preserve the current Store and Forward transfer (if any). "Start new" will initiate a new Store and Forward transfer and the current transfer (if any) will be acknowledged.
-- `target_account_expression` (String) default:'', Target account name or expression.
-- `target_account_expression_type` (String) enum:/NAME/EXPRESSION, default:'', Account name or expression type.
-- `transfer_profile_expression` (String) default:'', Transfer profile property is used only if the transfer site is of type PeSIT. Otherwise it will be ignored. When the transfer profile is specified by using Expression Language, there are 3 possible cases: (1) EL expression does not match any account transfer profiles - then the default transfer profile is used. (2) EL expression matches more than one transfer profile - then the default transfer profile is used. (3) EL expression matches exactly one transfer profile - the matched transfer profile is used.
+- `store_and_forward_mode` (String) Advanced PeSIT Setting. All the advanced PeSIT settings are included or all are ommitted. "Preserve" Store and Forward mode will preserve the current Store and Forward transfer (if any). "Start new" will initiate a new Store and Forward transfer and the current transfer (if any) will be acknowledged.
+- `target_account_expression` (String) Target account name or expression.
+- `target_account_expression_type` (String) enum:/NAME/EXPRESSION, Account name or expression type.
+- `transfer_profile_expression` (String) Transfer profile property is used only if the transfer site is of type PeSIT. Otherwise it will be ignored. When the transfer profile is specified by using Expression Language, there are 3 possible cases: (1) EL expression does not match any account transfer profiles - then the default transfer profile is used. (2) EL expression matches more than one transfer profile - then the default transfer profile is used. (3) EL expression matches exactly one transfer profile - the matched transfer profile is used.
 - `transfer_profile_expression_type` (String) Profile name or expression.
 - `transfer_site_expression` (String) default:'', This value should be specified as concatenation of transfer sites or expressions with a separator "#!#CVD#!#". Examples - transfer_site_name#!#CVD#!#, transfer_site_name1#!#CVD#!#transfer_site_name2#!#CVD#!#, transfer_site_name_expression#!#CVD#!#
 - `transfer_site_expression_type` (String) enum:/LIST/EXPRESSION_WILDCARD, default:LIST, Specifies whether a list of site names or an expression will be used for the transferSiteExpression parameter.
 - `trigger_file_content` (String) The content of the trigger file. Expression language is supported. This value should be specified as concatenation of lines of the trigger file with a separator "#!#CVD#!#". Examples - line#!#CVD#!#, line1#!#CVD#!#line2#!#CVD#!#, line_expression#!#CVD#!#, null value or &#35;!#CVD#!# for empty (zero byte) trigger file.
 - `trigger_file_for_each` (Boolean) Trigger file output for each transferred file.
-- `trigger_file_name` (String) default:'', Name of the trigger file to be sent to the transfer site after successful routing of file(s). EL expressions are supported.
-- `trigger_target_account_expression` (String) default:'', An account name, login name or use an expression to determine the recipient based on the environment information.
+- `trigger_file_name` (String) Name of the trigger file to be sent to the transfer site after successful routing of file(s). EL expressions are supported.
+- `trigger_target_account_expression` (String) An account name, login name or use an expression to determine the recipient based on the environment information.
 - `trigger_target_account_expression_type` (String) Target account expression type on trigger.
 - `trigger_transfer_profile_expression` (String) Transfer profile property is used only if the transfer site is of type PeSIT. Otherwise it will be ignored.
 - `trigger_transfer_profile_expression_type` (String) Transfer profile expression type on trigger.
-- `trigger_transfer_site_expression` (String) default:'', Transfer sites to send trigger files to. Expression language is supported. This value must be a concatenation of trigger transfer sites or expressions  with a separator "#!#CVD#!#". Examples - transfer_site_name#!#CVD#!#, transfer_site_name1#!#CVD#!#transfer_site_name2#!#CVD#!#, transfer_site_name_expression#!#CVD#!#
-- `trigger_transfer_site_expression_type` (String) enum:/LIST/EXPRESSION_WILDCARD, default:'', Transfer site expression type for the trigger output file.
+- `trigger_transfer_site_expression` (String) Transfer sites to send trigger files to. Expression language is supported. This value must be a concatenation of trigger transfer sites or expressions  with a separator "#!#CVD#!#". Examples - transfer_site_name#!#CVD#!#, transfer_site_name1#!#CVD#!#transfer_site_name2#!#CVD#!#, transfer_site_name_expression#!#CVD#!#
+- `trigger_transfer_site_expression_type` (String) enum:/LIST/EXPRESSION_WILDCARD, Transfer site expression type for the trigger output file.
 - `trigger_upload_folder` (String) You can specify an upload folder that will overwrite the one configured in the transfer site settings(if allowed in the transfer site). Expression language can be used to specify the new upload folder.
 - `type` (String) default:SendToPartner, <nil>
 - `upload_folder` (String) default:/, You can specify an upload folder that will overwrite the one configured in the transfer site settings (if allowed with the respective transfer site). Expression language can be used to specify the new upload folder.
-- `user_message` (String) default:'', Advanced PeSIT Setting. The Last PeSIT specific setting. Use this field to override the user message (PI99) predefined in the PeSIT transfer site. To preserve use ${pesit.pi.serviceParam}. This configuration parameter corresponds to the parm parameter in Axway Transfer CFT.
-- `virtual_filename` (String) default:'', Advanced PeSIT Setting. Use this field to override the virtual file name (PI12) predefined in the transfer profile. To preserve it use ${pesit.pi.fileName}. This configuration parameter corresponds to the idf parameter in Axway Transfer CFT.
+- `use_preceding_step_files` (Boolean) default:true, If true, the route execution will continue even if the step execution fails
+- `user_message` (String) Advanced PeSIT Setting. The Last PeSIT specific setting. Use this field to override the user message (PI99) predefined in the PeSIT transfer site. To preserve use ${pesit.pi.serviceParam}. This configuration parameter corresponds to the parm parameter in Axway Transfer CFT.
+- `virtual_filename` (String) Advanced PeSIT Setting. Use this field to override the virtual file name (PI12) predefined in the transfer profile. To preserve it use ${pesit.pi.fileName}. This configuration parameter corresponds to the idf parameter in Axway Transfer CFT.
 
 Read-Only:
 
 - `id` (String) Route step Id.
+- `preceding_step` (String) Preceding step id.

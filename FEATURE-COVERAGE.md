@@ -2,44 +2,48 @@
 
 ### accounts
 
-- [~] account-user
-- [~] account-template
-- [~] account-service
+- [x] account-user
+- [x] account-template
+- [x] account-service
 - [x] roles
 - [x] route_template : ???
 - [x] route-composite AKA route package
 - [x] route-simple
 - [x] subscription: advanced routing
-- [ ] subscription: basic app
-- [ ] subscription: human system
-- [ ] subscription: shared folder
-- [ ] subscription: standard router
-- [ ] subscription: synchrony transfer
-- [ ] subscription: MBFT
-- [ ] subscription: site mailbox
-- [~] business-unit
+- [x] subscription: basic app
+- [!] subscription: human system
+- [!] subscription: site mailbox
+- [!] subscription: MBFT
+- [!] subscription: shared folder
+- [!] subscription: standard router
+- [!] subscription: synchrony transfer
+- [x] business-unit
 - [x] administrators
 - [x] account-certificates
 - [x] transfer-profile
+- [ ] site-template
 
 ### administration
 
-- [ ] loginRestrictionPolicies
-- [ ] siteTemplates
+- [!] loginRestrictionPolicies
+- [!] siteTemplates
 - [x] userClasses
 - [x] server configuration
-
-### setup
-
+- [x] file archiving
+- [!] network-zone
+- [!] icap servers
+- [!] ldap domain
+- [!] address book
 - [x] certificates
-- [-] (ftp)
+- [x] sentinel
+
 - (as2)
 - [ ] admin
 - [ ] admin-ui
 - (pesit)
 - [ ] adhoc
 - (database)
-- [x] sentinel
+
 - [ ] license
 - [ ] usage
 - [ ] command-logging
@@ -51,24 +55,19 @@
 - [ ] misc - ftp/http suspend
 - [ ] misc - password policy
 - [ ] misc bandwidth limit
-- [ ] icap servers
 - [ ] tm setting
-- [x] file archiving
-- [ ] network-zone
 - [ ] http-setting
 
-## authentication
-- [ ] ldapDomains
-
 ### site
-- [~] site : ssh
-- [ ] site : ftp
-- [ ] site : http
+- [!] site : adhoc
+- [x] site : ssh
+- [!] site : ftp
+- [!] site : http
 - [x] site : pesit
-- [ ] site : as/2
+- [!] site : as/2
 - [x] site : folder monitoring
-- [ ] site : connect direct
-- [ ] site : synchrony
+- [!] site : connect direct
+- [!] site : synchrony-transfer
 - [x] site : custom
   
 ### AR Steps
@@ -85,9 +84,9 @@
 - [x] step: encoding-conversion
 - [x] step: execute-route
 - [x] step: external-script
-- [ ] step: line-ending
+- [!] step: line-ending
 - [x] step: line-folding
-- [ ] step: line-padding
+- [!] step: line-padding
 - [x] step: line-truncating
   
 ### Connectors
@@ -108,26 +107,24 @@
 - [ ] ar-connector : set-flow-attribute
 
 ## Application
+- [!] application: account-maintenance
 - [x] application: advanced-routing
+- [!] application: archive maintenance
+- [!] application: audit-log-maintenance
 - [x] application: basic-application
-- [ ] application: shared-folder
 - [x] application: file-maintenance
-- [ ] application: archive maintenance
-- [ ] application: standard-router
-- [ ] application: transfer-log-maintenance
-- [ ] application: audit-log-maintenance
-- [ ] application: log-entry-amintenance
-- [ ] application: package-retention-maintenance
-- [ ] application: sentinel-link-data
-
-- [ ] application: human-to-system
-- [ ] application: site-mailbox
-- [ ] application: axway-transfer-cft
-- [ ] application: file-transfer-via-file-service-interface
-- [ ] application: unlicenced-account-maintenance
-- [ ] application: login-threshol-maintenance
-- [ ] application: account-maintenance
-
+- [!] application: human-to-system
+- [!] application: log-entry-maintenance  
+- [!] application: login-threshold-maintenance
+- [!] application: file-transfer-via-file-service-interface
+- [!] application: package-retention-maintenance
+- [!] application: sentinel-link-data
+- [!] application: shared-folder
+- [!] application: site-mailbox
+- [!] application: standard-router
+- [!] application: synchrony-transfer
+- [!] application: transfer-log-maintenance
+- [!] application: unlicenced-account-maintenance
 
 # CFT gaps
 

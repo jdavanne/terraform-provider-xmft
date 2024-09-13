@@ -5,73 +5,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-/*
-{
-  "name": "string",
-  "type": "pesit",
-  "protocol": "pesit",
-  "transferType": "internal",
-  "maxConcurrentConnection": 0,
-  "default": false,
-  "accessLevel": "PRIVATE",
-  "account": "string",
-  "additionalAttributes": {
-    "additionalProp1": "string",
-    "additionalProp2": "string",
-    "additionalProp3": "string"
-  },
-  "pesitId": "string",
-  "host": "string",
-  "port": "string",
-  "dmz": "none",
-  "configurePreconnection": false,
-  "preconnectionPartnerId": "none",
-  "usePreconnectionPartnerPassword": false,
-  "usePreconnectionPartnerPasswordExpr": false,
-  "preconnectionPartnerPassword": "none",
-  "preconnectionServerId": "none",
-  "usePreconnectionServerPassword": false,
-  "usePreconnectionServerPasswordExpr": false,
-  "preconnectionServerPassword": "none",
-  "useServerPassword": false,
-  "useServerPasswordExpr": false,
-  "serverPassword": "string",
-  "usePartnerPassword": false,
-  "usePartnerPasswordExpr": false,
-  "partnerPassword": "string",
-  "compression": "none",
-  "resyncAllowed": false,
-  "checkpointInterval": 1024,
-  "checkpointWindow": 4,
-  "connectionTimeout": 60,
-  "bufferSize": 8192,
-  "sendMessage": "string",
-  "receiveMessage": "string",
-  "storeAndForwardMode": "START_NEW",
-  "originator": "string",
-  "finalDestination": "string",
-  "ptcpConnections": 1,
-  "ptcpPacketSize": 3000,
-  "socketSendReceiveBuffersize": 65536,
-  "ptcpConnectRetryCount": 10,
-  "isSecure": true,
-  "verifyCert": false,
-  "fipsMode": false,
-  "cftCompatibleSslMode": false,
-  "loginCertificate": "string",
-  "partnerCertificate": "string",
-  "cipherSuites": "string",
-  "protocols": "string",
-  "alternativeAddresses": [
-    {
-      "host": "host",
-      "port": "string",
-      "position": 1
-    }
-  ]
-}
-*/
-
 type stTransferSitePesitModel struct {
 	Id          types.String `tfsdk:"id" helper:",computed,state"`
 	Name        types.String `tfsdk:"name" helper:",required"`
@@ -96,7 +29,7 @@ type stTransferSitePesitModel struct {
 	PreconnectionServerId               types.String `tfsdk:"preconnection_server_id" helper:"preconnectionServerId,noread,default:"`
 	UsePreconnectionServerPassword      types.Bool   `tfsdk:"use_preconnection_server_password" helper:"usePreconnectionServerPassword,default:false"`
 	UsePreconnectionServerPasswordExpr  types.Bool   `tfsdk:"use_preconnection_server_password_expr" helper:"usePreconnectionServerPasswordExpr,default:false"`
-	PreconnectionServerPassword         types.String `tfsdk:"preconnection_server_password" helper:"preconnectionServerPassword,default:"`
+	PreconnectionServerPassword         types.String `tfsdk:"preconnection_server_password" helper:"preconnectionServerPassword,emptyIsNull,default:"`
 	UseServerPassword                   types.Bool   `tfsdk:"use_server_password" helper:"useServerPassword,default:false"`
 	UseServerPasswordExpr               types.Bool   `tfsdk:"use_server_password_expr" helper:"useServerPasswordExpr,default:false"`
 	ServerPassword                      types.String `tfsdk:"server_password" helper:"serverPassword,emptyIsNull,noread,default"`
@@ -125,12 +58,14 @@ type stTransferSitePesitModel struct {
 	PartnerCertificate                  types.String `tfsdk:"partner_certificate" helper:"partnerCertificate,emptyIsNull,default"`
 	CipherSuites                        types.String `tfsdk:"cipher_suites" helper:"cipherSuites,optional,computed"`
 	Protocols                           types.String `tfsdk:"protocols" helper:"protocols,optional,computed"`
+	FipsMode                            types.Bool   `tfsdk:"fips_mode" helper:"fipsMode,default:false"`
 
 	AlternativeAddresses []struct {
+		//		Id       types.String `tfsdk:"id" helper:",computed,state"`
 		Host     types.String `tfsdk:"host" helper:",required"`
 		Port     types.String `tfsdk:"port" helper:",required"`
 		Position types.Int64  `tfsdk:"position" helper:",required"`
-	} `tfsdk:"alternative_addresses" helper:"alternativeAddresses"`
+	} `tfsdk:"alternative_addresses" helper:"alternativeAddresses,optional"`
 
 	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }

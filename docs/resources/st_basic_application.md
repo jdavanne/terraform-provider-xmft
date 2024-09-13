@@ -17,17 +17,19 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) The unique application name
 
 ### Optional
 
-- `additional_attributes` (Map of String)
-- `business_units` (List of String) default:[]
-- `managed_by_cg` (Boolean) default:false
-- `notes` (String)
-- `type` (String) default:Basic
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `business_units` (List of String) default:[], <nil>
+- `managed_by_cg` (Boolean) default:false, This property indicates whether the application is managed by Central Governance.
+- `notes` (String) An unstructured comments (description) for the application entity
+- `type` (String) default:Basic, <nil>
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The application ID
 - `last_updated` (String)

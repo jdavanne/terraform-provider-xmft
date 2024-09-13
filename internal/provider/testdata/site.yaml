@@ -30,7 +30,8 @@ Site:
         - custom
     transferType:
       type: string
-      description: The transfer type of the site. It can be unspecified (N), internal
+      description:
+        The transfer type of the site. It can be unspecified (N), internal
         (I), partner(E)
       default: N
       enum:
@@ -44,7 +45,8 @@ Site:
       default: 0
     default:
       type: boolean
-      description: Defines whether it is a default site. Only site from type PeSIT
+      description:
+        Defines whether it is a default site. Only site from type PeSIT
         can be marked as 'Default'
       default: false
     accessLevel:
@@ -72,7 +74,7 @@ Site:
 HTTPSite:
   description: A representation of an HTTP(S) site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - type
     - type: object
@@ -95,7 +97,8 @@ HTTPSite:
           oneOf:
             - type: string
             - type: boolean
-          description: Specify whether to define partner URL or not. If it's 'false',
+          description:
+            Specify whether to define partner URL or not. If it's 'false',
             'host' and 'port' should be specified. Otherwise 'url' should be specified.
           default: false
         uri:
@@ -135,7 +138,8 @@ HTTPSite:
           description: Specify the upload folder.
         transferMode:
           type: string
-          description: Specify the transfer mode. It can be A (Ascii), I (Binary).
+          description:
+            Specify the transfer mode. It can be A (Ascii), I (Binary).
             When it is not define the transfer mode is Auto detected.
           enum:
             - AUTO_DETECT
@@ -175,7 +179,8 @@ HTTPSite:
           default: false
         password:
           type: string
-          description: Specify the site login password encrypted in 'AES128'. This
+          description:
+            Specify the site login password encrypted in 'AES128'. This
             property should be set if 'usePassword' is 'true'.
           default: ""
         clientCertificate:
@@ -195,11 +200,11 @@ HTTPSite:
           type: string
           description: Enabled SSL protocols for http site.
         postTransmissionActions:
-          $ref: 'site.yaml#/BasePostTransmissionActions'
+          $ref: "site.yaml#/BasePostTransmissionActions"
         alternativeAddresses:
           type: array
           items:
-            $ref: 'site.yaml#/SiteAlternativeAddress'
+            $ref: "site.yaml#/SiteAlternativeAddress"
 BasePostTransmissionActions:
   type: object
   properties:
@@ -242,7 +247,7 @@ BasePostTransmissionActions:
 AdhocSite:
   description: A representation of an Adhoc site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - to.email.addresses
         - type
@@ -289,7 +294,7 @@ AdhocSite:
             - Never
         fromEmailAddress:
           type: string
-          description: Specify the From email address. If not specified, the 
+          description: Specify the From email address. If not specified, the
             e-mail of the user account will be used.
           default: ""
         toEmailAddresses:
@@ -313,7 +318,8 @@ AdhocSite:
           default: ""
         sendAs:
           type: string
-          description: Specify a value to send the file with a different name. An
+          description:
+            Specify a value to send the file with a different name. An
             expression language can be used to specify a file name e.g. ${stenv['target']}_${random()}.
         sendFileAsAttachment:
           type: boolean
@@ -325,11 +331,11 @@ AdhocSite:
         alternativeAddresses:
           type: array
           items:
-            $ref: 'site.yaml#/SiteAlternativeAddress'
+            $ref: "site.yaml#/SiteAlternativeAddress"
 AS2Site:
   description: A representation of an AS2 site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - as2_url
         - receiverAs2Id
@@ -366,7 +372,8 @@ AS2Site:
           description: Specify the remote site email.
         dmz:
           type: string
-          description: Specify the remote site network zone. It can be 'any', 'none',
+          description:
+            Specify the remote site network zone. It can be 'any', 'none',
             'Default' or custom network zone.
           enum:
             - none
@@ -401,9 +408,9 @@ AS2Site:
         alternativeAddresses:
           type: array
           items:
-            $ref: 'site.yaml#/SiteAlternativeAddress'
+            $ref: "site.yaml#/SiteAlternativeAddress"
         transferSettings:
-          $ref: 'site.yaml#/TransferSettingsAS2'
+          $ref: "site.yaml#/TransferSettingsAS2"
 TransferSettingsAS2:
   type: object
   properties:
@@ -493,7 +500,7 @@ TransferSettingsAS2:
 ConnectDirectSite:
   description: A representation of an Connect:Direct site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - localServerName
         - localServerPort
@@ -526,7 +533,8 @@ ConnectDirectSite:
           description: Specify the site login username.
         usePassword:
           type: boolean
-          description: Specify if the login password should be set. With Connect:Direct,
+          description:
+            Specify if the login password should be set. With Connect:Direct,
             this field is NOT required only when either (or both) field "siteTemplate" or
             field "useCertificate" is set.
           default: false
@@ -536,17 +544,19 @@ ConnectDirectSite:
           default: false
         password:
           type: string
-          description: Specify the site login password encrypted in 'AES128'. This
+          description:
+            Specify the site login password encrypted in 'AES128'. This
             property should be set if 'usePassword' is 'true'.
         useCertificate:
           type: boolean
-          description: Specify if the login certificate should bet set. With Connect:Direct,
+          description:
+            Specify if the login certificate should bet set. With Connect:Direct,
             this field is NOT required only when either (or both) field "siteTemplate" or
             field "usePassword" is set.
           default: false
         certificateId:
           type: string
-          description: Speficy the site login certificate's id. 
+          description: Speficy the site login certificate's id.
             This property should be set if 'useCertificate' is 'true'.
         submitScriptWithinFile:
           type: boolean
@@ -564,7 +574,7 @@ ConnectDirectSite:
 FTPSite:
   description: A representation of an FTP(S) site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - host
         - port
@@ -585,7 +595,8 @@ FTPSite:
           description: Specify the remote site server port.
         dmz:
           type: string
-          description: Specify the remote site network zone. It can be 'any', 'none',
+          description:
+            Specify the remote site network zone. It can be 'any', 'none',
             'Default' or custom network zone.
           enum:
             - none
@@ -625,7 +636,8 @@ FTPSite:
           description: Specify the upload folder.
         uploadCommand:
           type: string
-          description: Specify the FTP upload command that will be used when server
+          description:
+            Specify the FTP upload command that will be used when server
             initiated transfer is executed.
           enum:
             - STOR
@@ -682,7 +694,8 @@ FTPSite:
           oneOf:
             - type: string
             - type: boolean
-          description: TLC Shutdown on CCC. 'true' means that the client should shutdown TLS session
+          description:
+            TLC Shutdown on CCC. 'true' means that the client should shutdown TLS session
             on 'Clear Command Channel' and 'false' that it should not shutdown
             the TLS session on 'Clear Command Channel'.
           default: false
@@ -708,7 +721,8 @@ FTPSite:
           default: false
         password:
           type: string
-          description: Specify the site login password encrypted in 'AES128'. This
+          description:
+            Specify the site login password encrypted in 'AES128'. This
             property should be set if 'usePassword' is 'true'.
         usePasswordExpr:
           type: boolean
@@ -726,13 +740,13 @@ FTPSite:
         alternativeAddresses:
           type: array
           items:
-            $ref: 'site.yaml#/SiteAlternativeAddress'
+            $ref: "site.yaml#/SiteAlternativeAddress"
         postTransmissionActions:
-          $ref: 'site.yaml#/PostTransmissionActionsFTP'
+          $ref: "site.yaml#/PostTransmissionActionsFTP"
 PostTransmissionActionsFTP:
   allOf:
-    - $ref: 'site.yaml#/BasePostTransmissionActions'
-      type: object
+    - $ref: "site.yaml#/BasePostTransmissionActions"
+    - type: object
       properties:
         moveOnTempFailOut:
           type: string
@@ -762,7 +776,7 @@ PostTransmissionActionsFTP:
 SSHSite:
   description: A representation of an SSH site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - host
         - port
@@ -806,7 +820,8 @@ SSHSite:
           default: false
         downloadPatternType:
           type: string
-          description: Specify the download pattern type. Pattern matching expression
+          description:
+            Specify the download pattern type. Pattern matching expression
             supports 'glob' and 'regex' syntaxes.When the pattern type is "File
             Globbing" then the String representation of the filename is matched
             using a limited pattern language that resembles regular expressions
@@ -831,12 +846,13 @@ SSHSite:
           default: "0644"
         updatePermissionsWithChmodCommand:
           type: string
-          description: Determines whether to use chmod or umask command to change file
+          description:
+            Determines whether to use chmod or umask command to change file
             permissions. This setting overrides the global setting configured via the
             Ssh.UpdateFilePermissionsWithChmodCommand option. The possible values are - null(Default) -
             The global setting is applied; True - The file permissions, specified in the SSH transfer site,
             are set after transfer ends with chmod; False - The file handler is opened with specified permissions.
-            The file permissions are set with umask. There is no need to edit the Upload Permissions field - correct 
+            The file permissions are set with umask. There is no need to edit the Upload Permissions field - correct
             format is automatically set.
           default: ""
         transferMode:
@@ -878,7 +894,8 @@ SSHSite:
           default: false
         password:
           type: string
-          description: Specify the site login password encrypted in 'AES128'. This
+          description:
+            Specify the site login password encrypted in 'AES128'. This
             property should be set if 'usePassword' is 'true'.
           default: ""
         socketTimeout:
@@ -896,7 +913,8 @@ SSHSite:
             - type: string
             - type: integer
           format: int32
-          description: Specify the maximum length of time that a connection can stay
+          description:
+            Specify the maximum length of time that a connection can stay
             active when no traffic is sent through the connection.
             If not specified, its value is '300' - 300 seconds.
           default: 300
@@ -919,7 +937,8 @@ SSHSite:
             - type: string
             - type: integer
           format: int32
-          description: Specify the size of the send buffer in bytes used from the
+          description:
+            Specify the size of the send buffer in bytes used from the
             socket opened during the transfer. It is used by the platform's networking
             code as a hint for the size to set the underlying network I/O buffers.
             This option corresponds to the SO_SNDBUF. The value should be a positive
@@ -977,19 +996,20 @@ SSHSite:
         alternativeAddresses:
           type: array
           items:
-            $ref: 'site.yaml#/SiteAlternativeAddress'
+            $ref: "site.yaml#/SiteAlternativeAddress"
         postTransmissionActions:
-          $ref: 'site.yaml#/PostTransmissionActionsSSH'
+          $ref: "site.yaml#/PostTransmissionActionsSSH"
 PostTransmissionActionsSSH:
   allOf:
-    - $ref: 'site.yaml#/PostTransmissionActionsFTP'
+    - $ref: "site.yaml#/PostTransmissionActionsFTP"
       type: object
       properties:
         doMoveOverwriteIn:
           oneOf:
             - type: string
             - type: boolean
-          description: When the "Allow Overwrite Existing File" option is enabled
+          description:
+            When the "Allow Overwrite Existing File" option is enabled
             and the rename operation fails because the target file exists, ST will
             delete the target file and repeat the rename operation.
           default: false
@@ -997,14 +1017,15 @@ PostTransmissionActionsSSH:
           oneOf:
             - type: string
             - type: boolean
-          description: When the "Allow Overwrite Existing File" option is enabled
+          description:
+            When the "Allow Overwrite Existing File" option is enabled
             and the rename operation fails because the target file exists, ST will
             delete the target file and repeat the rename operation.
           default: false
 PeSITSite:
   description: A representation of an PeSIT site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - type
     - type: object
@@ -1090,7 +1111,8 @@ PeSITSite:
           default: false
         serverPassword:
           type: string
-          description: Specify the server password encrypted in 'AES128'. This property
+          description:
+            Specify the server password encrypted in 'AES128'. This property
             should be set if 'useServerPassword' is 'true'.
           default: ""
         usePartnerPassword:
@@ -1110,7 +1132,8 @@ PeSITSite:
           default: ""
         compression:
           type: string
-          description: Specify the transfer compression. It can be 0 (None), 1 (Horizontal),
+          description:
+            Specify the transfer compression. It can be 0 (None), 1 (Horizontal),
             2 (Vertical) or 3 (Both).
           enum:
             - none
@@ -1142,8 +1165,9 @@ PeSITSite:
             - type: string
             - type: integer
           format: int32
-          description: Overwrites the value specified in Pesit.Client.Inactivity.Timeout configuration option. 
-            It is used to determine how much time (in seconds) ST will wait for acknowledgment command for 
+          description:
+            Overwrites the value specified in Pesit.Client.Inactivity.Timeout configuration option.
+            It is used to determine how much time (in seconds) ST will wait for acknowledgment command for
             transfer end, when pushing file to a server, when ST acts as a PeSIT client.
           default: 60
         bufferSize:
@@ -1151,13 +1175,15 @@ PeSITSite:
             - type: string
             - type: integer
           format: int32
-          description: Specify the PeSIT buffer size. This option is used when SecureTransport
+          description:
+            Specify the PeSIT buffer size. This option is used when SecureTransport
             is acting as a PeSIT client. Specifies the maximum size of a PeSIT data
             element (PI 25). Should be greater than 800 bytes and less than 65535.
           default: 8192
         sendMessage:
           type: string
-          description: Specify a user send message. An expression language can be
+          description:
+            Specify a user send message. An expression language can be
             used e.g. ${pesit.serverID}.
         receiveMessage:
           type: string
@@ -1200,7 +1226,8 @@ PeSITSite:
             - type: string
             - type: integer
           format: int32
-          description: This option is used when SecureTransport is acting as a PeSIT
+          description:
+            This option is used when SecureTransport is acting as a PeSIT
             client. Specifies the TCP Socket maximum send and receive buffer size
             in bytes. This setting corresponds to SO_SNDBUF and SO_RCVBUF socket
             parameters.
@@ -1210,7 +1237,8 @@ PeSITSite:
             - type: string
             - type: integer
           format: int32
-          description: This option is used when SecureTransport is acting as a PeSIT
+          description:
+            This option is used when SecureTransport is acting as a PeSIT
             client. It specifies the maximum times the SecureTransport will attempt
             to re-establish a connection with the remote server in case of "Unknown
             session" error.
@@ -1225,7 +1253,8 @@ PeSITSite:
           oneOf:
             - type: string
             - type: boolean
-          description: This option is used when SecureTransport is acting as a PeSIT
+          description:
+            This option is used when SecureTransport is acting as a PeSIT
             client. Verify whether the server certificate of the partner is chained
             to a trusted root. This property can be set if TLS/SSL (issecure) is
             used.
@@ -1241,7 +1270,8 @@ PeSITSite:
           oneOf:
             - type: string
             - type: boolean
-          description: Enable Legasy transfer CFT compatible SSL mode. This property
+          description:
+            Enable Legasy transfer CFT compatible SSL mode. This property
             can be set if TLS/SSL (issecure) is used and the 'Clear Command Channel'
             is enabled.
           default: false
@@ -1262,11 +1292,11 @@ PeSITSite:
         alternativeAddresses:
           type: array
           items:
-            $ref: 'site.yaml#/SiteAlternativeAddress'
+            $ref: "site.yaml#/SiteAlternativeAddress"
 FolderMonitorSite:
   description: A representation of an Folder Monitor site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - downloadFolder
         - downloadPattern
@@ -1288,7 +1318,8 @@ FolderMonitorSite:
           default: false
         downloadFolder:
           type: string
-          description: Specify the download folder. When 'download.folder.advanced.expression.enabled'
+          description:
+            Specify the download folder. When 'download.folder.advanced.expression.enabled'
             is checked the download folder is evaluated using expression language.
         downloadPatternAdvancedExpressionEnabled:
           type: boolean
@@ -1297,7 +1328,8 @@ FolderMonitorSite:
           default: false
         downloadPatternType:
           type: string
-          description: Specify the download pattern type. Pattern matching expression
+          description:
+            Specify the download pattern type. Pattern matching expression
             supports 'glob' and 'regex' syntaxes.When the pattern type is "File
             Globbing" then the String representation of the filename is matched
             using a limited pattern language that resembles regular expressions
@@ -1320,14 +1352,16 @@ FolderMonitorSite:
           default: 1
         downloadSubfolderPatternType:
           type: string
-          description: Specify the dowlnload pattern type. Pattern matching expression
+          description:
+            Specify the dowlnload pattern type. Pattern matching expression
             supports 'glob' and 'regex' syntaxes. When the pattern type is "File
             Globbing" then the String representation of the filename is matched
             using a limited pattern language that resembles regular expressions
             but with a simpler syntax.
         downloadSubfolderPattern:
           type: string
-          description: Specify the pattern used to match folder names to determine
+          description:
+            Specify the pattern used to match folder names to determine
             whether to apply the download pattern to the folder.
         downloadSubfolderPatternCaseSensitive:
           oneOf:
@@ -1342,14 +1376,16 @@ FolderMonitorSite:
           oneOf:
             - type: string
             - type: boolean
-          description: When it is 'true' the upload folder is evaluated using expression
+          description:
+            When it is 'true' the upload folder is evaluated using expression
             language.
           default: false
         uploadFolderAutocreate:
           oneOf:
             - type: string
             - type: boolean
-          description: Defines if the Upload Folder will be automatically created
+          description:
+            Defines if the Upload Folder will be automatically created
             if it doesn't exist.The automatically created folder will be owned by
             the user running the SecureTransport TM Server process. Privileges are
             calculated according to the OS umask (not the Users.DefaultUmask Server
@@ -1363,15 +1399,15 @@ FolderMonitorSite:
             To Partner routing step.
           default: false
         postTransmissionActions:
-          $ref: 'site.yaml#/PostTransmissionActionsFM'
+          $ref: "site.yaml#/PostTransmissionActionsFM"
 PostTransmissionActionsFM:
   allOf:
-    - $ref: 'site.yaml#/PostTransmissionActionsFTP'
+    - $ref: "site.yaml#/PostTransmissionActionsFTP"
       type: object
 SynchronySite:
   description: A representation of an synchrony site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - required:
         - type
     - type: object
@@ -1410,7 +1446,7 @@ SynchronySite:
           type: string
           description: The site template of the site
         additionalProperties:
-          $ref: 'site.yaml#/AdditionalPropertiesSynchrony'
+          $ref: "site.yaml#/AdditionalPropertiesSynchrony"
 AdditionalPropertiesSynchrony:
   type: object
   properties:
@@ -1457,7 +1493,7 @@ AdditionalPropertiesSynchrony:
 CustomSite:
   description: A representation of custom site.
   allOf:
-    - $ref: 'site.yaml#/Site'
+    - $ref: "site.yaml#/Site"
     - type: object
       properties:
         type:
@@ -1474,24 +1510,24 @@ CustomSite:
             property_2:
               type: string
 SiteAlternativeAddress:
-      required:
-        - host
-        - position
-      type: object
-      properties:
-        id:
-          type: string
-          description: The id of the site alternative address
-        host:
-          type: string
-          description: The host/url of the alternative address.
-        port:
-          type: string
-          description: The port of the alternative address.
-        position:
-          type: integer
-          description: The position when alternate addresses.
-          format: int32
+  required:
+    - host
+    - position
+  type: object
+  properties:
+    id:
+      type: string
+      description: The id of the site alternative address
+    host:
+      type: string
+      description: The host/url of the alternative address.
+    port:
+      type: string
+      description: The port of the alternative address.
+    position:
+      type: integer
+      description: The position when alternate addresses.
+      format: int32
 Connection:
   required:
     - id
@@ -1542,7 +1578,8 @@ Connection:
       description: The network zone of the site.
     socketTimeout:
       type: string
-      description: The maximum number of seconds the server waits to read a block
+      description:
+        The maximum number of seconds the server waits to read a block
         of data from the partner server, or write a block of data to the partner
         server.
     verifyFinger:
@@ -1561,7 +1598,8 @@ Connection:
         opened during the transfer.
     socketSendBufferSize:
       type: string
-      description: The size of the send buffer in bytes used from the socket opened
+      description:
+        The size of the send buffer in bytes used from the socket opened
         during the transfer.
     cipherSuites:
       type: string
@@ -1605,7 +1643,7 @@ Connection:
         - ASCII
     ccc:
       type: string
-      description: | 
+      description: |
         Clear command channel. 'true' indicates if Clear Command Channel option should be used when connecting to site, 'false' if not to be used.
     tlsShutdownCcc:
       type: string
@@ -1618,8 +1656,8 @@ Connection:
       type: string
       description: Transcode any line terminators in ASCII mode.
     disableFtpHostnameVerification:
-        type: string
-        description: Verify if the remote host taking part of a data connection is the same as the host to which the control connection is attached.
+      type: string
+      description: Verify if the remote host taking part of a data connection is the same as the host to which the control connection is attached.
     uploadFolderOverridable:
       type: string
       description: Defines if the upload folder can be modified by the Send To Partner routing step.
@@ -1633,16 +1671,16 @@ Connection:
         - default
         - PASV
         - EPSV
-    protocols:  
+    protocols:
       type: string
       description: Enabled SSL protocols for site.
     useUri:
       type: string
-      description: | 
-        Specify whether to define partner URL or not. If it's 'false', 'host' and 'port' should be specified. Otherwise 'url' should be specified.   
+      description: |
+        Specify whether to define partner URL or not. If it's 'false', 'host' and 'port' should be specified. Otherwise 'url' should be specified.
     uri:
       type: string
-      description: Specify the partner URL.   
+      description: Specify the partner URL.
     requestMode:
       type: string
       description: The value of the requestMode property
@@ -1654,7 +1692,7 @@ Connection:
         Custom properties which are defined with "key": "value" pairs.
       type: object
       additionalProperties:
-        type: string      
+        type: string
 ConnectionDetailsResult:
   type: object
   properties:
@@ -1714,12 +1752,12 @@ ListRemoteFolderResult:
       type: string
       description: Detailed error message in case of error in list folder operation.
     resultSet:
-      $ref: 'responses.yaml#/ResultSet'
+      $ref: "responses.yaml#/ResultSet"
     result:
       type: array
       description: Remote files result after list.
       items:
-        $ref: 'site.yaml#/ResultFile'
+        $ref: "site.yaml#/ResultFile"
 ResultFile:
   type: object
   properties:
@@ -1728,42 +1766,42 @@ ResultFile:
       description: The remote file name.
     fileSize:
       type: string
-      description: The remote file size. 
+      description: The remote file size.
     filePermissions:
       type: string
       description: The remote file permissions.
-    lastModifiedTime :
+    lastModifiedTime:
       type: string
-      description: The remote file last modified time.      
+      description: The remote file last modified time.
 SiteResult:
   type: object
   properties:
     resultSet:
-      $ref: 'responses.yaml#/ResultSet'
+      $ref: "responses.yaml#/ResultSet"
     result:
       type: array
       items:
         anyOf:
-          - $ref: 'site.yaml#/HTTPSite'
-          - $ref: 'site.yaml#/AdhocSite'
-          - $ref: 'site.yaml#/AS2Site'
-          - $ref: 'site.yaml#/ConnectDirectSite'
-          - $ref: 'site.yaml#/FTPSite'
-          - $ref: 'site.yaml#/SSHSite'
-          - $ref: 'site.yaml#/PeSITSite'
-          - $ref: 'site.yaml#/FolderMonitorSite'
-          - $ref: 'site.yaml#/SynchronySite'
-          - $ref: 'site.yaml#/CustomSite'
+          - $ref: "site.yaml#/HTTPSite"
+          - $ref: "site.yaml#/AdhocSite"
+          - $ref: "site.yaml#/AS2Site"
+          - $ref: "site.yaml#/ConnectDirectSite"
+          - $ref: "site.yaml#/FTPSite"
+          - $ref: "site.yaml#/SSHSite"
+          - $ref: "site.yaml#/PeSITSite"
+          - $ref: "site.yaml#/FolderMonitorSite"
+          - $ref: "site.yaml#/SynchronySite"
+          - $ref: "site.yaml#/CustomSite"
         discriminator:
           propertyName: type
           mapping:
-            http: 'site.yaml#/HTTPSite'
-            ftp: 'site.yaml#/FTPSite'
-            ssh: 'site.yaml#/SSHSite'
-            pesit: 'site.yaml#/PeSITSite'
-            AS2: 'site.yaml#/AS2Site'
-            folder: 'site.yaml#/FolderMonitorSite'
-            adhoc: 'site.yaml#/AdhocSite'
-            cd: 'site.yaml#/ConnectDirectSite'
-            synchrony transfer: 'site.yaml#/SynchronySite'
-            custom: 'site.yaml#/CustomSite'
+            http: "site.yaml#/HTTPSite"
+            ftp: "site.yaml#/FTPSite"
+            ssh: "site.yaml#/SSHSite"
+            pesit: "site.yaml#/PeSITSite"
+            AS2: "site.yaml#/AS2Site"
+            folder: "site.yaml#/FolderMonitorSite"
+            adhoc: "site.yaml#/AdhocSite"
+            cd: "site.yaml#/ConnectDirectSite"
+            synchrony transfer: "site.yaml#/SynchronySite"
+            custom: "site.yaml#/CustomSite"

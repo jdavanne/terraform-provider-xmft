@@ -26,7 +26,7 @@ description: |-
 - `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
 and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
-- `ca_password` (String, Sensitive)
+- `ca_password` (String, Sensitive) The password of the CA for the certificate generation.
 - `overwrite` (Boolean) default:false, Define whether to overwrite the certificate if a certificate with the same name, type and usage already exists.
 - `password` (String, Sensitive) The private key password.
 - `type` (String) enum:/x509/ssh, default:x509, The type of the certificate entity as string.

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"reflect"
+	"regexp"
 	"sort"
 	"strings"
 	"testing"
@@ -19,7 +20,34 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func Keys[T comparable](m map[T]interface{}) []T {
+const (
+	doUpdate                   = false
+	generateShortDiff          = true
+	generateProviderSchemaFlag = false
+)
+
+var swaggerSkips = []string{
+	"/accountSetup",
+	"/sessions",
+	"/events",
+	"/logs/transfers",
+	"/logs/audit",
+	"/logs/server",
+	"/servers",
+	"/certificates/requests",
+	"/configurations/clusterManagement/",
+	"/configurations/database/",
+	"/site_templates/",
+	"/siteTemplates/",
+}
+
+var duplicateSkip = []string{
+	//".schedules.",
+	//".transferConfigurations.",
+	".last_updated",
+}
+
+func Keys[T comparable, V any](m map[T]V) []T {
 	keys := make([]T, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -113,8 +141,6 @@ func fetch(client *http.Client, uri string) ([]byte, error) {
 }
 
 func update(client *http.Client, uri string, path string) ([]byte, error) {
-	doUpdate := false
-
 	var data []byte
 	var err error
 	if doUpdate {
@@ -180,8 +206,31 @@ func sref(t *testing.T, client *http.Client, refs map[string]interface{}, curren
 func describeSchema(t *testing.T, client *http.Client, refs map[string]interface{}, currentFile, path string, schema interface{}) []map[string]string {
 	fields := make([]map[string]string, 0)
 	debug := false
+
 	switch v := schema.(type) {
 	case map[interface{}]interface{}:
+		if v["oneOf"] != nil {
+			oneOfList, ok := v["oneOf"].([]interface{})
+			if !ok {
+				panic("unsupported oneOf" + fmt.Sprintf("%s : %T %v", path, v, v))
+			}
+			delete(v, "oneofType")
+			for _, v2 := range oneOfList {
+				oneOfItemMap, ok := v2.(map[interface{}]interface{})
+				if !ok {
+					continue
+				}
+				if oneOfItemMap["type"] != "string" {
+					v["type"] = oneOfItemMap["type"] // FIXME: bigtrick
+				}
+				if _, ok := v["oneofType"]; !ok {
+					v["oneofType"] = fmt.Sprint(oneOfItemMap["type"])
+				} else {
+					v["oneofType"] = fmt.Sprint(v["oneofType"], "/", oneOfItemMap["type"])
+				}
+			}
+		}
+
 		typ := v["type"]
 		switch typ {
 		case "array":
@@ -190,37 +239,41 @@ func describeSchema(t *testing.T, client *http.Client, refs map[string]interface
 			fields = append(fields, describeSchema(t, client, refs, currentFile, path+".#", items)...)
 		case "string", "integer", "number", "boolean":
 			// fmt.Println(path, typ, v)
+			enumsS := ""
+			var enums []string
+			if v["enum"] != nil {
+				for _, e := range v["enum"].([]interface{}) {
+					enums = append(enums, fmt.Sprint(e))
+				}
+				enumsS = "/" + strings.Join(enums, "/")
+			}
+
+			oneOfType := ""
+			if v["oneofType"] != nil {
+				oneOfType = fmt.Sprint("oneOfType", v["oneofType"])
+			}
+
+			if typ == "integer" {
+				typ = "int"
+			}
+
+			if path[len(path)-1] == '#' {
+				typ = "array[" + fmt.Sprint(typ) + "]"
+			}
+
 			fields = append(fields, map[string]string{
 				"apiPath":     path,
 				"type":        fmt.Sprint(typ),
+				"oneOfType":   oneOfType,
 				"default":     fmt.Sprint(v["default"]),
 				"description": fmt.Sprint(v["description"]),
-				"enum":        fmt.Sprint(v["enum"]),
+				"enum":        enumsS,
 				"format":      fmt.Sprint(v["format"]),
 				"maxLength":   fmt.Sprint(v["maxLength"]),
 				"minLength":   fmt.Sprint(v["minLength"]),
 			})
 		default:
 			found := false
-
-			if !found {
-				if v["type"] == "object" || v["properties"] != nil {
-					found = true
-					properties := v["properties"]
-					if properties != nil {
-						for k, v2 := range properties.(map[interface{}]interface{}) {
-							fields = append(fields, describeSchema(t, client, refs, currentFile, path+"."+fmt.Sprint(k), v2)...)
-						}
-					} else {
-						// fmt.Println(path, "map")
-						fields = append(fields, map[string]string{
-							"apiPath":     path,
-							"type":        "map",
-							"description": fmt.Sprint(v["description"]),
-						})
-					}
-				}
-			}
 
 			if !found {
 				ref := v["$ref"]
@@ -255,17 +308,17 @@ func describeSchema(t *testing.T, client *http.Client, refs map[string]interface
 				discriminator := v["discriminator"]
 
 				if discriminator != nil {
-					found = true
 
 					propertyName := fmt.Sprint(v["discriminator"].(map[interface{}]interface{})["propertyName"])
 					mapping := v["discriminator"].(map[interface{}]interface{})["mapping"]
-
-					for k, ref := range mapping.(map[interface{}]interface{}) {
-						// val := fmt.Sprint(get(t, client, refs, currentFile, "type.properties.default", v2))
-						f, nc := sref(t, client, refs, currentFile, fmt.Sprint(ref))
-						fields = append(fields, describeSchema(t, client, refs, nc, path+".["+propertyName+"="+fmt.Sprint(k)+"]", f)...)
+					if mapping != nil {
+						for k, ref := range mapping.(map[interface{}]interface{}) {
+							// val := fmt.Sprint(get(t, client, refs, currentFile, "type.properties.default", v2))
+							f, nc := sref(t, client, refs, currentFile, fmt.Sprint(ref))
+							fields = append(fields, describeSchema(t, client, refs, nc, path+".["+propertyName+"="+fmt.Sprint(k)+"]", f)...)
+						}
+						found = true
 					}
-
 				}
 			}
 
@@ -288,7 +341,24 @@ func describeSchema(t *testing.T, client *http.Client, refs map[string]interface
 					}
 				}
 			}
-
+			if !found {
+				if v["type"] == "object" || v["properties"] != nil {
+					found = true
+					properties := v["properties"]
+					if properties != nil {
+						for k, v2 := range properties.(map[interface{}]interface{}) {
+							fields = append(fields, describeSchema(t, client, refs, currentFile, path+"."+fmt.Sprint(k), v2)...)
+						}
+					} else {
+						// fmt.Println(path, "map")
+						fields = append(fields, map[string]string{
+							"apiPath":     path,
+							"type":        "map[string]string",
+							"description": fmt.Sprint(v["description"]),
+						})
+					}
+				}
+			}
 			if !found {
 				// FIXME: required
 				if v["required"] != nil || v["default"] != nil || v["description"] != nil {
@@ -333,17 +403,7 @@ main:
 			continue
 		}
 
-		for _, skip := range []string{
-			"/accountSetup",
-			"/sessions",
-			"/events",
-			"/logs/transfers",
-			"/logs/audit",
-			"/logs/server",
-			"/servers",
-			"/certificates/requests",
-			"/configurations/clusterManagement/",
-		} {
+		for _, skip := range swaggerSkips {
 			if strings.HasPrefix(uri, skip) {
 				discarded = append(discarded, uri+"(skip_prefix)")
 				continue main
@@ -411,21 +471,23 @@ main:
 		}
 
 	}
-	fmt.Println("n", len(fields))
+	// fmt.Println("n", len(fields))
 
-	for _, f := range fields {
-		fmt.Println(f["apiPath"], f["type"], f["default"])
+	if !generateShortDiff {
+		for _, f := range fields {
+			fmt.Println(f["apiPath"], f["type"], f["default"])
+		}
 	}
 
 	fmt.Println("discarded", len(discarded))
 	sort.Slice(discarded, func(i, j int) bool {
 		return discarded[i] < discarded[j]
 	})
-	for _, d := range discarded {
+	/*for _, d := range discarded {
 		fmt.Println("discarded", d)
-	}
+	}*/
 
-	fmt.Println("n", len(fields))
+	// fmt.Println("n", len(fields))
 
 	return fields
 }
@@ -438,19 +500,151 @@ func walkSTProviderResources(t *testing.T) []map[string]string {
 			continue
 		}
 
+		uri := stRes.uriReplace
+		if stRes.swaggerUri != "" {
+			uri = stRes.swaggerUri
+		}
+
 		// fmt.Println(stRes.name, stRes.kind, stRes.uriReplace)
-		uri := stRes.uriReplace[9:] + stRes.swaggerDiscriminator
+		uri = uri[9:] + stRes.swaggerDiscriminator
+
 		fields = append(fields, tfhelper.ModelFlatten(nil, stRes.name, stRes.name, uri, false, reflect.TypeOf(reflect.ValueOf(stRes.obj).Elem().Interface()))...)
 	}
 	fmt.Println("n", len(fields))
 
-	for _, f := range fields {
+	/*for _, f := range fields {
 		fmt.Println(f["apiPath"], f["type"], f["default"])
-	}
+	}*/
 
-	fmt.Println("n", len(fields))
+	// fmt.Println("n", len(fields))
 
 	return fields
+}
+
+var (
+	matchFirstCap = regexp.MustCompile("(.)([A-Z][a-z]+)")
+	matchAllCap   = regexp.MustCompile("([a-z0-9])([A-Z])")
+)
+
+func ToPascalCase(str string) string {
+	return strings.ToUpper(str[0:1]) + str[1:]
+}
+
+func ToSnakeCase(str string) string {
+	snake := matchFirstCap.ReplaceAllString(str, "${1}_${2}")
+	snake = matchAllCap.ReplaceAllString(snake, "${1}_${2}")
+	return strings.ToLower(snake)
+}
+
+func Indent(n int) string {
+	return strings.Join(make([]string, n), "  ")
+}
+
+func PathDepth(elements []string) int {
+	arrayMarkers := 0
+	for i := 0; i < len(elements); i++ {
+		if elements[i] == "#" {
+			arrayMarkers++
+		}
+	}
+
+	return len(elements) - arrayMarkers
+}
+
+func generateProviderSchema(swaggerResources []map[string]string) {
+	oldParent := ""
+	var oldElements []string
+loop3:
+	for _, f := range swaggerResources {
+		for _, skip := range duplicateSkip {
+			if strings.Contains(f["apiPath"], skip) {
+				continue loop3
+			}
+		}
+
+		t := f["type"]
+		if f["type"] == "" {
+			continue loop3
+		}
+
+		apiPath := f["apiPath"]
+		elements := strings.Split(apiPath, ".")
+
+		swaggerType := t
+		switch swaggerType {
+		case "integer":
+			t = "types.Int64"
+		case "string":
+			t = "types.String"
+		case "boolean":
+			t = "types.Bool"
+		default:
+			t = "types.String" + t
+		}
+		name := elements[len(elements)-1]
+		goName := ToPascalCase(name)
+		tfName := ToSnakeCase(name)
+		path := strings.Join(elements[1:len(elements)-1], ".")
+		parent := strings.Join(elements[0:len(elements)-1], ".")
+		indentN := PathDepth(elements)
+
+		if oldParent != parent {
+			// Close structs if needed
+			if !strings.HasPrefix(parent, oldParent) { // not common prefix
+				n := len(oldElements) - 1
+				for {
+					old := strings.Join(oldElements[0:n], ".")
+					nw := strings.Join(elements[0:min(n, len(elements))], ".")
+
+					if old == nw {
+						break
+					}
+					parentName := oldElements[n-1]
+					tfParentName := ToSnakeCase(parentName)
+					if parentName != "#" {
+						fmt.Println(Indent(2+PathDepth(oldElements[0:n])) + "} `tfsdk:\"" + tfParentName + "\" helper:\"" + parentName + ",default:\"`" /*, "//", strings.Join(oldElements[0:n], ".")*/)
+					}
+					n--
+				}
+
+				fmt.Println(Indent(indentN))
+				// fmt.Println(Indent(indentN)+"  // "+parent, oldParent, "-->", parent, len(oldElements), len(elements))
+			}
+			// Open of new struct if needed
+			if oldParent == "" || strings.HasPrefix(parent, oldParent) || len(oldElements) == len(elements) || oldElements[0] != elements[0] {
+				// check current type is array
+				array := ""
+				if path != "" && path[len(path)-1] == '#' {
+					array = "[]"
+				}
+
+				parentField := elements[len(elements)-2]
+				if parentField == "#" {
+					parentField = elements[len(elements)-3]
+				}
+				// fmt.Println(Indent(indentN)+"  // "+parent, oldParent, "-->", parent)
+				fmt.Println(Indent(indentN) + "  " + ToPascalCase(parentField) + "  " + array + "struct { ")
+			}
+		}
+
+		def := f["default"]
+		if def == "<nil>" {
+			def = ",default:"
+		} else {
+			def = ",default:" + def
+		}
+
+		enum := f["enum"]
+		if enum != "" && enum != "<nil>" {
+			enum = ",enum:" + enum
+		} else {
+			enum = ""
+		}
+
+		fmt.Println(Indent(indentN), "  ", goName, t, "`tfsdk:\""+tfName+"\" helper:\""+name+enum+def+"\"`")
+		oldParent = parent
+		oldElements = elements
+	}
 }
 
 func TestResources(t *testing.T) {
@@ -459,10 +653,6 @@ func TestResources(t *testing.T) {
 
 	sort.Slice(providerResources, func(i, j int) bool {
 		return providerResources[i]["apiPath"] < providerResources[j]["apiPath"]
-	})
-
-	sort.Slice(swaggerResources, func(i, j int) bool {
-		return swaggerResources[i]["apiPath"] < swaggerResources[j]["apiPath"]
 	})
 
 	fmt.Println("provider n", len(providerResources))
@@ -482,43 +672,125 @@ func TestResources(t *testing.T) {
 	okProvider := 0
 loop1:
 	for _, f := range providerResources {
-		for _, skip := range []string{".schedules.", ".transferConfigurations."} {
+		for _, skip := range duplicateSkip {
 			if strings.Contains(f["apiPath"], skip) {
 				continue loop1
 			}
 		}
 		totalprovider++
-		if _, ok := swaggerResourcesUnique[f["apiPath"]]; !ok {
-			fmt.Println("missing provider", f["apiPath"], f["type"], f["default"])
+		if r, ok := swaggerResourcesUnique[f["apiPath"]]; !ok {
+			fmt.Println("!!!missing in swagger ", f["apiPath"], f["type"], f["default"])
+			r = make(map[string]string)
+			r["apiPath"] = f["apiPath"]
+			r["providerType"] = f["type"]
+			r["providerDefault"] = f["default"]
+			r["providerEnum"] = f["enum"]
+			swaggerResourcesUnique[f["apiPath"]] = r
 		} else {
-			fmt.Println("ok      provider", f["apiPath"], f["type"], f["default"])
+			// fmt.Println("ok      provider", f["apiPath"], f["type"], f["default"])
 			okProvider++
+			r["providerType"] = f["type"]
+			r["providerDefault"] = f["default"]
+			r["providerEnum"] = f["enum"]
 		}
 	}
+
+	swaggerResources = make([]map[string]string, 0, len(swaggerResourcesUnique))
+	for _, v := range swaggerResourcesUnique {
+		swaggerResources = append(swaggerResources, v)
+	}
+	sort.Slice(swaggerResources, func(i, j int) bool {
+		return swaggerResources[i]["apiPath"] < swaggerResources[j]["apiPath"]
+	})
 
 	fieldDescriptions := make(map[string]string)
 	totalswagger := 0
 	okSwagger := 0
+	mismatchCount := 0
+	missingInProvider := make(map[string]int)
+	missingInSwagger := 0
 loop2:
 	for _, f := range swaggerResources {
-		for _, skip := range []string{".schedules.", ".transferConfigurations."} {
+		for _, skip := range duplicateSkip {
 			if strings.Contains(f["apiPath"], skip) {
 				continue loop2
 			}
 		}
-		totalswagger++
-		if _, ok := providerResourcesUnique[f["apiPath"]]; !ok {
-			fmt.Println("missing swagger", f["apiPath"], f["type"], f["default"])
+
+		apiPath := f["apiPath"]
+		if _, ok := providerResourcesUnique[apiPath]; !ok {
+			totalswagger++
+			fmt.Println("missing in provider", apiPath, f["type"], f["default"], f["enum"])
+			prefix := strings.SplitN(apiPath, ".", 2)
+			missingInProvider[prefix[0]]++
 		} else {
-			fmt.Println("ok      swagger", f["apiPath"], f["type"], f["default"], f["description"])
-			fieldDescriptions[f["apiPath"]] = f["description"]
-			okSwagger++
+			if f["type"] == "" {
+				fmt.Println("missing in swagger ", apiPath, f["type"], f["default"], f["enum"], "vs provider", f["providerType"], f["providerDefault"], f["providerEnum"])
+				missingInSwagger++
+
+			} else {
+				totalswagger++
+				mismatch := false
+				if f["type"] != f["providerType"] {
+					fmt.Println("type mismatch      ", apiPath, f["type"], f["oneofType"], f["default"], f["enum"], "vs provider", f["providerType"], f["providerDefault"])
+					mismatch = true
+				}
+				if f["default"] != "<nil>" && f["default"] != "string" && f["default"] != f["providerDefault"] {
+					fmt.Println("default mismatch   ", apiPath, f["type"], f["oneofType"], "'"+f["default"]+"'", f["enum"], "vs provider", f["providerType"], "'"+f["providerDefault"]+"'")
+					mismatch = true
+				}
+				if f["enum"] != "" && f["enum"] != f["providerEnum"] {
+					fmt.Println("enum mismatch      ", apiPath, f["type"], f["oneofType"], f["default"], "enum:"+f["enum"], "vs provider", f["providerType"], f["providerDefault"], f["providerEnum"])
+					mismatch = true
+				}
+				if mismatch {
+					mismatchCount++
+				}
+				if !mismatch && !generateShortDiff {
+					fmt.Println("ok                 ", apiPath, f["type"], f["default"], f["enum"], "vs provider", f["providerType"], f["providerDefault"])
+				}
+				okSwagger++
+			}
+			fieldDescriptions[apiPath] = f["description"]
 		}
 	}
 
-	fmt.Println("okProvider", okProvider, totalprovider, len(providerResources))
-	fmt.Println("okSwagger", okSwagger, totalswagger, len(swaggerResources))
+	missingInProviderSum := 0
+	for _, v := range missingInProvider {
+		missingInProviderSum += v
+	}
 
+	var missingInProvider2 []struct {
+		key   string
+		count int
+	}
+	for _, a := range Keys[string](missingInProvider) {
+		missingInProvider2 = append(missingInProvider2, struct {
+			key   string
+			count int
+		}{
+			key:   a,
+			count: missingInProvider[a],
+		})
+	}
+
+	sort.Slice(missingInProvider2, func(i, j int) bool {
+		return missingInProvider2[i].count > missingInProvider2[j].count
+	})
+
+	if generateProviderSchemaFlag {
+		generateProviderSchema(swaggerResources)
+	}
+
+	for _, v := range missingInProvider2 {
+		fmt.Println("missingInProvider", v.key, v.count)
+	}
+
+	fmt.Println("okProvider", okProvider, totalprovider, len(providerResources), "MISSING=", missingInSwagger, totalprovider-okProvider)
+	fmt.Println("okSwagger", okSwagger, totalswagger, len(swaggerResources), "MISSING=", missingInProviderSum, totalswagger-okSwagger)
+	fmt.Println("missingInProvider", missingInProviderSum)
+	fmt.Println("missingInSwagger", missingInSwagger)
+	fmt.Println("mismatch", mismatchCount)
 	fieldDescriptionsJson, err := json.MarshalIndent(fieldDescriptions, "", "  ")
 	if err != nil {
 		panic(err)

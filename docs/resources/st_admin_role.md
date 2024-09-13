@@ -17,13 +17,13 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) Name of the administrative role.
 
 ### Optional
 
-- `is_bounce_allowed` (Boolean)
-- `is_limited` (Boolean)
-- `menus` (List of String)
+- `is_bounce_allowed` (Boolean) Is bounce function allowed for administrative role.
+- `is_limited` (Boolean) Type of the administrative role - master administrator or limited (delegated).
+- `menus` (List of String) <nil>
 
 ### Read-Only
 

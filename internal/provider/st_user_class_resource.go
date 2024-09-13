@@ -30,8 +30,6 @@ type stUserClassModel struct {
 	Group      types.String `tfsdk:"group" helper:"group,default:*"`
 	Address    types.String `tfsdk:"address" helper:"address,default:*"`
 	Expression types.String `tfsdk:"expression" helper:"expression,default:"`
-
-	// AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }
 
 func NewSTUserClassModelModelResource() resource.Resource {

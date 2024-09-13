@@ -40,7 +40,7 @@ type stConfigurationSentinelModel struct {
 	HeartbeatEnabled      types.Bool   `tfsdk:"heartbeat_enabled" helper:"heartbeatEnabled,default:false"`
 	HeartbeatDelay        types.Int64  `tfsdk:"heartbeat_delay" helper:"heartbeatDelay,default:10"`
 	HeartbeatTimeUnit     types.String `tfsdk:"heartbeat_time_unit" helper:"heartbeatTimeUnit,default:seconds"`
-	EventStates           types.Map    `tfsdk:"event_states" helper:"eventStates,elementtype:string,noread"`
+	EventStates           types.Map    `tfsdk:"event_states" helper:"eventStates,elementtype:string,noread"` // FIXME: ?????
 	MappingRules          types.Map    `tfsdk:"mapping_rules" helper:"mappingRules,elementtype:string"`
 	OverflowFilePath      types.String `tfsdk:"overflow_file_path" helper:"overflowFilePath"`
 	OverflowFileSize      types.Int64  `tfsdk:"overflow_file_size" helper:"overflowFileSize,default:1"`

@@ -90,10 +90,11 @@ type stAdminModel struct {
 		LoginFailureCount    types.Int64  `tfsdk:"login_failure_count" helper:"loginFailureCount,nowrite,computed"`
 		LastLoginTime        types.String `tfsdk:"last_login_time" helper:"lastLoginTime,nowrite,computed"`
 		LastFailureLoginTime types.String `tfsdk:"last_failure_login_time" helper:"lastFailureLoginTime,nowrite,computed"`
+		// LastOwnPasswordChange types.String `tfsdk:"last_own_password_change" helper:"lastOwnPasswordChange,nowrite,computed"`
 	} `tfsdk:"password_credentials" helper:"passwordCredentials,optional"`
-	AdministratorRights types.Object `tfsdk:"administrator_rights" helper:"administratorRights,elementtype:stAdminRoleAdministratorRights,default:"`
+	AdministratorRights *stAdminRoleAdministratorRights `tfsdk:"administrator_rights" helper:"administratorRights,elementtype:stAdminRoleAdministratorRights,default:"`
 
-	BusinessUnits types.List `tfsdk:"business_units" helper:",elementtype:string,optional"`
+	BusinessUnits []types.String `tfsdk:"business_units" helper:"businessUnits,default:"`
 	// AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }
 

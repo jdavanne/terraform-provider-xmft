@@ -26,36 +26,53 @@ description: |-
 - `account_encrypt_mode` (String) enum:/UNSPECIFIED/ENABLED, default:UNSPECIFIED, Account entities support repository encryption mode. There are two possible options for the encryptMode - 'ENABLED' and 'UNSPECIFIED'.
 When 'ENABLED' is set then repository encryption for the account is enabled.
 When 'UNSPECIFIED' is set then repository encryption for the account is not enabled and can be specified with EncryptClass.
+- `account_maintenance_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings))
 - `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys should follow the pattern: [a-zA-Z0-9_.]+
 and have length between 10 and 255 characters. Key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
+- `address_book_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--address_book_settings))
+- `adhoc_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--adhoc_settings))
 - `auth_by_email` (Boolean) default:false, This property defines if authentication by email address is allowed for this account
-- `business_unit` (String) default:'', The business unit that account belongs to.
+- `bandwidth_limits` (Attributes) default:{} (see [below for nested schema](#nestedatt--bandwidth_limits))
+- `business_unit` (String) The business unit that account belongs to.
+- `contact` (Attributes) default:{} (see [below for nested schema](#nestedatt--contact))
 - `disabled` (Boolean) default:false, This property defines if this account is disabled. If the account is disabled: 1) Subscriptions for the account will not trigger. ; 2) Users associated with the account will not be able to login and perform any transfers
-- `gid` (String) default:1000, The numeric group ID of the account
+- `file_archiving_policy` (String) enum:/DEFAULT/DISABLED/ENABLED, default:DEFAULT, Account entities support a custom property named 'fileArchivingPolicy' that can be set only if the global File Archiving is enabled.
+There are three possible options for the fileArchivingPolicy - 'DEFAULT', 'DISABLED' and 'ENABLED'.
+When 'DEFAULT' is set, then the following apply: if the account is assigned to business unit, it will inherit its policy, otherwise, the global archiving policy applies.
+When 'DISABLED' is set, file archiving will be disabled for this account.
+When 'ENABLED' is set, file archiving will be enabled for this account.
+- `file_maintenance_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--file_maintenance_settings))
+- `gid` (String) default:10000, The numeric group ID of the account
+- `home_folder_access_level` (String) enum:/PRIVATE/PUBLIC/BUSINESS_UNIT, default:PRIVATE, The home folder access level
 - `is_unlicensed_user_allowed_to_reply` (Boolean) default:true, This property defines if the unlicensed user may reply to packages.
-- `login_restriction_policy` (String) default:'', The login restriction policy for this account.
-- `managed_by_cg` (String) default:'', This property indicates whether the account is managed by Central Governance.
-- `mapped_user` (String) default:'', The name of the real user mapped to this account for SecureTransport installation running on Windows environment.
-- `notes` (String) default:'', An unstructured comments to the account
-- `pesit_id` (String) default:'', This property defines the PeSIT ID which is used for defining a PeSIT partnership.
-- `routing_mode` (String) enum:/accept/reject/ignore, default:reject, Accounts support PeSIT Store and Forward mode via property named 'routingMode'. There are three possible options for the routingMode: accept (the value for Routing Mode that accept transfers), reject (the value for Routing Mode that reject transfers) and ignore (the value for Routing Mode that ignores transfers). By default is 'reject'.
+- `login_restriction_policy` (String) The login restriction policy for this account.
+- `managed_by_cg` (Boolean) This property indicates whether the account is managed by Central Governance.
+- `mapped_user` (String) The name of the real user mapped to this account for SecureTransport installation running on Windows environment.
+- `notes` (String) An unstructured comments to the account
+- `pesit_id` (String) This property defines the PeSIT ID which is used for defining a PeSIT partnership.
+- `routing_mode` (String) enum:/reject/accept/ignore, default:reject, Accounts support PeSIT Store and Forward mode via property named 'routingMode'. There are three possible options for the routingMode: accept (the value for Routing Mode that accept transfers), reject (the value for Routing Mode that reject transfers) and ignore (the value for Routing Mode that ignores transfers). By default is 'reject'.
 - `skin` (String) default:"Default HTML Template", The skin templates
 - `subscription_folder_discovery` (String) enum:/ITERATIVE/RECURSIVE, default:ITERATIVE, For accounts with multiple subscriptions, the number of subscriptions and the target folder depth would impact performance.
 There are two possible options for the subscriptionFolderDiscovery - 'ITERATIVE' and 'RECURSIVE'.
 When 'ITERATIVE' is set, then subscription folder discovery is performed by iteration over all of the account's subscriptions while trying to match the target folder. Should be used when the number of subscriptions is small and the target folder depth is large.
 When 'RECURSIVE' is set, then subscription folder discovery is performed by recursive traversal of the target folder hierarchy - the target folder is checked first, then moving up to parent folders. Should be used when the number of subscriptions is large and the target folder depth is small.
 The default value is 'ITERATIVE'.
-- `transfer_type` (String) enum:/N/Y, default:N, This property is an attribute name to indicate the transfer type of the account's transfer site. It can be unspecified (N), internal (I), partner(E). By default is unspecified.
+- `transfer_type` (String) enum:/false/I/E, default:N, This property is an attribute name to indicate the transfer type of the account's transfer site. It can be unspecified (N), internal (I), partner(E). By default is unspecified.
 - `transfers_web_service_allowed` (Boolean) default:false, This property is an attribute name to indicate whether access to the transfers resource from the end user RESTful API is allowed.
 - `type` (String) default:user, <nil>
-- `uid` (String) default:1000, The numeric user ID of the account. Required for SecureTransport installation running on UNIX environment.
+- `uid` (String) default:10000, The numeric user ID of the account. Required for SecureTransport installation running on UNIX environment.
 
 ### Read-Only
 
 - `account_creation_date` (Number) Account creation date.
+- `account_submit_for_approve` (Boolean) If the account has been sent for approve to 'checker' administrator.
+- `account_verification_status` (String) Verification status for the account.
 - `id` (String) The unique identifier of the account.
+- `last_modified` (String) Last modified time for the account.
 - `last_updated` (String)
+- `reject_reason` (String) Reject reason.
+- `unlicensed` (Boolean) This property defines if the account is an unlicensed account.
 
 <a id="nestedatt--user"></a>
 ### Nested Schema for `user`
@@ -65,16 +82,192 @@ Required:
 - `name` (String) The name of the user (the login name)
 - `password_credentials` (Attributes) (see [below for nested schema](#nestedatt--user--password_credentials))
 
+Optional:
+
+- `failed_auth_maximum` (Number) default:3, The number of failed authentication attempts allowed before authentication via the user is disabled. If not set, the value from configuration option Users.DefaultLockoutLimit will be taken. A value of 0 allows the user an unlimited number of attempts
+- `failed_ssh_key_auth_maximum` (Number) default:3, The number of failed ssh key authentication attempts allowed before authentication via the user is disabled. If not set, the value from configuration option Users.DefaultSshKeyLockoutLimit will be taken. A value of 0 allows the user an unlimited number of attempts
+- `successful_auth_maximum` (Number) The number of successful authentication attempts allowed within a predefined period before authentication is disabled. That period is defined globally. A value of null allows the user an unlimited number of attempts
+
 Read-Only:
 
+- `auth_external` (Boolean) Tells if external authentication is enabled. It has value 'true' if the user authentication is done by an external authentication and 'false' if the user authentication is done by the ST system
 - `failed_auth_attempts` (Number) The number of sequential failed authentication attempts
+- `failed_ssh_key_auth_attempts` (Number) The number of sequential failed ssh key authentication attempts
 - `last_failed_auth` (String) The time of the last unsuccessful authentication attempt. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on failed user login.
+- `last_failed_ssh_key_auth` (String) The time of the last unsuccessful ssh key authentication attempt. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on failed user login.
+- `last_login` (String) The time the user last successfully logged in. It has value null if the user never successfully logged in. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on user login.
+- `locked` (Boolean) Test if authentication via the user login is disabled. This may be because the user has been locked or the maximum authentication attempts has been exceeded
+- `successful_logins` (Number) The number of successful login attempts
 
 <a id="nestedatt--user--password_credentials"></a>
 ### Nested Schema for `user.password_credentials`
 
 Optional:
 
-- `force_password_change` (Boolean) Checks if password change is forced
 - `password` (String) The password. If the password property is not set then the passwordDigest property must be set and vice versa
 - `password_digest` (String) The password digest. If the passwordDigest property is not set then the password property must be set and vice versa
+- `password_expiry_interval` (Number) The password expiry interval. Accepts only positive integers.
+
+Read-Only:
+
+- `last_own_password_change` (String) The last password change by the user. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on password change by user.
+- `last_password_change` (String) The last password change. The time is in RFC 2822 format - EEE, d MMM yyyy HH:mm:ss Z. Note: This property is read only property. Secure Transport server sets that property on password change.
+
+
+
+<a id="nestedatt--account_maintenance_settings"></a>
+### Nested Schema for `account_maintenance_settings`
+
+Optional:
+
+- `account_certificate_notified` (Boolean) default:false, If the account certificates will expire in one of configured notification days, a notification mail will be sent to the email addresses configured for that user.
+- `account_disabled_date` (Number) Date when account has been disabled by account retention maintenance.
+- `account_notified` (Boolean) Denotes whether an email has already been sent as a notification to the current account.
+- `account_password_notified` (Boolean) If the account password will expire in one of configured notification days, a notification mail will be sent to the email addresses configured for that user.
+- `action` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--action))
+- `criteria` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--criteria))
+- `email_notification_before_action` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--email_notification_before_action))
+- `email_notification_for_user_certificate` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--email_notification_for_user_certificate))
+- `email_notification_for_user_password` (Attributes) (see [below for nested schema](#nestedatt--account_maintenance_settings--email_notification_for_user_password))
+- `policy` (String) enum:/default/custom/disabled, default:default, This property defines which Account Maintenance settings will be applied for current account.
+
+<a id="nestedatt--account_maintenance_settings--action"></a>
+### Nested Schema for `account_maintenance_settings.action`
+
+Optional:
+
+- `action` (String) enum:/DELETE/DISABLE/PURGE, Applicable for account. The action which should be performed when Account Maintenance criteria is met.
+- `days_delete_disabled` (Number) Applicable for account. The sub-action criteria representing the amount of days for deletion of accounts disabled by Account Maintenance application only. It is valid if action is set to "DISABLE".
+
+
+<a id="nestedatt--account_maintenance_settings--criteria"></a>
+### Nested Schema for `account_maintenance_settings.criteria`
+
+Optional:
+
+- `days_after_creation` (Number) The criteria representing the amount of days after account creation or first maintenance job run.
+- `days_of_inactivity` (Number) The criteria representing the amount of days of account inactivity.
+
+
+<a id="nestedatt--account_maintenance_settings--email_notification_before_action"></a>
+### Nested Schema for `account_maintenance_settings.email_notification_before_action`
+
+Optional:
+
+- `email_template` (String) Applicable for account. The email template name which will be used in Account Maintenance report email notifications.
+- `notify_account` (Boolean) default:false, If the account matches a criteria and an action to be performed in X days or sooner, a notification mail should be sent to the email address configured for that user.
+- `notify_days` (String) The comma-separated periods for notifications.
+
+
+<a id="nestedatt--account_maintenance_settings--email_notification_for_user_certificate"></a>
+### Nested Schema for `account_maintenance_settings.email_notification_for_user_certificate`
+
+Optional:
+
+- `email_template` (String) Applicable for account. The email template name which will be used in Account Maintenance certificate email notifications.
+- `notify_account` (Boolean) default:false, If the account matches a criteria and an action to be performed in X days or sooner, a notification mail should be sent to the email address configured for that user.
+- `notify_days` (String) The comma-separated periods for account certificates expiration notifications.
+
+
+<a id="nestedatt--account_maintenance_settings--email_notification_for_user_password"></a>
+### Nested Schema for `account_maintenance_settings.email_notification_for_user_password`
+
+Optional:
+
+- `email_template` (String) Applicable for account. The email template name which will be used in Account Maintenance password email notifications.
+- `notify_account` (Boolean) default:false, If the account matches a criteria and an action to be performed in X days or sooner, a notification mail should be sent to the email address configured for that user.
+- `notify_days` (String) The comma-separated periods for account password expiration notifications.
+
+
+
+<a id="nestedatt--address_book_settings"></a>
+### Nested Schema for `address_book_settings`
+
+Optional:
+
+- `contacts` (Attributes List) (see [below for nested schema](#nestedatt--address_book_settings--contacts))
+- `non_address_book_collaboration_allowed` (Boolean) Allow address book collaboration.
+- `policy` (String) enum:/default/custom/disabled, default:default, AddressBook policy.
+- `sources` (Attributes List) (see [below for nested schema](#nestedatt--address_book_settings--sources))
+
+<a id="nestedatt--address_book_settings--contacts"></a>
+### Nested Schema for `address_book_settings.contacts`
+
+Optional:
+
+- `full_name` (String) default:'', The full name of the address book contact
+- `primary_email` (String) default:'', The primary email of the address book contact.
+
+Read-Only:
+
+- `id` (String) The id of the address book contact
+
+
+<a id="nestedatt--address_book_settings--sources"></a>
+### Nested Schema for `address_book_settings.sources`
+
+Required:
+
+- `name` (String) <nil>
+
+Optional:
+
+- `enabled` (Boolean) default:false, <nil>
+- `parent_group` (String) default:'', <nil>
+- `type` (String) enum:/LOCAL/LDAP/CUSTOM, default:LOCAL, <nil>
+
+Read-Only:
+
+- `id` (String) <nil>
+
+
+
+<a id="nestedatt--adhoc_settings"></a>
+### Nested Schema for `adhoc_settings`
+
+Optional:
+
+- `delivery_method` (String) enum:/DEFAULT/DISABLED/ANONYMOUS/ACCOUNT_WITHOUT_ENROLLMENT/ACCOUNT_WITH_ENROLLMENT/CUSTOM, default:DEFAULT, This property defines the delivery method. When deliveryMethod is set to 'Disabled' then Adhoc is disabled and enrollmentType/implicitEnrollmentType can not be set. When deliveryMethod is set to 'Default' then it is only available on BU and Account (setting the BU to use the value and account to use the BU value). When deliveryMethod is set to 'Anonymous' then implicit enrollment types 'Anonymous' and "" (empty string for Select by sender) are enabled. When deliveryMethod is set to 'Account Without Enrollment' then implicit enrollment types 'Anonymous', ""  (empty string for Select by sender) and 'Existing Account' are enabled. When deliveryMethod is set to 'Account With Enrollment' then implicit enrollment types 'Anonymous', "" (empty string for Select by sender), 'Enroll unlicensed', 'Enroll licensed' are enabled
+- `enrollment_types` (List of String) default:[], <nil>
+- `implicit_enrollment_type` (String) enum:/ANONYMOUS_LINK/CHALLENGED_LINK/EXISTING_ACCOUNT/ENROLL_UNLICENSED/ENROLL_LICENSED, The Implicit Enrollment Type value controls which option Web Access Plus selects initially in the User Access window and which enrollment type is used by the Axway Email Plug-ins. The choices depend on the enrollment types enabled by the Delivery Methods and Enrollment Types fields
+
+
+<a id="nestedatt--bandwidth_limits"></a>
+### Nested Schema for `bandwidth_limits`
+
+Optional:
+
+- `inbound_limit` (Number) Bandwidth's inbound limit.
+- `outbound_limit` (Number) Bandwidth's outbound limit.
+- `policy` (String) enum:/default/custom/disabled, default:default, Bandwidth policy.
+
+
+<a id="nestedatt--contact"></a>
+### Nested Schema for `contact`
+
+Optional:
+
+- `email` (String) The account email
+- `phone` (String) The account phone.
+
+
+<a id="nestedatt--file_maintenance_settings"></a>
+### Nested Schema for `file_maintenance_settings`
+
+Optional:
+
+- `delete_files_days` (Number) This property represents file retention period for account or business unit. All files older than the property value will be deleted.
+- `deletion_notifications` (Boolean) If this property is set to true, the deletion notifications feature will be enabled for the account.
+- `deletion_notifications_template` (String) The email template name which will be used in File Maintenance report email notifications for account or business unit.
+- `deletion_notify_account` (Boolean) If this property is set to true, the deletion notifications will be sent to account email.
+- `expiration_period` (Boolean) If this property is set to true, the deletion of files based on file expiration period will be enabled. The file expiration period will be set as flow file attribute EXPIRE.ON.
+- `notify_days` (String) This property represents warning notifications period when emails will be sent to the recipients.
+- `pattern` (String) This property represents file name pattern for account or business unit. All file names match of the property value will be regarded by the application.
+- `policy` (String) enum:/default/custom/disabled, default:default, This property defines which File Maintenance settings will be applied for current account or business unit.
+- `remove_folders` (Boolean) If this property is set to true, the deletion of folders remain empty after File Maintence will be enabled.
+- `report_notified` (String) Report email notifications for future action.
+- `send_sentinel_alert` (Boolean) If this property is set to true, the warning TO_BE_DELETED state will be reported to Sentinel server.
+- `warn_notified` (String) Warning email notifications for future action.
+- `warn_notify_account` (Boolean) If this property is set to true, the warning notifications will be sent to account email.
+- `warning_notifications` (Boolean) If this property is set to true, the warning notifications feature will be enabled.
+- `warning_notifications_template` (String) The email template name which will be used in File Maintenance warning email notifications for account.

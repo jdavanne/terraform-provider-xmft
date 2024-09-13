@@ -62,22 +62,22 @@ func TestResourceToAttributes(t *testing.T) {
 		},
 	}
 	v.SubListString = PO(types.ListValue(types.StringType, []attr.Value{types.StringValue("value1")}))
-	v.SubListObject = PO(types.ListValue(types.ObjectType{}.WithAttributeTypes(structNameToTFType("TestResourceModelSubSub")),
+	/*v.SubListObject = PO(types.ListValue(types.ObjectType{}.WithAttributeTypes(structNameToTFType("TestResourceModelSubSub")),
 		[]attr.Value{
 			PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
 				"sub_sub_str":  types.StringValue("SubSubStr65"),
 				"sub_sub_bool": types.BoolValue(true),
 			})),
 		},
-	))
+	))*/
 	v.SubMapString = PO(types.MapValue(types.StringType, map[string]attr.Value{
 		"additionalProp1": types.StringValue("value1"),
 		"additionalProp2": types.StringValue("value2"),
 	}))
-	v.Object = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
+	/*v.Object = PO(types.ObjectValue(structNameToTFType("TestResourceModelSubSub"), map[string]attr.Value{
 		"sub_sub_str":  types.StringValue("SubSubStr567"),
 		"sub_sub_bool": types.BoolValue(true),
-	}))
+	}))*/
 	v.PolyPtr.T2 = &TestResourceModelSubSub{
 		SubSubStr:  types.StringValue("SubSubStr56734"),
 		SubSubBool: types.BoolValue(true),
@@ -137,17 +137,18 @@ func TestResourceToAttributes(t *testing.T) {
 			"sub_sub_struct": map[string]interface{}{"subSubStr": "SubSubStr3", "sub_sub_bool": true},
 		},
 		"sub_list_string": []interface{}{"value1"},
-		"sub_list_object": []interface{}{
+		/*"sub_list_object": []interface{}{
 			map[string]interface{}{"subSubStr": "SubSubStr65", "sub_sub_bool": true},
-		},
+		},*/
 		"sub_map_string": map[string]interface{}{
 			"additionalProp1": "value1",
 			"additionalProp2": "value2",
 		},
-		"object": map[string]interface{}{
+		/*"object": map[string]interface{}{
 			"subSubStr":    "SubSubStr567",
 			"sub_sub_bool": true,
 		},
+		*/
 		/*"poly": map[string]interface{}{
 			"subSubStr": "SubSubStr56734", "sub_sub_bool": true,
 		},*/

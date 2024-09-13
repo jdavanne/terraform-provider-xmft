@@ -36,7 +36,7 @@ type stBasicApplication struct {
 }
 
 func NewSTBasicApplicationResource() resource.Resource {
-	return NewSTResource(&stBasicApplication{}, "st_basic_application", "", "/api/v2.0/applications", "/api/v2.0/applications/{name}")
+	return NewSTResource(&stBasicApplication{}, "st_basic_application", "", "/api/v2.0/applications", "/api/v2.0/applications/{name}").UseSwaggerUri("/api/v2.0/applications/{name}[type=Basic]")
 }
 
 func init() {

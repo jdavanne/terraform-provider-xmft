@@ -3,6 +3,7 @@ package tfhelper
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"reflect"
 	"strconv"
 	"strings"
@@ -110,6 +111,7 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 			noread := FlagsHas(flags, "noread")
 			fieldMapOnRead, fieldMapOnReadOk := FlagsGet(flags, "fieldMapOnRead")
 			foldStr, fold := FlagsGet(flags, "fold")
+			emptyIsNull := FlagsHas(flags, "emptyIsNull")
 
 			elementtype, _ := FlagsGet(flags, "elementtype")
 			// sensitive := Has(flags, "sensitive")
@@ -214,7 +216,9 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 								panic("unsupported type: " + fmt.Sprint(elementtype) + "(" + modelName + "." + fieldName + ")")
 							}
 						case "basetypes.ObjectValue":
-
+							/*if true {
+								panic("unsupported type: basetypes.ObjectValue (" + modelName + "." + fieldName + ")")
+							}*/
 							elementModel := registeredTypes[elementtype]
 							if elementModel == nil {
 								panic("unsupported element type: '" + elementtype + "' (" + modelName + "." + fieldName + ")")
@@ -245,17 +249,36 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 								switch v := attrValue.(type) {
 								case []string:
 									elements := make([]attr.Value, len(v))
-									for i, v := range v {
-										elements[i] = types.StringValue(v)
+									for i, item := range v {
+										elements[i] = types.StringValue(item)
 									}
 									val1, diags := types.ListValue(types.StringType, elements)
 									if diags.HasError() {
 										panic("error: " + fmt.Sprint(diags))
 									}
 									value.Field(i).Set(reflect.ValueOf(val1))
+								case []interface{}:
+									// should be only zero length...
+
+									if !emptyIsNull || len(v) > 0 {
+										elements := make([]attr.Value, len(v))
+										for i, item := range v {
+											vString, ok := item.(string)
+											if !ok {
+												// FIXME: should be error?
+												panic("unsupported type: " + fmt.Sprintf("%T %+v [%d]", item, item, i) + "-->" + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
+											}
+											elements[i] = types.StringValue(vString)
+										}
+										val1, diags := types.ListValue(types.StringType, elements)
+										if diags.HasError() {
+											panic("error: " + fmt.Sprint(diags))
+										}
+										value.Field(i).Set(reflect.ValueOf(val1))
+									}
 								default:
 									// FIXME: should be error?
-									panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
+									panic("unsupported type: " + fmt.Sprintf("%T %+v", attrValue, attrValue) + "-->" + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
 								}
 							} else {
 								elementModel := registeredTypes[elementtype]
@@ -307,9 +330,10 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 							}
 
 						case "basetypes.StringValue":
-							if attrValue == nil {
+							/*if attrValue == nil {
 								attrValue = ""
-							}
+							}*/
+							slog.Info("AttributesToResource : set resource field resource ", "path", modelName+"."+fieldName, "value", attrValue)
 							switch v := attrValue.(type) {
 							case string:
 								val1 := v
@@ -329,8 +353,13 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 								val2 := types.StringValue(val1)
 								value.Field(i).Set(reflect.ValueOf(val2))
 							case nil:
-								val2 := types.StringNull()
-								value.Field(i).Set(reflect.ValueOf(val2))
+								if emptyIsNull {
+									val2 := types.StringValue("")
+									value.Field(i).Set(reflect.ValueOf(val2))
+								} else {
+									val2 := types.StringNull()
+									value.Field(i).Set(reflect.ValueOf(val2))
+								}
 							default:
 								panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
 							}
@@ -352,8 +381,13 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 									panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ") [" + fmt.Sprint(v) + "]")
 								}
 							case nil:
-								val2 := types.BoolNull()
-								value.Field(i).Set(reflect.ValueOf(val2))
+								if emptyIsNull {
+									val2 := types.BoolValue(false)
+									value.Field(i).Set(reflect.ValueOf(val2))
+								} else {
+									val2 := types.BoolNull()
+									value.Field(i).Set(reflect.ValueOf(val2))
+								}
 							default:
 								panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ") [" + fmt.Sprint(v) + "]")
 							}
@@ -370,8 +404,13 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 								// tflog.Info(ctx, "AttributesToResource : set resource field resource : "+modelName+"."+fieldName+"="+fmt.Sprint(val1))
 								value.Field(i).Set(reflect.ValueOf(val2))
 							case nil:
-								val2 := types.Int64Null()
-								value.Field(i).Set(reflect.ValueOf(val2))
+								if emptyIsNull {
+									val2 := types.Int64Value(0)
+									value.Field(i).Set(reflect.ValueOf(val2))
+								} else {
+									val2 := types.Int64Null()
+									value.Field(i).Set(reflect.ValueOf(val2))
+								}
 							default:
 								panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ") [" + fmt.Sprint(v) + "]")
 							}

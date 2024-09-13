@@ -17,14 +17,28 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringdefault"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
+// tru to use NestedBlock instead of NestedAttribute : but fail on default :
+const useBlock = false
+
 func ModelToSchema(ctx context.Context, goPath string, apiPath string, model interface{}) schema.Schema {
-	return schema.Schema{Attributes: _modelToAttributes(ctx, goPath, apiPath, false, reflect.TypeOf(reflect.ValueOf(model).Elem().Interface()))}
+	attrs, blocks := _modelToAttributes(ctx, goPath, apiPath, false, reflect.TypeOf(reflect.ValueOf(model).Elem().Interface()), useBlock)
+	return schema.Schema{Attributes: attrs, Blocks: blocks}
 }
 
-func _modelToAttributes(ctx context.Context, goPath string, apiPath string, parentFold bool, value reflect.Type) map[string]schema.Attribute {
+func _modelToAttributesWrap(ctx context.Context, goPath string, apiPath string, parentFold bool, value reflect.Type) map[string]schema.Attribute {
+	attrs, _ := _modelToAttributes(ctx, goPath, apiPath, parentFold, value, false)
+	return attrs
+}
+
+func _modelToAttributes(ctx context.Context, goPath string, apiPath string, parentFold bool, value reflect.Type, useBlock bool) (map[string]schema.Attribute, map[string]schema.Block) {
 	attrs := make(map[string]schema.Attribute)
+	var blocks map[string]schema.Block
+	if useBlock {
+		blocks = make(map[string]schema.Block)
+	}
 	switch value.Kind() {
 	case reflect.Struct:
 		// v := value.Interface()
@@ -39,6 +53,10 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 			flags := tag.Get(helperTagName)
 			tfName := FlagsTfsdkGetName(tfsdk)
 			apiName := FlagsHelperName(tfsdk, flags)
+
+			if tfName == "" {
+				panic("tfname is empty" + goName + "/" + apiName + "/" + goPath)
+			}
 
 			mustCheckSupportedAttributes(goPath+"."+goName, flags)
 			required := FlagsHas(flags, "required")
@@ -123,7 +141,7 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 						}
 						attrs[tfName] = schema.ListNestedAttribute{
 							NestedObject: schema.NestedAttributeObject{
-								Attributes: _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName+".#", fold, reflectType.Field(i).Type.Elem()),
+								Attributes: _modelToAttributesWrap(ctx, goPath+"."+goName, apiPath+"."+apiName+".#", fold, reflectType.Field(i).Type.Elem()),
 							},
 							Required:    required,
 							Optional:    optional,
@@ -154,6 +172,9 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 							panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
 						}
 					case "basetypes.ObjectValue":
+						/*if true {
+							panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
+						}*/
 						elementModel := registeredTypes[elementtype]
 						if elementModel == nil {
 							panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
@@ -166,7 +187,7 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 							d = objectdefault.StaticValue(v)
 						}
 
-						elementAttrs := _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
+						elementAttrs := _modelToAttributesWrap(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 						attrs[tfName] = schema.SingleNestedAttribute{
 							Attributes:  elementAttrs,
 							Required:    required,
@@ -181,7 +202,7 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 						if elementtype == "string" {
 							var d defaults.List
 							if defok && def == "" {
-								f := types.ListNull(types.StringType)
+								f, _ := types.ListValueFrom(ctx, types.StringType, []string{})
 								d = listdefault.StaticValue(f)
 							} else if defok {
 								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
@@ -200,7 +221,7 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 							if elementModel == nil {
 								panic("unsupported element type: '" + elementtype + "' (" + goPath + "." + goName + ")")
 							}
-							elementAttrs := _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName+".#", fold, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
+							elementAttrs := _modelToAttributesWrap(ctx, goPath+"."+goName, apiPath+"."+apiName+".#", fold, reflect.TypeOf(reflect.ValueOf(elementModel).Elem().Interface()))
 
 							var d defaults.List
 							if defok && def == "" {
@@ -288,32 +309,64 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 						panic("unsupported type: " + typestr + "(" + goPath + "." + goName + ")")
 					}
 				} else {
-					/*var d defaults.Object
-					if defok && def != "" {
-						panic("unsupported default value: " + def + "(" + modelName + "." + fieldName + ")")
-					}
-					if defok && def == "" {
-						d = defaults.Object{}
-					}*/
 
+					if defok && def != "" {
+						panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
+					}
+
+					if !useBlock {
+						var d defaults.Object
+						var defaultVal basetypes.ObjectValue
+						if defok && def == "" {
+							defaultVal, _ = structToObjectValue(goPath+"."+goName, reflect.New(reflectType.Field(i).Type).Interface())
+							d = objectdefault.StaticValue(defaultVal)
+						}
+
+						attrs[tfName] = schema.SingleNestedAttribute{
+							Attributes:  _modelToAttributesWrap(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type),
+							Required:    required,
+							Optional:    optional,
+							Computed:    computed,
+							Sensitive:   sensitive,
+							Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
+							Default:     d,
+							// Validators:  []validator.Object{onlyFields(0, 1024)},
+							// PlanModifiers: []planmodifier.Object{useDefaultObjectModifier{defaultVal}},
+						}
+					} else {
+						var d basetypes.ObjectValue
+						if defok && def == "" {
+							d, _ = structToObjectValue(goPath+"."+goName, reflect.New(reflectType.Field(i).Type).Interface())
+							// d = objectdefault.StaticValue(defaultVal)
+						}
+
+						a2, b2 := _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type, false)
+						blocks[tfName] = schema.SingleNestedBlock{
+							Attributes:  a2,
+							Blocks:      b2,
+							Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
+							// Validators:  []validator.Object{onlyFields(0, 1024)},
+							PlanModifiers: []planmodifier.Object{useDefaultObjectModifier{d}},
+						}
+					}
+				}
+			case reflect.Ptr:
+				if !useBlock {
 					attrs[tfName] = schema.SingleNestedAttribute{
-						Attributes:  _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type),
+						Attributes:  _modelToAttributesWrap(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type.Elem()),
 						Required:    required,
 						Optional:    optional,
 						Computed:    computed,
 						Sensitive:   sensitive,
 						Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
-						// Default:    d,
 					}
-				}
-			case reflect.Ptr:
-				attrs[tfName] = schema.SingleNestedAttribute{
-					Attributes:  _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type.Elem()),
-					Required:    required,
-					Optional:    optional,
-					Computed:    computed,
-					Sensitive:   sensitive,
-					Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
+				} else {
+					a2, b2 := _modelToAttributes(ctx, goPath+"."+goName, apiPath+"."+apiName, fold, reflectType.Field(i).Type.Elem(), false)
+					blocks[tfName] = schema.SingleNestedBlock{
+						Attributes:  a2,
+						Blocks:      b2,
+						Description: flagsDescription(ctx, flags, "{}", apiPath+"."+apiName),
+					}
 				}
 			default:
 				panic("unsupported: type" + kind.String() + " (" + goPath + "." + goName + ")")
@@ -322,5 +375,5 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 	default:
 		panic("unsupported: type" + value.Kind().String() + " (" + goPath + ")")
 	}
-	return attrs
+	return attrs, blocks
 }

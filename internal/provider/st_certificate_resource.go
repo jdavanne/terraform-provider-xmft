@@ -5,39 +5,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-/*
-{
-  "id": "string",
-  "name": "string",
-  "subject": "string",
-  "type": "x509",
-  "usage": "login",
-  "expirationTime": "string",
-  "creationTime": 0,
-  "signAlgorithm": "SHA256withRSA",
-  "keySize": 2048,
-  "keyAlgorithm": "string",
-  "issuer": "string",
-  "serialNumber": "string",
-  "validityPeriod": 100000,
-  "fingerprint": "string",
-  "account": "string",
-  "accessLevel": "PRIVATE",
-  "overwrite": false,
-  "caPassword": "string",
-  "exportPrivateKey": false,
-  "exportSSHPublicKey": false,
-  "password": "string",
-  "validationStatus": "string",
-  "version": 0,
-  "additionalAttributes": {
-    "additionalProp1": "string",
-    "additionalProp2": "string",
-    "additionalProp3": "string"
-  }
-}
-*/
-
 // see https://support.axway.com/kb/181603/language/en
 
 type stCertificateModel struct {
@@ -48,7 +15,7 @@ type stCertificateModel struct {
 	Type       types.String `tfsdk:"type" helper:",enum:/x509/ssh,default:x509"`
 	Usage      types.String `tfsdk:"usage" helper:",enum:/private/local/partner/login/trusted,default:private"`
 	Password   types.String `tfsdk:"password" helper:",sensitive,noread"`
-	CaPassword types.String `tfsdk:"ca_password" helper:",sensitive,noread"`
+	CaPassword types.String `tfsdk:"ca_password" helper:"caPassword,sensitive,noread"`
 	Overwrite  types.Bool   `tfsdk:"overwrite" helper:",noread,default:false"`
 
 	Account     types.String `tfsdk:"account" helper:",default:"`
@@ -73,7 +40,6 @@ type stCertificateModel struct {
 
 	// ExportPrivateKey    types.Bool `tfsdk:"export_private_key" helper:"exportPrivateKey,computed,nowrite"`
 	// ExportSSHPublicKey  types.Bool `tfsdk:"export_ssh_public_key" helper:"exportSSHPublicKey,computed,nowrite"`
-
 }
 
 func NewSTCertificateModelResource() resource.Resource {

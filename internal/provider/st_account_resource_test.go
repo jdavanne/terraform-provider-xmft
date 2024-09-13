@@ -28,12 +28,13 @@ func TestStAccountResource(t *testing.T) {
 		uid         = "1000"
 		gid         = "1000"
 		home_folder = "/files/account1"
-		user = {
+		user ={
 		  	name =  "` + name + `"
 		  	password_credentials = {
 				password = "zouzou"
 		  	}
-		}
+				#unknown_key = "unknownValue" #FIXME SHOULD NOT BE ALLOWED !
+		}	
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -80,6 +81,13 @@ func TestStAccountResource(t *testing.T) {
 		password = "zouzou"
 		}
 	}
+	contact = {
+		email="zouzou@example.com"
+	}
+	bandwidth_limits = {
+		inbound_limit = 1000
+		outbound_limit = 1000
+	}
 }
 `,
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -95,6 +103,9 @@ func TestStAccountResource(t *testing.T) {
 		password_credentials = {
 			password = "zouzou"
 		}
+	}
+	contact = {
+		email="zouzou@example.com"
 	}
 }
 `)),

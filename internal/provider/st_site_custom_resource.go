@@ -148,7 +148,7 @@ type stTransferSiteCustomModel struct {
 	Default                 types.Bool   `tfsdk:"default" helper:",default:false"`
 	AccessLevel             types.String `tfsdk:"access_level" helper:"accessLevel,default:PRIVATE"`
 	Account                 types.String `tfsdk:"account" helper:",required"`
-	ClientCertificate       types.String `tfsdk:"client_certificate" helper:"clientCertificate,emptyIsNull,default:"`
+	ClientCertificate       types.String `tfsdk:"client_certificate" helper:"clientCertificate,optional"`
 
 	CustomProperties    types.Map `tfsdk:"custom_properties" helper:"customProperties,elementtype:string,optional,noread"`
 	CustomPropertiesAll types.Map `tfsdk:"custom_properties_all" helper:"customProperties,elementtype:string,computed,nowrite,fieldMapOnRead:customProperties"`

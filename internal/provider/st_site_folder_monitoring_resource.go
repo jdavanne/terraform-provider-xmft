@@ -78,7 +78,7 @@ type stTransferSiteFolderMonitorModel struct {
 	UploadFolderAutocreate                   types.Bool   `tfsdk:"upload_folder_autocreate" helper:"uploadFolderAutocreate,default:false"`
 	UploadFolderOverridable                  types.Bool   `tfsdk:"upload_folder_overridable" helper:"uploadFolderOverridable,default:false"`
 
-	/*PostTransmissionActions                  *struct {
+	PostTransmissionActions struct {
 		DeleteOnTempFailOut types.Bool   `tfsdk:"delete_on_temp_fail_out" helper:"deleteOnTempFailOut,default:false"`
 		DeleteOnSuccessIn   types.Bool   `tfsdk:"delete_on_success_in" helper:"deleteOnSuccessIn,default:false"`
 		DeleteOnPermFailOut types.Bool   `tfsdk:"delete_on_perm_fail_out" helper:"deleteOnPermFailOut,default:false"`
@@ -90,15 +90,7 @@ type stTransferSiteFolderMonitorModel struct {
 		MoveOnSuccessOut    types.String `tfsdk:"move_on_success_out" helper:"moveOnSuccessOut,default"`
 		MoveOnPermFailIn    types.String `tfsdk:"move_on_perm_fail_in" helper:"moveOnPermFailIn,default"`
 		MoveOnSuccessIn     types.String `tfsdk:"move_on_success_in" helper:"moveOnSuccessIn,default"`
-		DoMoveOverwriteIn   types.Bool   `tfsdk:"do_move_overwrite_in" helper:"doMoveOverwriteIn,default:false"`
-		DoMoveOverwriteOut  types.Bool   `tfsdk:"do_move_overwrite_out" helper:"doMoveOverwriteOut,default:false"`
-	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,computed,optional"`*/
-
-	AlternativeAddresses []struct {
-		Host     types.String `tfsdk:"host" helper:",required"`
-		Port     types.String `tfsdk:"port" helper:",required"`
-		Position types.Int64  `tfsdk:"position" helper:",required"`
-	} `tfsdk:"alternative_addresses" helper:"alternativeAddresses"`
+	} `tfsdk:"post_transmission_actions" helper:"postTransmissionActions,computed,default:"`
 
 	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 }

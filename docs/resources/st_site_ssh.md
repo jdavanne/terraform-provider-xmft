@@ -30,10 +30,11 @@ and have length between 10 and 255 characters (including the prefix). Non prefix
 a reserved word. Both key and value cannot be blank.
 - `allowed_macs` (String) Allowed macs for ssh site.
 - `alternative_addresses` (Attributes List) (see [below for nested schema](#nestedatt--alternative_addresses))
-- `block_size` (Number) default:32768
-- `buffer_size` (Number) default:32768
+- `block_size` (Number) default:32768, Specify the SFTP block size value used for the transfer. The value should be a positive integer greater or equal to 512. The defaults value is 32768. It is not recommended to increase the value, more than the default one as the remote server may not be able to support higher block sizes.
+- `buffer_size` (Number) default:32768, Specify the size of the buffer in bytes used for reading from the local file system when performing the transfer. This setting is used to optimize the writing of files by allowing large chunk of data to be read in one operation from a local file. The value should be a positive integer. This setting should be set to the highest value possible.
 - `cipher_suites` (String) Cipher suites for ssh site.
 - `client_certificate` (String) default:'', The client certificate ID used for mutual authentication.
+- `connection_idle_timeout` (Number) default:300, Specify the maximum length of time that a connection can stay active when no traffic is sent through the connection. If not specified, its value is '300' - 300 seconds.
 - `default` (Boolean) default:false, Defines whether it is a default site. Only site from type PeSIT can be marked as 'Default'
 - `dmz` (String) default:none, Specify the remote site network zone.
 - `download_folder` (String) default:'', Specify the download folder.
@@ -42,28 +43,29 @@ a reserved word. Both key and value cannot be blank.
 - `download_pattern_advanced_expression_enabled` (Boolean) default:false, When it is 'true' the download pattern is evaluated using expression language.
 - `download_pattern_type` (String) default:glob, Specify the download pattern type. Pattern matching expression supports 'glob' and 'regex' syntaxes.When the pattern type is "File Globbing" then the String representation of the filename is matched using a limited pattern language that resembles regular expressions but with a simpler syntax.
 - `finger_print` (String) default:'', Specify the fingerprint.
-- `fips_mode` (Boolean) default:false
+- `fips_mode` (Boolean) default:false, Specify if the FIPS Transfer Mode is enabled or disabled. This property can be set if FTPS (issecure) is used.
 - `key_exchange_algorithms` (String) Key exchange algorithms for ssh site.
 - `max_concurrent_connection` (Number) default:0, The max concurrent connection of the site
 - `password` (String) default:'', Specify the site login password encrypted in 'AES128'. This property should be set if 'usePassword' is 'true'.
 - `port` (String) default:22, Specify the remote site server port.
+- `post_transmission_actions` (Attributes) default:{} (see [below for nested schema](#nestedatt--post_transmission_actions))
 - `protocol` (String) default:ssh, <nil>
 - `protocols` (String) default:'', Enabled SSL protocols for ssh site.
 - `public_keys` (String) Public keys for ssh site.
-- `socket_buffer_size` (Number) default:65536
-- `socket_send_buffer_size` (Number) default:65536
-- `socket_timeout` (Number) default:300
-- `tcp_no_delay` (Boolean) default:true
+- `socket_buffer_size` (Number) default:65536, Specify the size of the receive buffer in bytes used from the socket opened during the transfer. It is used by the platform's networking code as a hint for the size to set the underlying network I/O buffers. Increasing the receive buffer size can increase the performance of network I/O for high-volume connection, while decreasing it can help reduce the backlog of incoming data. This value is also used to set the TCP receive window that is advertized to the remote peer. This option corresponds to the SO_RCVBUF. The value should be a positive integer.
+- `socket_send_buffer_size` (Number) default:65536, Specify the size of the send buffer in bytes used from the socket opened during the transfer. It is used by the platform's networking code as a hint for the size to set the underlying network I/O buffers. This option corresponds to the SO_SNDBUF. The value should be a positive integer.
+- `socket_timeout` (Number) default:300, Specify the maximum number of seconds the server waits to read a block of data from the partner server, or write a block of data to the partner server. If not specified, its value is '300' - 300 seconds. This option corresponds to the SO_RCVTIMEO and SO_SNDTIMEO Socket options.
+- `tcp_no_delay` (Boolean) default:true, Enable TCP_NODELAY (disable/enable Nagle's algorithm) for the transfer.
 - `transfer_mode` (String) default:AUTO_DETECT, Specify the transfer mode.
 - `transfer_type` (String) default:internal, The transfer type of the site. It can be unspecified (N), internal (I), partner(E)
-- `type` (String) default:ssh, Type of the site.
+- `type` (String) default:ssh, <nil>
 - `update_permissions_with_chmod_command` (String) default:'', Determines whether to use chmod or umask command to change file permissions. This setting overrides the global setting configured via the Ssh.UpdateFilePermissionsWithChmodCommand option. The possible values are - null(Default) - The global setting is applied; True - The file permissions, specified in the SSH transfer site, are set after transfer ends with chmod; False - The file handler is opened with specified permissions. The file permissions are set with umask. There is no need to edit the Upload Permissions field - correct format is automatically set.
 - `upload_folder` (String) default:'', Specify the upload folder.
-- `upload_folder_overridable` (Boolean) default:false
+- `upload_folder_overridable` (Boolean) default:false, Defines if the upload folder can be modified by the Send To Partner routing step.
 - `upload_permissions` (String) default:0644, Defines the upload permissions.
-- `use_password` (Boolean) default:true
+- `use_password` (Boolean) default:true, Specify if the login password should be set.
 - `use_password_expr` (Boolean) default:false, Specify whether to have password expressions or not.
-- `verify_finger` (Boolean) default:false
+- `verify_finger` (Boolean) default:false, Defines whther to verify fingerprint for this site or not.
 
 ### Read-Only
 
@@ -78,3 +80,25 @@ Required:
 - `host` (String) The host/url of the alternative address.
 - `port` (String) The port of the alternative address.
 - `position` (Number) The position when alternate addresses.
+
+Read-Only:
+
+- `id` (String) The id of the site alternative address
+
+
+<a id="nestedatt--post_transmission_actions"></a>
+### Nested Schema for `post_transmission_actions`
+
+Optional:
+
+- `delete_on_perm_fail_in` (Boolean) default:false, Defines whether to delete the source file on failure after the transmission.
+- `delete_on_perm_fail_out` (Boolean) default:false, Defines whether to delete the destination file on failure after the transmission.
+- `delete_on_success_in` (Boolean) default:false, Defines whether to delete the source file on success after the transmission.
+- `delete_on_temp_fail_out` (Boolean) default:false, Defines whether to delete the destination file on temporary failure after the transmission.
+- `do_as_in` (String) default:'', Specify a value to receive the file with a different name. An expression language can be used to specify a file name e.g. ${stenv['target']}_${random()}.
+- `do_as_out` (String) default:'', Specify a value to send the file with a different name. An expression language can be used to specify a file name e.g. ${stenv['target']}_${random()}.
+- `move_on_perm_fail_in` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
+- `move_on_perm_fail_out` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on failure. An expression language can be used to specify a file name/folder.
+- `move_on_success_in` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
+- `move_on_success_out` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on success. An expression language can be used to specify a file name/folder.
+- `move_on_temp_fail_out` (String) default:'', Specify a value to rename the file after transmission or move it to a different folder on temporary failure. An expression language can be used to specify a file name/folder.

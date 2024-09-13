@@ -5,22 +5,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 )
 
-/*
-{
-	"name": "string",
-	"type": "AdvancedRouting",
-	"notes": "string",
-	"additionalAttributes": {
-	  "additionalProp1": "string",
-	  "additionalProp2": "string",
-	  "additionalProp3": "string"
-	},
-	"businessUnits": [
-	  "string"
-	]
-  }
-*/
-
 type stAdvancedRoutingApplication struct {
 	Id          types.String `tfsdk:"id" helper:",computed,state"`
 	Name        types.String `tfsdk:"name" helper:",required"`
@@ -34,7 +18,7 @@ type stAdvancedRoutingApplication struct {
 }
 
 func NewSTAdvancedRoutingApplicationResource() resource.Resource {
-	return NewSTResource(&stAdvancedRoutingApplication{}, "st_advanced_routing_application", "", "/api/v2.0/applications", "/api/v2.0/applications/{name}")
+	return NewSTResource(&stAdvancedRoutingApplication{}, "st_advanced_routing_application", "", "/api/v2.0/applications", "/api/v2.0/applications/{name}").UseSwaggerUri("/api/v2.0/applications/{name}[type=AdvancedRouting]")
 }
 
 func init() {

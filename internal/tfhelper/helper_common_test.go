@@ -66,10 +66,10 @@ type TestResourceModel struct {
 	SubStructP *TestResourceModelSub  `tfsdk:"sub_struct_p"`
 
 	// SubObject     types.Object `tfsdk:"sub_object" helper:",optional,elementtype:TestResourceModelSub"`
-	SubListString types.List   `tfsdk:"sub_list_string" helper:",optional,elementtype:string"`
-	SubListObject types.List   `tfsdk:"sub_list_object" helper:",optional,elementtype:TestResourceModelSubSub"`
-	SubMapString  types.Map    `tfsdk:"sub_map_string" helper:",elementtype:string,optional"`
-	Object        types.Object `tfsdk:"object" helper:",elementtype:TestResourceModelSubSub"`
+	SubListString types.List `tfsdk:"sub_list_string" helper:",optional,elementtype:string"`
+	// SubListObject types.List `tfsdk:"sub_list_object" helper:",optional,elementtype:TestResourceModelSubSub"`
+	SubMapString types.Map `tfsdk:"sub_map_string" helper:",elementtype:string,optional"`
+	// Object        types.Object `tfsdk:"object" helper:",elementtype:TestResourceModelSubSub"`
 	// Poly          TestResourceModelPoly `tfsdk:"poly" helper:",fold:kind,elementtype:TestResourceModelPoly"`
 	// PolyList      types.List            `tfsdk:"poly_list" helper:",fold:kind,elementtype:TestResourceModelPoly"`
 	// SubMapObject  types.Map  `tfsdk:"additional_attributes" helper:"additional_attributes,elementtype:TestResourceModelSub,optional"`

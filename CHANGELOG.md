@@ -1,4 +1,50 @@
 
+# 0.0.10
+
+ (!) means barely tested
+FEATURES:
+- full st_account_* support:
+  - add st_account_service resource (!)
+  - add st_account_template resource (!)
+- full st_application_* support:
+  - add st_application_account_ttl resource (!)
+  - add st_application_archive_maintenance resource (!)
+  - add st_application_basic resource (!)
+  - add st_application_file_maintenance resource (!)
+  - add st_application_human_to_system resource (!)
+  - add st_application_log_entry_maintenance resource (!)
+  - add st_application_login_threshold_maintenance resource (!)
+  - add st_application_mbft resource (!)
+  - add st_application_package_retention_maintenance resource (!)
+  - add st_application_sentinel_link_data resource (!)
+  - add st_application_shared_folder resource (!)
+  - add st_application_site_mailbox resource (!)
+  - add st_application_standard_router resource (!)
+  - add st_application_synchrony_transfer resource (!)
+  - add st_application_transfer_log_maintenance resource (!)
+  - add st_application_unlicenced_account_maintenance resource (!)
+- full st_subscription_* support:
+  - add st_subscription_basic resource
+  - add st_subscription_human_to_system resource (!)
+  - add st_subscription_mbft resource (!)
+  - add st_subscription_shared_folder resource (!)
+  - add st_subscription_site_mailbox resource (!)
+  - add st_subscription_standard_router resource (!)
+  - add st_subscription_synchrony_transfer resource (!)
+- full st_site_* support
+  - add st_site_adhoc resource (!)
+  - add st_site_as2 resource (!)
+  - add st_site_connect_direct resource (!)
+  - add st_site_ftp resource
+  - add st_site_http resource
+  - add st_site_synchrony_transfer resource (!)
+- misc
+  - add st_address_book resource
+  - add st_zone (!)
+  - add st_icap_server (!)
+  - add st_ldap_domain (!)
+  - add st_login_restriction_policy (!)
+
 # 0.0.9
 
 FEATURES:

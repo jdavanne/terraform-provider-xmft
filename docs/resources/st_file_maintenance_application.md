@@ -17,34 +17,36 @@ description: |-
 
 ### Required
 
-- `name` (String)
+- `name` (String) The unique application name
 
 ### Optional
 
-- `additional_attributes` (Map of String)
-- `business_units` (List of String) default:[]
-- `delete_files_days` (Number) default:0
-- `deletion_notifications` (Boolean) default:false
-- `deletion_notifications_template` (String) default:FileMaintenanceNotification.xhtml
-- `deletion_notify_account` (Boolean) default:false
-- `deletion_notify_emails` (String) default:''
-- `expiration_period` (Boolean) default:false
-- `managed_by_cg` (Boolean) default:false
-- `notes` (String)
-- `notify_days` (String) default:''
-- `pattern` (String) default:''
-- `remove_folders` (Boolean) default:false
+- `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
+and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
+a reserved word. Both key and value cannot be blank.
+- `business_units` (List of String) default:[], <nil>
+- `delete_files_days` (Number) default:0, This property represents file retention period. All files older than the property value will be deleted.
+- `deletion_notifications` (Boolean) default:false, If this property is set to true, the deletion notifications feature will be enabled.
+- `deletion_notifications_template` (String) default:FileMaintenanceNotification.xhtml, The email template name which will be used in File Maintenance report email notifications.
+- `deletion_notify_account` (Boolean) default:false, If this property is set to true, the deletion notifications will be sent to account email.
+- `deletion_notify_emails` (String) default:'', This property represents comma-separated email addresses for deletion notifications recipients.
+- `expiration_period` (Boolean) default:false, If this property is set to true, the deletion of files based on file expiration period will be enabled. The file expiration period will be set as flow file attribute EXPIRE.ON.
+- `managed_by_cg` (Boolean) default:false, This property indicates whether the application is managed by Central Governance.
+- `notes` (String) An unstructured comments (description) for the application entity
+- `notify_days` (String) default:'', This property represents warning notifications period when emails will be sent to the recipients. Accept comma-separated values.
+- `pattern` (String) default:'', This property represents file name pattern. All file names match of the property value will be regarded by the application.
+- `remove_folders` (Boolean) default:false, If this property is set to true, the deletion of folders remain empty after File Maintence will be enabled.
 - `schedules` (Attributes List) (see [below for nested schema](#nestedatt--schedules))
-- `send_sentinel_alert` (Boolean) default:false
-- `type` (String) default:AccountFilePurge
-- `warn_notify_account` (Boolean) default:false
-- `warn_notify_emails` (String) default:''
-- `warning_notifications` (Boolean) default:false
-- `warning_notifications_template` (String) default:FileMaintenanceNotification.xhtml
+- `send_sentinel_alert` (Boolean) default:false, If this property is set to true, the warning TO_BE_DELETED state will be reported to Sentinel Server.
+- `type` (String) default:AccountFilePurge, <nil>
+- `warn_notify_account` (Boolean) default:false, If this property is set to true, the warning notifications will be sent to account email.
+- `warn_notify_emails` (String) default:'', This property represents comma-separated email addresses for warning notifications recipients.
+- `warning_notifications` (Boolean) default:false, If this property is set to true, the warning notifications feature will be enabled.
+- `warning_notifications_template` (String) default:FileMaintenanceNotification.xhtml, The email template name which will be used in File Maintenance warning email notifications.
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The application ID
 - `last_updated` (String)
 
 <a id="nestedatt--schedules"></a>
@@ -65,13 +67,15 @@ Optional:
 
 Optional:
 
-- `daily_type` (String) enum:/EVERYDAY/EVERY_WEEK_DAY, default:EVERYDAY
-- `end_date` (String) default:''
-- `execution_times` (List of String)
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String)
-- `tag` (String)
-- `type` (String) default:DAILY
+- `daily_type` (String) enum:/EVERYDAY/EVERY_WEEKDAY, default:EVERYDAY, The daily type
+- `end_date` (String) The end date in date-time format
+- `execution_times` (List of String) <nil>
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:DAILY, The type of the schedule
 
 
 <a id="nestedatt--schedules--expression"></a>
@@ -79,13 +83,14 @@ Optional:
 
 Optional:
 
-- `cron_expression` (String) default:''
-- `end_date` (String)
-- `execution_times` (List of String)
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String)
-- `tag` (String)
-- `type` (String) default:EXPRESSION
+- `cron_expression` (String) default:'', The cron expression.
+- `end_date` (String) The end date in date-time format
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:EXPRESSION, The type of the schedule
 
 
 <a id="nestedatt--schedules--hourly"></a>
@@ -93,14 +98,16 @@ Optional:
 
 Optional:
 
-- `end_date` (String)
-- `execution_times` (List of String)
-- `hourly_step` (Number) default:1
-- `hourly_type` (String) enum:/PERHOURS/PERMINUTES, default:PERHOURS
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String) default:''
-- `tag` (String)
-- `type` (String) default:HOURLY
+- `end_date` (String) The end date in date-time format
+- `execution_times` (List of String) <nil>
+- `hourly_step` (Number) default:1, The hourly step
+- `hourly_type` (String) enum:/PERHOURS/PERMINUTES, default:PERHOURS, The hourly type
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) default:'', The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:HOURLY, The type of the schedule
 
 
 <a id="nestedatt--schedules--monthly"></a>
@@ -109,14 +116,17 @@ Optional:
 Optional:
 
 - `days_of_month` (List of Number)
-- `days_of_week` (List of String) enum:enum
-- `end_date` (String)
-- `execution_times` (List of String)
-- `monthly_type` (String) enum:/EXACT/SEQUENCE_WEEKLY/SEQUENCE_MONTHLY, default:EXACT
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String)
-- `tag` (String)
-- `type` (String) default:MONTHLY
+- `days_of_week` (List of String) enum:/SUNDAY/MONDAY/TUESDAY/WEDNESDAY/THURSDAY/FRIDAY/SATURDAY, <nil>
+- `end_date` (String) The end date in date-time format
+- `execution_times` (List of String) <nil>
+- `monthly_type` (String) enum:/EXACT/SEQUENCE_WEEKLY/SEQUENCE_MONTHLY, default:EXACT, The monthly type
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:MONTHLY, The type of the schedule
+- `week_of_month` (String) enum:/FIRST/SECOND/THIRD/FOURTH/LAST, default:FIRST, The week of the month
 
 
 <a id="nestedatt--schedules--once"></a>
@@ -124,11 +134,13 @@ Optional:
 
 Optional:
 
-- `execution_times` (List of String)
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String)
-- `tag` (String)
-- `type` (String) default:ONCE
+- `execution_times` (List of String) <nil>
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:ONCE, The type of the schedule
 
 
 <a id="nestedatt--schedules--weekly"></a>
@@ -136,13 +148,15 @@ Optional:
 
 Optional:
 
-- `days_of_week` (List of String) enum:/SUNDAY/MONDAY/TUESDAY/WEDNESDAY/THURSDAY/FRIDAY/SATURDAY
-- `end_date` (String)
-- `execution_times` (List of String)
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String)
-- `tag` (String)
-- `type` (String) default:WEEKLY
+- `days_of_week` (List of String) enum:/SUNDAY/MONDAY/TUESDAY/WEDNESDAY/THURSDAY/FRIDAY/SATURDAY, <nil>
+- `end_date` (String) The end date in date-time format
+- `execution_times` (List of String) <nil>
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:WEEKLY, The type of the schedule
 
 
 <a id="nestedatt--schedules--yearly"></a>
@@ -150,10 +164,13 @@ Optional:
 
 Optional:
 
-- `end_date` (String)
-- `execution_times` (List of String)
-- `months` (List of String) enum:/JANUARY/FEBRUARY/MARCH/APRIL/MAY/JUNE/JULY/AUGUST/SEPTEMBER/OCTOBER/NOVEMBER/DECEMBER
-- `skip_holidays` (Boolean) default:false
-- `start_date` (String)
-- `tag` (String)
-- `type` (String) default:YEARLY
+- `days_of_month` (List of Number)
+- `end_date` (String) The end date in date-time format
+- `execution_times` (List of String) <nil>
+- `months` (List of String) enum:/JANUARY/FEBRUARY/MARCH/APRIL/MAY/JUNE/JULY/AUGUST/SEPTEMBER/OCTOBER/NOVEMBER/DECEMBER, <nil>
+- `skip_holidays` (Boolean) default:false, Whether to skip holidays.
+- `start_date` (String) The start date in date-time format
+- `tag` (String) The type of the application or subscription. 
+For application schedule are valid the following application types: 'HumanSystem', 'StandardRouter', 'SiteMailbox', 'SharedFolde'r, 'TransferLogMaint', 'Basic', 'AdvancedRouting', 'LogEntryMaint', 'ArchiveMaint', 'SentinelLinkDataMaint', 'SynchronyTransfer', 'MBFT', 'PackageRetentionMaint', 'UnlicensedAccountMaint', 'AuditLogMaint'. 
+For subscription schedule are valid the following options : 'PARTNER-IN', 'PARTNER-OUT'.
+- `type` (String) default:YEARLY, The type of the schedule

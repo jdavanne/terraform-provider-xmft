@@ -22,18 +22,218 @@ description: |-
 
 ### Optional
 
+- `account_maintenance_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings))
+- `ad_hoc_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--ad_hoc_settings))
 - `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
 and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
+- `address_book_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--address_book_settings))
+- `bandwidth_limits` (Attributes) default:{} (see [below for nested schema](#nestedatt--bandwidth_limits))
 - `base_folder_modifying_allowed` (Boolean) default:false, Flag indicating if the base folder of the business unit entity is modifiable (this property defines whether the base folder for the belonging accounts may be modified).
-- `dmz` (String) default:'', The name of the DMZ zone
+- `dmz` (String) The name of the DMZ zone
 - `enabled_icap_servers` (List of String) default:[], <nil>
+- `file_archiving_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--file_archiving_settings))
+- `file_maintenance_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--file_maintenance_settings))
 - `home_folder_modifying_allowed` (Boolean) default:false, Flag indicating if the belonging accounts' base folders are modifiable.
+- `html_template_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--html_template_settings))
+- `login_restriction_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--login_restriction_settings))
 - `managed_by_cg` (Boolean) default:false, This property indicates whether the business unit is managed by Central Governance.
-- `parent` (String) default:'', The name of the parent business unit entity.
+- `parent` (String) The name of the parent business unit entity.
 - `shared_folders_collaboration_allowed` (Boolean) Flag indicating if accounts may collaborate using, creating and sharing folders.
+- `transfers_api_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--transfers_api_settings))
 
 ### Read-Only
 
 - `business_unit_hierarchy` (String) The full path hierarchy of the business unit entity.
 - `last_updated` (String)
+
+<a id="nestedatt--account_maintenance_settings"></a>
+### Nested Schema for `account_maintenance_settings`
+
+Optional:
+
+- `action` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--action))
+- `criteria` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--criteria))
+- `email_notification_before_action` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--email_notification_before_action))
+- `email_notification_for_user_certificate` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--email_notification_for_user_certificate))
+- `email_notification_for_user_password` (Attributes) default:{} (see [below for nested schema](#nestedatt--account_maintenance_settings--email_notification_for_user_password))
+- `policy` (String) default:default, This property defines which Account Maintenance settings will be applied for current account.
+- `policy_modifying_allowed` (Boolean) default:false, Whether the account under BU can have custom configuration of account time to live maintenance.
+
+<a id="nestedatt--account_maintenance_settings--action"></a>
+### Nested Schema for `account_maintenance_settings.action`
+
+Optional:
+
+- `action` (String) enum:/DELETE/DISABLE/PURGE, Applicable for account. The action which should be performed when Account Maintenance criteria is met.
+- `days_delete_disabled` (Number) Applicable for account. The sub-action criteria representing the amount of days for deletion of accounts disabled by Account Maintenance application only. It is valid if action is set to "DISABLE".
+
+
+<a id="nestedatt--account_maintenance_settings--criteria"></a>
+### Nested Schema for `account_maintenance_settings.criteria`
+
+Optional:
+
+- `days_after_creation` (Number) The criteria representing the amount of days after account creation or first maintenance job run.
+- `days_of_inactivity` (Number) The criteria representing the amount of days of account inactivity.
+- `specific_date` (String) Specific date.
+
+
+<a id="nestedatt--account_maintenance_settings--email_notification_before_action"></a>
+### Nested Schema for `account_maintenance_settings.email_notification_before_action`
+
+Optional:
+
+- `email_template` (String) default:'', Applicable for account. The email template name which will be used in Account Maintenance report email notifications.
+- `notify_account` (Boolean) default:false, If the account matches a criteria and an action to be performed in X days or sooner, a notification mail should be sent to the email address configured for that user.
+- `notify_days` (String) default:'', The comma-separated periods for notifications.
+- `notify_emails` (String) default:'', The comma-separated email addresses for Account Maintenance notifications.
+
+
+<a id="nestedatt--account_maintenance_settings--email_notification_for_user_certificate"></a>
+### Nested Schema for `account_maintenance_settings.email_notification_for_user_certificate`
+
+Optional:
+
+- `email_template` (String) default:'', Applicable for account. The email template name which will be used in Account Maintenance certificate email notifications.
+- `notify_account` (Boolean) default:false, If the account matches a criteria and an action to be performed in X days or sooner, a notification mail should be sent to the email address configured for that user.
+- `notify_days` (String) default:'', The comma-separated periods for account certificates expiration notifications.
+- `notify_emails` (String) default:'', The comma-separated email addresses for Account Maintenance notifications.
+
+
+<a id="nestedatt--account_maintenance_settings--email_notification_for_user_password"></a>
+### Nested Schema for `account_maintenance_settings.email_notification_for_user_password`
+
+Optional:
+
+- `email_template` (String) default:'', Applicable for account. The email template name which will be used in Account Maintenance password email notifications.
+- `notify_account` (Boolean) default:false, If the account matches a criteria and an action to be performed in X days or sooner, a notification mail should be sent to the email address configured for that user.
+- `notify_days` (String) default:'', The comma-separated periods for account password expiration notifications.
+- `notify_emails` (String) default:'', The comma-separated email addresses for Account Maintenance notifications.
+
+
+
+<a id="nestedatt--ad_hoc_settings"></a>
+### Nested Schema for `ad_hoc_settings`
+
+Optional:
+
+- `auth_by_email` (Boolean) default:false, Flag indicating if auth is by email
+- `delivery_method` (String) enum:/DEFAULT/EMAIL, default:DEFAULT, This property defines the delivery method. When deliveryMethod is set to 'Disabled' then Adhoc is disabled and enrollmentType/implicitEnrollmentType can not be set. When deliveryMethod is set to 'Default' then it is only available on BU and Account (setting the BU to use the value and account to use the BU value). When deliveryMethod is set to 'Anonymous' then implicit enrollment types 'Anonymous' and "" (Select by sender) are enabled. When deliveryMethod is set to 'Account Without Enrollment' then implicit enrollment types 'Anonymous', ""  (Select by sender) and 'Existing Account' are enabled. When deliveryMethod is set to 'Account With Enrollment' then implicit enrollment types 'Anonymous', "" (Select by sender), 'Enroll unlicensed', 'Enroll licensed' are enabled
+- `enrollment_template` (String) default:default, The name of the notification template for this business unit entity
+- `enrollment_types` (List of String) <nil>
+- `implicit_enrollment_type` (String) The Implicit Enrollment Type value of the business unit entity. This property controls which option Web Access Plus selects initially in the User Access window and which enrollment type is used by the Axway Email Plug-ins. The choices depend on the enrollment types enabled by the Delivery Methods and Enrollment Types fields
+- `notification_template` (String) The notification template
+
+
+<a id="nestedatt--address_book_settings"></a>
+### Nested Schema for `address_book_settings`
+
+Optional:
+
+- `modify_collaboration_allowed` (Boolean) default:false, Defines whether the Shared Folders collaboration is enabled for the business unit successors.
+- `modify_sources_allowed` (Boolean) default:false, If sources are allowed for modifying.
+- `non_address_book_collaboration_allowed` (Boolean) default:false, Allow address book collaboration.
+- `policy` (String) AddressBook policy.
+- `sources` (Attributes List) (see [below for nested schema](#nestedatt--address_book_settings--sources))
+
+<a id="nestedatt--address_book_settings--sources"></a>
+### Nested Schema for `address_book_settings.sources`
+
+Required:
+
+- `id` (String) <nil>
+- `name` (String) <nil>
+- `parent_group` (String) <nil>
+- `type` (String) <nil>
+
+Optional:
+
+- `custom_properties` (Attributes) default:{} (see [below for nested schema](#nestedatt--address_book_settings--sources--custom_properties))
+- `enabled` (Boolean) default:false, <nil>
+
+<a id="nestedatt--address_book_settings--sources--custom_properties"></a>
+### Nested Schema for `address_book_settings.sources.custom_properties`
+
+Optional:
+
+- `value1` (String) default:''
+- `value2` (String) default:''
+
+
+
+
+<a id="nestedatt--bandwidth_limits"></a>
+### Nested Schema for `bandwidth_limits`
+
+Optional:
+
+- `inbound_limit` (Number) Bandwidth's inbound limit.
+- `modify_limits_allowed` (Boolean) default:false, Whether modifying limits is allowed.
+- `outbound_limit` (Number) Bandwidth's outbound limit.
+- `policy` (String) default:default, Bandwidth policy.
+
+
+<a id="nestedatt--file_archiving_settings"></a>
+### Nested Schema for `file_archiving_settings`
+
+Optional:
+
+- `custom_encryption_certificate` (String) Custom encryption certificate of the business unit.
+- `custom_file_size` (Number) default:0, Custom file size for archiving of the businessunit unit.
+- `custom_file_size_policy` (String) default:default, Custom file size policy of the business unit.
+- `custom_folder` (String) default:'', Custom archiving folder of the business unit
+- `encryption_certificate_policy` (String) enum:/default/custom/disabled, default:default, Archiving certificate policy of the business unit.
+- `folder_policy` (String) default:default, Defines whether account under BU can modify folder.
+- `policy` (String) default:default, Defines whether the child business units are allowed to modify archiving policy
+- `policy_modifying_allowed` (Boolean) default:false, Defines whether the child business units are allowed to modify archiving policy.
+
+
+<a id="nestedatt--file_maintenance_settings"></a>
+### Nested Schema for `file_maintenance_settings`
+
+Optional:
+
+- `allow_policy_modifying` (Boolean) default:false, This property defines whether the modification of File Maintenance settings at account level is enabled/disabled.
+- `delete_files_days` (Number) This property represents file retention period for account or business unit. All files older than the property value will be deleted.
+- `deletion_notifications` (Boolean) If this property is set to true, the deletion notifications feature will be enabled for the account.
+- `deletion_notifications_template` (String) The email template name which will be used in File Maintenance report email notifications for account or business unit.
+- `deletion_notify_account` (Boolean) If this property is set to true, the deletion notifications will be sent to account email.
+- `deletion_notify_emails` (String) This property represents comma-separated email addresses for deletion notifications recipients.
+- `expiration_period` (Boolean) If this property is set to true, the deletion of files based on file expiration period will be enabled. The file expiration period will be set as flow file attribute EXPIRE.ON.
+- `notify_days` (String) This property represents warning notifications period when emails will be sent to the recipients.
+- `pattern` (String) This property represents file name pattern for account or business unit. All file names match of the property value will be regarded by the application.
+- `policy` (String) enum:/default/custom/disabled, default:default, This property defines which File Maintenance settings will be applied for current account or business unit.
+- `remove_folders` (Boolean) If this property is set to true, the deletion of folders remain empty after File Maintence will be enabled.
+- `send_sentinel_alert` (Boolean) If this property is set to true, the warning TO_BE_DELETED state will be reported to Sentinel server.
+- `warn_notify_account` (Boolean) If this property is set to true, the warning notifications will be sent to account email.
+- `warn_notify_emails` (String) This property represents comma-separated email addresses for warning notifications recipients.
+- `warning_notifications` (Boolean) If this property is set to true, the warning notifications feature will be enabled.
+- `warning_notifications_template` (String) The email template name which will be used in File Maintenance warning email notifications for account.
+
+
+<a id="nestedatt--html_template_settings"></a>
+### Nested Schema for `html_template_settings`
+
+Optional:
+
+- `html_template_folder_path` (String) default:"Default HTML Template", The HTML template directory path on the local system used for this business unit entity
+- `is_allowed_for_modifying` (Boolean) default:false, Flag indicating if the HTML Template folder may be modified
+
+
+<a id="nestedatt--login_restriction_settings"></a>
+### Nested Schema for `login_restriction_settings`
+
+Optional:
+
+- `is_policy_modifying_allowed` (Boolean) default:false, Flag indicating whether the login restriction policy option is modifiable on account level.
+- `policy` (String) The login restriction policy for this business unit.
+
+
+<a id="nestedatt--transfers_api_settings"></a>
+### Nested Schema for `transfers_api_settings`
+
+Optional:
+
+- `is_web_service_rights_modifying_allowed` (Boolean) default:false, Flag indicating if web services rights are allowed for modifying
+- `transfers_web_service_allowed` (Boolean) default:false, Defines whether the access to the /transfers resource from the End-user REST API is allowed

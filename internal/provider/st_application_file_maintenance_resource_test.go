@@ -73,7 +73,7 @@ func TestNewSTFileMaintenanceApplicationResource(t *testing.T) {
 										skip_holidays = false
 										tag = "AccountFilePurge"
 										daily_type= "EVERYDAY"
-										end_date = ""
+										#end_date = null
 										execution_times = [
 											"01:00"
 										]
@@ -118,7 +118,7 @@ func TestNewSTFileMaintenanceApplicationResource(t *testing.T) {
 									skip_holidays = false
 									tag = "AccountFilePurge"
 									daily_type: "EVERYDAY"
-									end_date = null
+									#end_date = null
 									execution_times = [
 										"02:00"
 									]
@@ -149,7 +149,7 @@ func TestNewSTFileMaintenanceApplicationResource(t *testing.T) {
 										skip_holidays = false
 										tag = "AccountFilePurge"
 										daily_type= "EVERYDAY"
-										end_date = ""
+										#end_date = null
 										execution_times = [
 											"02:00"
 										]

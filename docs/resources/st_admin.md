@@ -17,47 +17,47 @@ description: |-
 
 ### Required
 
-- `name` (String)
-- `role_name` (String)
+- `name` (String) The name of the administrator
+- `role_name` (String) The role name of the administrator
 
 ### Optional
 
 - `administrator_rights` (Attributes) default:{} (see [below for nested schema](#nestedatt--administrator_rights))
-- `business_units` (List of String)
-- `certificate_dn` (String) default:''
-- `dual_authentication` (Boolean) default:false
-- `is_limited` (Boolean) default:false
-- `local_authentication` (Boolean) default:false
-- `parent` (String) default:''
+- `business_units` (List of String) default:[], <nil>
+- `certificate_dn` (String) default:'', Specifies the DN of the certificate used by the administrator for authentication.
+- `dual_authentication` (Boolean) default:false, Clarifies whether the administator is being authenticated with password and certificate or with password only.
+- `is_limited` (Boolean) default:false, The role type of the administrator - limited (delegated) or master
+- `local_authentication` (Boolean) default:false, Clarifies whether the administator is being authenticated by ST or external service.
+- `parent` (String) default:'', Specifies the name of the parent administrator of this administrator in an administrator hierarchy.
 - `password_credentials` (Attributes) (see [below for nested schema](#nestedatt--password_credentials))
 
 ### Read-Only
 
-- `full_creation_path` (String)
+- `full_creation_path` (String) Specifies the path of descendands of this administrator in an administrator hierarchy.
 - `last_updated` (String)
-- `locked` (Boolean)
+- `locked` (Boolean) Clarifies whether the administator is enabled/active.
 
 <a id="nestedatt--administrator_rights"></a>
 ### Nested Schema for `administrator_rights`
 
 Optional:
 
-- `can_access_help_desk` (Boolean) default:false
-- `can_create_users` (Boolean) default:false
-- `can_manage_administrators` (Boolean) default:false
-- `can_manage_applications` (Boolean) default:false
-- `can_manage_business_units` (Boolean) default:false
-- `can_manage_external_script_root_execution` (Boolean) default:false
-- `can_manage_external_script_step` (Boolean) default:false
-- `can_manage_icap_settings` (Boolean) default:false
-- `can_manage_login_restriction_policies` (Boolean) default:false
-- `can_manage_route_templates` (Boolean) default:false
-- `can_manage_shared_folders` (Boolean) default:false
-- `can_read_only` (Boolean) default:false
-- `can_see_full_audit_log` (Boolean) default:false
-- `can_update_users` (Boolean) default:false
-- `is_checker` (Boolean) default:false
-- `is_maker` (Boolean) default:false
+- `can_access_help_desk` (Boolean) default:false, Defines if the administrator can access help desk
+- `can_create_users` (Boolean) default:false, Defines if the administrator can create users
+- `can_manage_administrators` (Boolean) default:false, Defines if the administrator can manage administrators
+- `can_manage_applications` (Boolean) default:false, Defines if the administrator can manage applications
+- `can_manage_business_units` (Boolean) default:false, Defines if the administrator can manage business units
+- `can_manage_external_script_root_execution` (Boolean) default:false, Defines if the administrator can manage external script root execution.
+- `can_manage_external_script_step` (Boolean) default:false, Defines if the administrator can manage the external script step.
+- `can_manage_icap_settings` (Boolean) default:false, Defines if the administrator can manage the ICAP settings.
+- `can_manage_login_restriction_policies` (Boolean) default:false, Defines if the administrator can manage the login restriction policies.
+- `can_manage_route_templates` (Boolean) default:false, Defines if the administrator can manage route templates
+- `can_manage_shared_folders` (Boolean) default:false, Defines if the administrator can manage shared folders
+- `can_read_only` (Boolean) default:false, Defines if the administrator is read only
+- `can_see_full_audit_log` (Boolean) default:false, Defines if the administrator can access the Audit Log
+- `can_update_users` (Boolean) default:false, Defines if the administrator can update users
+- `is_checker` (Boolean) default:false, Defines if the administrator has Checker rights
+- `is_maker` (Boolean) default:false, Defines if the administrator has Maker rights
 
 
 <a id="nestedatt--password_credentials"></a>
@@ -65,12 +65,12 @@ Optional:
 
 Optional:
 
-- `password` (String, Sensitive)
+- `password` (String, Sensitive) Administrator's password
 
 Read-Only:
 
-- `last_failure_login_time` (String)
-- `last_login_time` (String)
-- `last_password_change_time` (String)
-- `login_failure_count` (Number)
-- `password_expired` (Boolean)
+- `last_failure_login_time` (String) Last failure login time of the administrator
+- `last_login_time` (String) Last login time of the administrator
+- `last_password_change_time` (String) Last time the administrator's password was changed
+- `login_failure_count` (Number) The count of the login failures
+- `password_expired` (Boolean) Clarifies whether the administator's password is expired.

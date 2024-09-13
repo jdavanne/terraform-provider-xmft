@@ -17,16 +17,16 @@ type stRouteSimpleResourceModel struct {
 	// Account                     types.String   `tfsdk:"account" helper:",optional"`
 	// Subscriptions               []types.String `tfsdk:"subscriptions"`
 	ConditionType               types.String `tfsdk:"condition_type" helper:"conditionType,default:ALWAYS"`
-	Condition                   types.String `tfsdk:"condition" helper:",optional,computed"`
-	FailureEmailNotification    types.Bool   `tfsdk:"failure_email_notification" helper:"failureEmailNotification,optional,computed"`
-	FailureEmailTemplate        types.String `tfsdk:"failure_email_template" helper:"failureEmailTemplate,optional,computed"`
-	FailureEmailName            types.String `tfsdk:"failure_email_name" helper:"failureEmailName,optional,computed"`
-	SuccessEmailNotification    types.Bool   `tfsdk:"success_email_notification" helper:"successEmailNotification,optional,computed"`
-	SuccessEmailTemplate        types.String `tfsdk:"success_email_template" helper:"successEmailTemplate,optional,computed"`
-	SuccessEmailName            types.String `tfsdk:"success_email_name" helper:"successEmailName,optional,computed"`
-	TriggeringEmailNotification types.Bool   `tfsdk:"triggering_email_notification" helper:"triggeringEmailNotification,optional,computed"`
-	TriggeringEmailTemplate     types.String `tfsdk:"triggering_email_template" helper:"triggeringEmailTemplate,optional,computed"`
-	TriggeringEmailName         types.String `tfsdk:"triggering_email_name" helper:"triggeringEmailName,optional,computed"`
+	Condition                   types.String `tfsdk:"condition" helper:",emptyIsNull,default:"`
+	FailureEmailNotification    types.Bool   `tfsdk:"failure_email_notification" helper:"failureEmailNotification,emptyIsNull,default:"`
+	FailureEmailTemplate        types.String `tfsdk:"failure_email_template" helper:"failureEmailTemplate,emptyIsNull,default:"`
+	FailureEmailName            types.String `tfsdk:"failure_email_name" helper:"failureEmailName,emptyIsNull,default:"`
+	SuccessEmailNotification    types.Bool   `tfsdk:"success_email_notification" helper:"successEmailNotification,emptyIsNull,default:"`
+	SuccessEmailTemplate        types.String `tfsdk:"success_email_template" helper:"successEmailTemplate,emptyIsNull,default:"`
+	SuccessEmailName            types.String `tfsdk:"success_email_name" helper:"successEmailName,emptyIsNull,default:"`
+	TriggeringEmailNotification types.Bool   `tfsdk:"triggering_email_notification" helper:"triggeringEmailNotification,emptyIsNull,default:"`
+	TriggeringEmailTemplate     types.String `tfsdk:"triggering_email_template" helper:"triggeringEmailTemplate,emptyIsNull,default:"`
+	TriggeringEmailName         types.String `tfsdk:"triggering_email_name" helper:"triggeringEmailName,emptyIsNull,default:"`
 
 	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 	/*StepStatuses                []struct {

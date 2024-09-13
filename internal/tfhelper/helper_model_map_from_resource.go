@@ -3,6 +3,7 @@ package tfhelper
 import (
 	"context"
 	"fmt"
+	"log/slog"
 	"reflect"
 	"strings"
 
@@ -199,7 +200,7 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 						bval := val.(basetypes.StringValue)
 						val := bval.ValueString()
 						// slog.DebugContext(ctx, "AttributesToResource", "name", name, "val", val, "bval", fmt.Sprintf("%+v", bval))
-						if (val != "" || deftok) && !nowrite && !bval.IsNull() {
+						if (val != "" || deftok) && !nowrite && !bval.IsNull() && !bval.IsUnknown() {
 							if val != "" || !emptyIsNull {
 								attrs[name] = val
 							}
@@ -207,13 +208,17 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 					case "basetypes.BoolValue":
 						bval := val.(basetypes.BoolValue)
 						val := bval.ValueBool()
-						if !nowrite && !bval.IsNull() {
-							attrs[name] = val
+						slog.DebugContext(ctx, "AttributesFromResource", "name", name, "val", val, "bval", fmt.Sprintf("%+v", bval))
+						if !nowrite && !bval.IsNull() && !bval.IsUnknown() {
+							if val != false || !emptyIsNull {
+								attrs[name] = val
+							}
 						}
 					case "basetypes.Int64Value":
 						bval := val.(basetypes.Int64Value)
 						val := bval.ValueInt64()
-						if !nowrite && !bval.IsNull() {
+						slog.DebugContext(ctx, "AttributesFromResource", "name", name, "val", val, "bval", fmt.Sprintf("%+v", bval))
+						if !nowrite && !bval.IsNull() && !bval.IsUnknown() {
 							if val != 0 || !emptyIsNull {
 								attrs[name] = val
 							}

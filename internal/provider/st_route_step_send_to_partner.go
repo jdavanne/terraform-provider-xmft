@@ -62,39 +62,39 @@ type stRouteStepSendToPartnerResourceModel struct {
 	Type   types.String `tfsdk:"type" helper:",default:SendToPartner"`
 	Status types.String `tfsdk:"status" helper:",enum:/ENABLED/DISABLED,default:ENABLED"`
 
-	// PrecedingStep types.String `tfsdk:"preceding_step"`
+	PrecedingStep       types.String `tfsdk:"preceding_step" helper:"precedingStep,computed,nowrite"`
 	ConditionType       types.String `tfsdk:"condition_type" helper:"conditionType,enum:/ALWAYS/EL,default:ALWAYS"`
-	Condition           types.String `tfsdk:"condition" helper:",emptyIsNull,default:"`
+	Condition           types.String `tfsdk:"condition" helper:",optional"`
 	ActionOnStepSuccess types.String `tfsdk:"action_on_step_success" helper:"actionOnStepSuccess,enum:/PROCEED/STOP,default:PROCEED"`
 	ActionOnStepFailure types.String `tfsdk:"action_on_step_failure" helper:"actionOnStepFailure,enum:/FAIL/PROCEED,default:FAIL"`
 
-	// Autostart                            types.Bool   `tfsdk:"autostart" helper:"autostart,default:false"`
-	// UsePrecedingStepFiles                types.Bool   `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,default:false"`
+	Autostart                            types.Bool   `tfsdk:"autostart" helper:"autostart,default:false"`
+	UsePrecedingStepFiles                types.Bool   `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,default:true"`
 	FileFilterExpression                 types.String `tfsdk:"file_filter_expression" helper:"fileFilterExpression,default:*"`
 	FileFilterExpressionType             types.String `tfsdk:"file_filter_expression_type" helper:"fileFilterExpressionType,enum:/GLOB/REGEXP/TEXT_FILES,default:GLOB"`
-	TargetAccountExpression              types.String `tfsdk:"target_account_expression" helper:"targetAccountExpression,emptyIsNull,default:"`
-	TargetAccountExpressionType          types.String `tfsdk:"target_account_expression_type" helper:"targetAccountExpressionType,enum:/NAME/EXPRESSION,emptyIsNull,default"`
+	TargetAccountExpression              types.String `tfsdk:"target_account_expression" helper:"targetAccountExpression,optional"`
+	TargetAccountExpressionType          types.String `tfsdk:"target_account_expression_type" helper:"targetAccountExpressionType,enum:/NAME/EXPRESSION,optional"`
 	TransferSiteExpression               types.String `tfsdk:"transfer_site_expression" helper:"transferSiteExpression,default"`
 	TransferSiteExpressionType           types.String `tfsdk:"transfer_site_expression_type" helper:"transferSiteExpressionType,enum:/LIST/EXPRESSION_WILDCARD,default:LIST"`
 	UploadFolder                         types.String `tfsdk:"upload_folder" helper:"uploadFolder,default:/"`
-	TransferProfileExpression            types.String `tfsdk:"transfer_profile_expression" helper:"transferProfileExpression,emptyIsNull,default:"`
+	TransferProfileExpression            types.String `tfsdk:"transfer_profile_expression" helper:"transferProfileExpression,optional"`
 	TransferProfileExpressionType        types.String `tfsdk:"transfer_profile_expression_type" helper:"transferProfileExpressionType,computed,optional"`
-	StoreAndForwardMode                  types.String `tfsdk:"store_and_forward_mode" helper:"storeAndForwardMode,emptyIsNull,default:"`
-	VirtualFilename                      types.String `tfsdk:"virtual_filename" helper:"virtualFilename,emptyIsNull,default:"`
-	DataEncoding                         types.String `tfsdk:"data_encoding" helper:"dataEncoding,emptyIsNull,default:"`
-	RecordFormat                         types.String `tfsdk:"record_format" helper:"recordFormat,emptyIsNull,default:"`
-	RecordLength                         types.String `tfsdk:"record_length" helper:"recordLength,emptyIsNull,default:"`
-	FileLabel                            types.String `tfsdk:"file_label" helper:"fileLabel,emptyIsNull,default:"`
-	Originator                           types.String `tfsdk:"originator" helper:"originator,emptyIsNull,default:"`
-	FinalDestination                     types.String `tfsdk:"final_destination" helper:"finalDestination,emptyIsNull,default:"`
-	UserMessage                          types.String `tfsdk:"user_message" helper:"userMessage,emptyIsNull,default:"`
-	TriggerFileName                      types.String `tfsdk:"trigger_file_name" helper:"triggerFileName,emptyIsNull,default:"`
-	TriggerTargetAccountExpression       types.String `tfsdk:"trigger_target_account_expression" helper:"triggerTargetAccountExpression,emptyIsNull,default:"`
-	TriggerTransferSiteExpression        types.String `tfsdk:"trigger_transfer_site_expression" helper:"triggerTransferSiteExpression,emptyIsNull,default:"`
-	TriggerTransferSiteExpressionType    types.String `tfsdk:"trigger_transfer_site_expression_type" helper:"triggerTransferSiteExpressionType,enum:/LIST/EXPRESSION_WILDCARD,emptyIsNull,default:"`
-	RouteFileAs                          types.String `tfsdk:"route_file_as" helper:"routeFileAs,emptyIsNull,default:"`
+	StoreAndForwardMode                  types.String `tfsdk:"store_and_forward_mode" helper:"storeAndForwardMode,optional"`
+	VirtualFilename                      types.String `tfsdk:"virtual_filename" helper:"virtualFilename,optional"`
+	DataEncoding                         types.String `tfsdk:"data_encoding" helper:"dataEncoding,optional"`
+	RecordFormat                         types.String `tfsdk:"record_format" helper:"recordFormat,optional"`
+	RecordLength                         types.String `tfsdk:"record_length" helper:"recordLength,optional"`
+	FileLabel                            types.String `tfsdk:"file_label" helper:"fileLabel,optional"`
+	Originator                           types.String `tfsdk:"originator" helper:"originator,optional"`
+	FinalDestination                     types.String `tfsdk:"final_destination" helper:"finalDestination,optional"`
+	UserMessage                          types.String `tfsdk:"user_message" helper:"userMessage,optional"`
+	TriggerFileName                      types.String `tfsdk:"trigger_file_name" helper:"triggerFileName,optional"`
+	TriggerTargetAccountExpression       types.String `tfsdk:"trigger_target_account_expression" helper:"triggerTargetAccountExpression,optional"`
+	TriggerTransferSiteExpression        types.String `tfsdk:"trigger_transfer_site_expression" helper:"triggerTransferSiteExpression,optional"`
+	TriggerTransferSiteExpressionType    types.String `tfsdk:"trigger_transfer_site_expression_type" helper:"triggerTransferSiteExpressionType,enum:/LIST/EXPRESSION_WILDCARD,optional"`
+	RouteFileAs                          types.String `tfsdk:"route_file_as" helper:"routeFileAs,optional"`
 	TriggerFileContent                   types.String `tfsdk:"trigger_file_content" helper:"triggerFileContent,computed,optional"`
-	PostRoutingActionType                types.String `tfsdk:"post_routing_action_type" helper:"postRoutingActionType,enum:/DELETE/RENAME,emptyIsNull,default:"`
+	PostRoutingActionType                types.String `tfsdk:"post_routing_action_type" helper:"postRoutingActionType,enum:/DELETE/RENAME,optional"`
 	SleepIncrementBetweenRetries         types.Int64  `tfsdk:"sleep_increment_between_retries" helper:"sleepIncrementBetweenRetries,computed,optional"`
 	SleepBetweenRetries                  types.Int64  `tfsdk:"sleep_between_retries" helper:"sleepBetweenRetries,computed,optional"`
 	MaxParallelClients                   types.Int64  `tfsdk:"max_parallel_clients" helper:"maxParallelClients,computed,optional"`

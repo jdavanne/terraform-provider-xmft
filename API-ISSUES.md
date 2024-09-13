@@ -2,6 +2,12 @@
 # TF integration
 
 - default (optional) vs unknown value (optional/computed)
+   - input can be null,unknown,empty/def 
+   - output can be null,unknown,empty
+   - "" becomes null -> yes : use default "" and emptyIsNull, or use optional
+   - null keeps null -> yes : use default else use default and emptyIsNull
+     - emptyIsNull doesn't send any value
+     - emptyIsNull convert null to ""   
 - sub struct management with unknown pointer vs object => onsequence on documentation
 - dependencies on fields / bool enabled
 
@@ -29,11 +35,11 @@
 - choose between default, computed/optional vs default emptyIsNull
 
 - businessUnit : no id ???? (*inconsistency*)
-- sentinel.host : bad host resolution : cannot configure
+- sentinel.host : bad host resolution : cannot configure -> no check ?
 
 - /transferProfiles : sudden error: "Incorrect Accept header. Allowed values are application/json and multipart/mixed"
 - inconsistency of enums : UPPERCASE vs Lowercase vs camelCase vs pascal case
-  - Proposal : add options with choosen case, and deprecate others (???)
+  - Proposal : add options with choosen case, and deprecate others (???) but what to return !!!!
 
 - references by name vs id : rename may break or not the links
   - rename account : 
@@ -44,8 +50,18 @@
     -  application
    -  rename business unit
   
--  inconsistent glob "case"
+- inconsistent glob "case"
 
+- step character-replace/strip : weird \u character....
+
+- missing api for available plugins /version : authz/authn/site/step...
+
+- file-maintenance-application : scheduler startDate ??? what for
+
+- /api/v2.0/sites type=ftp bad field leads to "Incorrect JSON format"
+
+- swagger schema : default as "string" !!!!
+- 
 # CFT API issues
 - cftpart/cfttcp logic
 

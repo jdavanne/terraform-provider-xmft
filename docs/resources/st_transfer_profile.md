@@ -25,6 +25,7 @@ description: |-
 - `additional_attributes` (Map of String) Additional attributes which are defined with "key": "value" pairs. Keys must start with "userVars." prefix, follow the pattern: [a-zA-Z0-9_.]+
 and have length between 10 and 255 characters (including the prefix). Non prefixed part of key should not start with "userVars.", since it is
 a reserved word. Both key and value cannot be blank.
+- `advanced_settings` (Attributes) default:{} (see [below for nested schema](#nestedatt--advanced_settings))
 - `default` (Boolean) default:false, Defines whether this transfer profile is default or not.
 - `file_label_option` (String) enum:/DONT_SEND/SEND_FILENAME/SEND_FILENAME_AND_PATH, default:DONT_SEND, Determines whether the file name and the path, relative to the account's home folder, are sent. Corresponds to PI 37.
 - `multi_select` (Boolean) default:false, Determines the files to retrieve - all files that match the specified pattern (true) or just the first one (false).
@@ -40,3 +41,153 @@ a reserved word. Both key and value cannot be blank.
 
 - `id` (String) The id of the transfer profile.
 - `last_updated` (String)
+
+<a id="nestedatt--advanced_settings"></a>
+### Nested Schema for `advanced_settings`
+
+Optional:
+
+- `caller_transcoding` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--caller_transcoding))
+- `enabled` (Boolean) default:true, Determines whether advancedSettings are enabled.
+- `receiver_transcoding` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--receiver_transcoding))
+
+<a id="nestedatt--advanced_settings--caller_transcoding"></a>
+### Nested Schema for `advanced_settings.caller_transcoding`
+
+Optional:
+
+- `ascii` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--caller_transcoding--ascii))
+- `ascii_predefined` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--caller_transcoding--ascii_predefined))
+- `binary` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--caller_transcoding--binary))
+- `ebcdic` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--caller_transcoding--ebcdic))
+- `ebcdic_predefined` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--caller_transcoding--ebcdic_predefined))
+
+<a id="nestedatt--advanced_settings--caller_transcoding--ascii"></a>
+### Nested Schema for `advanced_settings.caller_transcoding.ascii`
+
+Optional:
+
+- `local_data_code` (String) default:ASCII, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `network_data_code` (String) default:ASCII, Read-only field populated based on "type". Defines the value of PI 16 - the data coding of the network file.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile. Corresponds to PI 31 code.
+- `output_record_length` (Number) default:2048, The record length of the sending side of the transfer profile. It should be positive number. Corresponds to PI 32 code.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `type` (String) default:ascii, Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+
+
+<a id="nestedatt--advanced_settings--caller_transcoding--ascii_predefined"></a>
+### Nested Schema for `advanced_settings.caller_transcoding.ascii_predefined`
+
+Optional:
+
+- `local_data_code` (String) default:ASCII, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `network_data_code` (String) enum:/ASCII/EBCDIC, default:ASCII, Defines the value of PI 16 - the data coding of the network file.
+- `output_encoding_scheme` (String) default:UTF-8, The encoding scheme of the output file. Can be one of the system supported charsets.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile. Corresponds to PI 31 code.
+- `output_record_length` (Number) default:2048, The record length of the sending side of the transfer profile. It should be positive number. Corresponds to PI 32 code.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `source_encoding_scheme` (String) default:UTF-8, The encoding scheme of the source file. Can be one of the system supported charsets.
+- `transcoding` (String) default:predefined, Read-only field displayed only when predefined "type" is used.
+- `type` (String) default:ascii_predefined, Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+
+
+<a id="nestedatt--advanced_settings--caller_transcoding--binary"></a>
+### Nested Schema for `advanced_settings.caller_transcoding.binary`
+
+Optional:
+
+- `local_data_code` (String) default:BINARY, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `network_data_code` (String) default:BINARY, Read-only field populated based on "type". Defines the value of PI 16 - the data coding of the network file.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, Read-only field populated based on "type". The record format of the transfer profile. Corresponds to PI 31 code.
+- `output_record_length` (Number) default:2048, Read-only field populated based on "type". The record length of the sending side of the transfer profile. It should be positive number. Corresponds to PI 32 code.
+- `type` (String) default:binary, Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+
+
+<a id="nestedatt--advanced_settings--caller_transcoding--ebcdic"></a>
+### Nested Schema for `advanced_settings.caller_transcoding.ebcdic`
+
+Optional:
+
+- `local_data_code` (String) default:EBCDIC, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `network_data_code` (String) default:EBCDIC, Read-only field populated based on "type". Defines the value of PI 16 - the data coding of the network file.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile. Corresponds to PI 31 code.
+- `output_record_length` (Number) default:2048, The record length of the sending side of the transfer profile. It should be positive number. Corresponds to PI 32 code.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `type` (String) default:ebcdic, Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+
+
+<a id="nestedatt--advanced_settings--caller_transcoding--ebcdic_predefined"></a>
+### Nested Schema for `advanced_settings.caller_transcoding.ebcdic_predefined`
+
+Optional:
+
+- `local_data_code` (String) default:EBCDIC, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `network_data_code` (String) enum:/EBCDIC/ASCII, default:EBCDIC, Defines the value of PI 16 - the data coding of the network file.
+- `output_encoding_scheme` (String) default:IBM1047, The encoding scheme of the output file. Can be one of the system supported charsets.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile. Corresponds to PI 31 code.
+- `output_record_length` (Number) default:2048, The record length of the sending side of the transfer profile. It should be positive number. Corresponds to PI 32 code.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `source_encoding_scheme` (String) default:IBM1047, The encoding scheme of the source file. Can be one of the system supported charsets.
+- `transcoding` (String) default:PREDEFINED, Read-only field displayed only when predefined "type" is used.
+- `type` (String) default:ebcdic_predefined, Determines whether transcoding to be applied. Acts as a discriminator and is case sensitive
+
+
+
+<a id="nestedatt--advanced_settings--receiver_transcoding"></a>
+### Nested Schema for `advanced_settings.receiver_transcoding`
+
+Optional:
+
+- `ascii` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--receiver_transcoding--ascii))
+- `binary` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--receiver_transcoding--binary))
+- `ebcdic` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--receiver_transcoding--ebcdic))
+- `predefined` (Attributes) (see [below for nested schema](#nestedatt--advanced_settings--receiver_transcoding--predefined))
+
+<a id="nestedatt--advanced_settings--receiver_transcoding--ascii"></a>
+### Nested Schema for `advanced_settings.receiver_transcoding.ascii`
+
+Optional:
+
+- `line_ending_format` (String) enum:/DEFAULT/WINDOWS/UNIX, default:DEFAULT, Line ending of the receiving side of the transfer profile.
+- `local_data_code` (String) default:ASCII, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile.
+- `output_record_length` (Number) default:2048, The record length of the receiving side of the transfer profile. It should be positive number.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `type` (String) default:ascii, Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+
+
+<a id="nestedatt--advanced_settings--receiver_transcoding--binary"></a>
+### Nested Schema for `advanced_settings.receiver_transcoding.binary`
+
+Optional:
+
+- `local_data_code` (String) default:BINARY, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `type` (String) default:binary, Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+
+
+<a id="nestedatt--advanced_settings--receiver_transcoding--ebcdic"></a>
+### Nested Schema for `advanced_settings.receiver_transcoding.ebcdic`
+
+Optional:
+
+- `line_ending_format` (String) enum:/DEFAULT/WINDOWS/UNIX, default:DEFAULT, Line ending of the receiving side of the transfer profile.
+- `local_data_code` (String) default:EBCDIC, Read-only field populated based on "type". The data coding of the file on the local file system.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile.
+- `output_record_length` (Number) default:2048, The record length of the receiving side of the transfer profile. It should be positive number.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `type` (String) default:ebcdic, Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.
+
+
+<a id="nestedatt--advanced_settings--receiver_transcoding--predefined"></a>
+### Nested Schema for `advanced_settings.receiver_transcoding.predefined`
+
+Optional:
+
+- `line_ending_format` (String) enum:/DEFAULT/WINDOWS/UNIX, default:DEFAULT, Line ending of the receiving side of the transfer profile.
+- `output_encoding_scheme` (String) default:UTF-8, The encoding scheme of the output file. Can be one of the system supported charsets.
+- `output_record_format` (String) enum:/VARIABLE/FIXED, default:VARIABLE, The record format of the transfer profile.
+- `output_record_length` (Number) default:2048, The record length of the receiving side of the transfer profile. It should be positive number.
+- `padding_character` (String) default:@, The padding character can be UNICODE or ASCII and specified by its hexadecimal value.
+- `source_encoding_scheme` (String) default:UTF-8, The encoding scheme of the source file. Can be one of the system supported charsets.
+- `transcoding` (String) default:predefined, Read-only field displayed only when predefined "type" is used.
+- `type` (String) default:predefined, Determines whether and what transcoding to be applied. Acts as a discriminator and is case sensitive.

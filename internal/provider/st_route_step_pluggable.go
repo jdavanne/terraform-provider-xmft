@@ -28,14 +28,13 @@ type stRouteStepPluggableResourceModel struct {
 	Type   types.String `tfsdk:"type" helper:",default:Pluggable"`
 	Status types.String `tfsdk:"status" helper:",default:ENABLED"`
 
-	// PrecedingStep types.String `tfsdk:"preceding_step"`
-	ConditionType       types.String `tfsdk:"condition_type" helper:"conditionType,enum:ALWAYS/EL,default:ALWAYS"`
-	Condition           types.String `tfsdk:"condition" helper:",emptyIsNull,default:"`
+	PrecedingStep       types.String `tfsdk:"preceding_step" helper:"precedingStep,computed,nowrite"`
+	ConditionType       types.String `tfsdk:"condition_type" helper:"conditionType,enum:/ALWAYS/EL,default:ALWAYS"`
+	Condition           types.String `tfsdk:"condition" helper:",optional"`
 	ActionOnStepSuccess types.String `tfsdk:"action_on_step_success" helper:"actionOnStepSuccess,enum:/PROCEED/STOP,default:PROCEED"`
 	ActionOnStepFailure types.String `tfsdk:"action_on_step_failure" helper:"actionOnStepFailure,enum:/FAIL/PROCEED,default:FAIL"`
 
-	// Autostart             types.Bool `tfsdk:"autostart" helper:"autostart,default:false"`
-	// UsePrecedingStepFiles types.Bool `tfsdk:"use_preceding_step_files" helper:"usePrecedingStepFiles,default:false"`
+	Autostart types.Bool `tfsdk:"autostart" helper:"autostart,default:false"`
 
 	CustomProperties    types.Map `tfsdk:"custom_properties" helper:"customProperties,elementtype:string,optional,noread"`
 	CustomPropertiesAll types.Map `tfsdk:"custom_properties_all" helper:"customProperties,elementtype:string,computed,nowrite,fieldMapOnRead:customProperties"`
