@@ -112,18 +112,15 @@ func TestNewSTFileMaintenanceApplicationResource(t *testing.T) {
 						notify_days = 1
 						schedules = [
 							{
-						       daily = {
-									type = "DAILY"
+								monthly = {
 									start_date = "` + startDate + `"
-									skip_holidays = false
 									tag = "AccountFilePurge"
-									daily_type: "EVERYDAY"
-									#end_date = null
+									days_of_month = [ 1 ]
 									execution_times = [
-										"02:00"
+										"01:00"
 									]
 								}
-			                }
+							}
 						]
 					}`,
 				Check: resource.ComposeAggregateTestCheckFunc(
@@ -143,15 +140,12 @@ func TestNewSTFileMaintenanceApplicationResource(t *testing.T) {
 							notify_days = 1
 							schedules = [
 								{
-								daily = {
-										type = "DAILY"
+									monthly = {
 										start_date = "`+startDate+`"
-										skip_holidays = false
 										tag = "AccountFilePurge"
-										daily_type= "EVERYDAY"
-										#end_date = null
+										days_of_month = [ 1 ]
 										execution_times = [
-											"02:00"
+											"01:00"
 										]
 									}
 								}

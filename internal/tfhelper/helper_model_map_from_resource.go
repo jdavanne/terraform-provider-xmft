@@ -84,6 +84,14 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 							if len(slice) > 0 {
 								attrs[name] = slice
 							}
+						case "basetypes.Int64Value":
+							slice := make([]interface{}, 0)
+							for i := 0; i < fieldValue.Len(); i++ {
+								slice = append(slice, fieldValue.Index(i).Interface().(basetypes.Int64Value).ValueInt64())
+							}
+							if len(slice) > 0 {
+								attrs[name] = slice
+							}
 						default:
 							panic("unsupported slice type: " + eltypestr + "(" + modelName + "." + fieldName + ")")
 						}
@@ -169,6 +177,20 @@ func _resourceValueToAttributes(ctx context.Context, modelName string, value ref
 							if len(attrs2) > 0 {
 								attrs[name] = attrs2
 							}
+						} else if elementtype == "int" {
+							elements := make([]types.Int64, len(bval.Elements()))
+							v2 := bval.ElementsAs(ctx, &elements, false)
+							if v2.HasError() {
+								panic("error: " + fmt.Sprint(v2))
+							}
+							attrs2 := make([]interface{}, 0, len(elements))
+							for _, v := range elements {
+								attrs2 = append(attrs2, v.ValueInt64())
+							}
+							if len(attrs2) > 0 {
+								attrs[name] = attrs2
+							}
+
 						} else {
 							list := make([]interface{}, len(bval.Elements()))
 							for i, v := range bval.Elements() {

@@ -14,6 +14,55 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
+func sliceToString[T any](a []T, path string) []basetypes.StringValue {
+	slice := make([]basetypes.StringValue, 0, len(a))
+	for _, item := range a {
+		v2, ok := any(item).(string)
+		if !ok {
+			panic("unsupported type for: " + path + ":" + fmt.Sprintf("%T %+v", item, item))
+		}
+
+		slice = append(slice, types.StringValue(v2))
+	}
+	return slice
+}
+
+func sliceToint64[T any](a []T, path string) []basetypes.Int64Value {
+	slice := make([]basetypes.Int64Value, 0, len(a))
+	for _, v := range a {
+		var v2 int64
+		switch item := any(v).(type) {
+		case int:
+			v2 = int64(item)
+		case int64:
+			v2 = item
+		case int32:
+			v2 = int64(item)
+		case int16:
+			v2 = int64(item)
+		case int8:
+			v2 = int64(item)
+		case float64:
+			v2 = int64(item)
+		case float32:
+			v2 = int64(item)
+		default:
+			panic("unsupported type for: " + path + ":" + fmt.Sprintf("%T %+v", item, item))
+		}
+
+		slice = append(slice, types.Int64Value(v2))
+	}
+	return slice
+}
+
+func sliceToAttr[T attr.Value](a []T) []attr.Value {
+	slice := make([]attr.Value, 0, len(a))
+	for _, item := range a {
+		slice = append(slice, item)
+	}
+	return slice
+}
+
 func unfold(ctx context.Context, fold bool, foldStr string, modelName string, attrs2 map[string]interface{}) map[string]interface{} {
 	if fold {
 		attrs3 := make(map[string]interface{})
@@ -112,6 +161,7 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 			fieldMapOnRead, fieldMapOnReadOk := FlagsGet(flags, "fieldMapOnRead")
 			foldStr, fold := FlagsGet(flags, "fold")
 			emptyIsNull := FlagsHas(flags, "emptyIsNull")
+			def, defok := FlagsGet(flags, "default")
 
 			elementtype, _ := FlagsGet(flags, "elementtype")
 			// sensitive := Has(flags, "sensitive")
@@ -140,24 +190,28 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 							switch eltypestr {
 							case "basetypes.StringValue":
 								switch v := attrValue.(type) {
-								/*case string:
-									attrs[name] = strings.Split(v, ",")
-								case []string:
-									attrs[name] = v
-								*/
+								case nil:
+									// slice := make([]basetypes.StringValue, 0)
+									// value.Field(i).Set(reflect.ValueOf(slice))
 								case []interface{}:
-									slice := make([]basetypes.StringValue, 0, len(v))
-									for _, v := range v {
-										v2 := v.(string)
-										slice = append(slice, types.StringValue(v2))
-									}
+									slice := sliceToString(v, modelName+"."+fieldName)
 									value.Field(i).Set(reflect.ValueOf(slice))
 								case []string:
-									slice := make([]basetypes.StringValue, 0, len(v))
-									for _, v := range v {
-										v2 := v //.(string)
-										slice = append(slice, types.StringValue(v2))
-									}
+									slice := sliceToString(v, modelName+"."+fieldName)
+									value.Field(i).Set(reflect.ValueOf(slice))
+								default:
+									panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
+								}
+							case "basetypes.Int64Value":
+								switch v := attrValue.(type) {
+								case nil:
+									/*slice := make([]basetypes.Int64Value, 0)
+									value.Field(i).Set(reflect.ValueOf(slice))*/
+								case []interface{}:
+									slice := sliceToint64(v, modelName+"."+fieldName)
+									value.Field(i).Set(reflect.ValueOf(slice))
+								case []int64:
+									slice := sliceToint64(v, modelName+"."+fieldName)
 									value.Field(i).Set(reflect.ValueOf(slice))
 								default:
 									panic("unsupported type: " + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
@@ -247,30 +301,21 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 						case "basetypes.ListValue":
 							if elementtype == "string" {
 								switch v := attrValue.(type) {
+								case nil:
 								case []string:
-									elements := make([]attr.Value, len(v))
-									for i, item := range v {
-										elements[i] = types.StringValue(item)
-									}
-									val1, diags := types.ListValue(types.StringType, elements)
-									if diags.HasError() {
-										panic("error: " + fmt.Sprint(diags))
-									}
-									value.Field(i).Set(reflect.ValueOf(val1))
-								case []interface{}:
-									// should be only zero length...
-
 									if !emptyIsNull || len(v) > 0 {
-										elements := make([]attr.Value, len(v))
-										for i, item := range v {
-											vString, ok := item.(string)
-											if !ok {
-												// FIXME: should be error?
-												panic("unsupported type: " + fmt.Sprintf("%T %+v [%d]", item, item, i) + "-->" + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
-											}
-											elements[i] = types.StringValue(vString)
+										slice := sliceToAttr(sliceToString(v, modelName+"."+fieldName))
+
+										val1, diags := types.ListValue(types.StringType, slice)
+										if diags.HasError() {
+											panic("error: " + fmt.Sprint(diags))
 										}
-										val1, diags := types.ListValue(types.StringType, elements)
+										value.Field(i).Set(reflect.ValueOf(val1))
+									}
+								case []interface{}:
+									if !emptyIsNull || len(v) > 0 {
+										slice := sliceToAttr(sliceToString(v, modelName+"."+fieldName))
+										val1, diags := types.ListValue(types.StringType, slice)
 										if diags.HasError() {
 											panic("error: " + fmt.Sprint(diags))
 										}
@@ -278,6 +323,30 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 									}
 								default:
 									// FIXME: should be error?
+									panic("unsupported type: " + fmt.Sprintf("%T %+v", attrValue, attrValue) + "-->" + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
+								}
+							} else if elementtype == "int" {
+								switch v := attrValue.(type) {
+								case nil:
+								case []interface{}:
+									if !emptyIsNull || len(v) > 0 {
+										slice := sliceToAttr(sliceToint64(v, modelName+"."+fieldName))
+										val1, diags := types.ListValue(types.Int64Type, slice)
+										if diags.HasError() {
+											panic("error: " + fmt.Sprint(diags))
+										}
+										value.Field(i).Set(reflect.ValueOf(val1))
+									}
+								case []int64:
+									if !emptyIsNull || len(v) > 0 {
+										slice := sliceToAttr(sliceToint64(v, modelName+"."+fieldName))
+										val1, diags := types.ListValue(types.Int64Type, slice)
+										if diags.HasError() {
+											panic("error: " + fmt.Sprint(diags))
+										}
+										value.Field(i).Set(reflect.ValueOf(val1))
+									}
+								default:
 									panic("unsupported type: " + fmt.Sprintf("%T %+v", attrValue, attrValue) + "-->" + fmt.Sprint(attrType) + "(" + modelName + "." + fieldName + ")")
 								}
 							} else {
@@ -354,8 +423,13 @@ func AttributesToResource(ctx context.Context, modelName string, attrs map[strin
 								value.Field(i).Set(reflect.ValueOf(val2))
 							case nil:
 								if emptyIsNull {
-									val2 := types.StringValue("")
-									value.Field(i).Set(reflect.ValueOf(val2))
+									if defok && def == "" {
+										val2 := types.StringValue("")
+										value.Field(i).Set(reflect.ValueOf(val2))
+									} else {
+										val2 := types.StringValue(def)
+										value.Field(i).Set(reflect.ValueOf(val2))
+									}
 								} else {
 									val2 := types.StringNull()
 									value.Field(i).Set(reflect.ValueOf(val2))

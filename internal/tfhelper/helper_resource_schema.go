@@ -216,6 +216,23 @@ func _modelToAttributes(ctx context.Context, goPath string, apiPath string, pare
 								Default:     d,
 								Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
 							}
+						} else if elementtype == "int" {
+							var d defaults.List
+							if defok && def == "" {
+								f, _ := types.ListValueFrom(ctx, types.Int64Type, []string{})
+								d = listdefault.StaticValue(f)
+							} else if defok {
+								panic("unsupported default value: " + def + "(" + goPath + "." + goName + ")")
+							}
+							attrs[tfName] = schema.ListAttribute{
+								ElementType: types.Int64Type,
+								Required:    required,
+								Optional:    optional,
+								Computed:    computed,
+								Sensitive:   sensitive,
+								Default:     d,
+								Description: flagsDescription(ctx, flags, "[]", apiPath+"."+apiName+".#"),
+							}
 						} else {
 							elementModel := registeredTypes[elementtype]
 							if elementModel == nil {

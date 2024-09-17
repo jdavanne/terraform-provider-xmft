@@ -56,7 +56,7 @@ type ScheduleMonthly struct {
 	DaysOfWeek     []types.String `tfsdk:"days_of_week" helper:"daysOfWeek,enum:/SUNDAY/MONDAY/TUESDAY/WEDNESDAY/THURSDAY/FRIDAY/SATURDAY,uniqueItems,nullable"`
 	DaysOfMonth    []types.Int64  `tfsdk:"days_of_month" helper:"daysOfMonth,uniqueItems,nullable"`
 	MonthlyType    types.String   `tfsdk:"monthly_type" helper:"monthlyType,enum:/EXACT/SEQUENCE_WEEKLY/SEQUENCE_MONTHLY,default:EXACT"`
-	WeekOfMonth    types.String   `tfsdk:"week_of_month" helper:"weekOfMonth,enum:/FIRST/SECOND/THIRD/FOURTH/LAST,default:FIRST"`
+	WeekOfMonth    types.String   `tfsdk:"week_of_month" helper:"weekOfMonth,enum:/FIRST/SECOND/THIRD/FOURTH/LAST,emptyIsNull,default:FIRST"`
 }
 
 type ScheduleYearly struct {
