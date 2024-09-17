@@ -1,5 +1,11 @@
 
-# 0.0.10
+
+# 0.0.12
+
+FIXES:
+- fix: []int64 / List[int] for st_schedule (monthly)
+
+# 0.0.11
 
  (!) means barely tested
 FEATURES:
