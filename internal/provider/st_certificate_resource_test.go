@@ -82,6 +82,10 @@ func TestNewSTCertificateResource(t *testing.T) {
 	}
 
 	localConfig := `
+resource tls_private_key "login-key" {
+  algorithm = "RSA"
+}
+
 resource "xmft_st_account" "account1" {
 		provider    = xmft.st1
 		name        = "` + account + `"
@@ -99,6 +103,11 @@ resource "xmft_st_account" "account1" {
 	`
 
 	resource.Test(t, resource.TestCase{
+		ExternalProviders: map[string]resource.ExternalProvider{
+			"tls": {
+				Source: "hashicorp/tls",
+			},
+		},
 		ProtoV6ProviderFactories: testAccProtoV6ProviderFactories,
 		Steps: []resource.TestStep{
 			// Create and Read testing
@@ -112,7 +121,31 @@ resource "xmft_st_account" "account1" {
 						usage            = "login"
 						#overwrite        = true
 						content          = "` + strings.ReplaceAll(cert, "\n", "\\n") + `"
+					}
 						
+					resource "xmft_st_certificate" "login-key-cert" {
+						provider = xmft.st1
+						name               = "` + name + `.ssh"
+						account            = xmft_st_account.account1.name
+						type               = "ssh"
+						usage              = "login"
+						# ca_password        = "SECRET123"
+						# overwrite        = true
+
+						content            = tls_private_key.login-key.public_key_openssh
+						//content            =  tls_private_key.login-key.public_key_pem
+						/*content            = <<EOF
+---- BEGIN SSH2 PUBLIC KEY ----
+AAAAB3NzaC1yc2EAAAADAQABAAABAQCVlGUzWxNd0SAiV5uAINDWbTPF12CZLCAp
+5YBhDWtWuSwQrMCy2T2A5SuM0CqdBGHNXWQarxtBIxALhqCDwRhaGEppN8BSEq2O
+Wav5mZUQs6zeJthcfGX8/EgQk1HFY4lPFzVKwqa2qO2FSWYwu8sYFfqIGsBq0HJ7
+vH32Il9ss9zhhBpfOy693MG8D2F2iYYMwLeQ0zvQBP6dn7BDgiKNXbLS/QbSx21c
+d1TkAPTobAooz3XbwO/KAk1B706VTZRC+QSkin/FHwBppeTr2basV1yO3Yavx1P9
+O5Kfmmsa7zZmRgFNCQnGRD/39gtoCVznIgbrHbXjpvY+MVbt5FUj
+---- END SSH2 PUBLIC KEY ----
+EOF*/
+						subject            = "CN=alabala"
+						validity_period    = 365
 					}
 					`,
 				Check: resource.ComposeAggregateTestCheckFunc(

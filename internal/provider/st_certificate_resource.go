@@ -12,20 +12,20 @@ type stCertificateModel struct {
 	Name        types.String `tfsdk:"name" helper:",required,noread"`
 	LastUpdated types.String `tfsdk:"last_updated" helper:",computed,noread,nowrite"`
 
-	Type       types.String `tfsdk:"type" helper:",enum:/x509/ssh,default:x509"`
-	Usage      types.String `tfsdk:"usage" helper:",enum:/private/local/partner/login/trusted,default:private"`
+	Type       types.String `tfsdk:"type" helper:",enum:/x509/pgp/ssh,required"`
+	Usage      types.String `tfsdk:"usage" helper:",enum:/login/trusted/partner/local/private,required"`
 	Password   types.String `tfsdk:"password" helper:",sensitive,noread"`
 	CaPassword types.String `tfsdk:"ca_password" helper:"caPassword,sensitive,noread"`
 	Overwrite  types.Bool   `tfsdk:"overwrite" helper:",noread,default:false"`
 
 	Account     types.String `tfsdk:"account" helper:",default:"`
-	AccessLevel types.String `tfsdk:"access_level" helper:"accessLevel,computed"`
+	AccessLevel types.String `tfsdk:"access_level" helper:"accessLevel,enum:/PRIVATE/PUBLIC/BUSINESS_UNIT,default:PRIVATE"`
 
 	Content types.String `tfsdk:"content" helper:",required,noread"`
 
 	AdditionalAttributes types.Map `tfsdk:"additional_attributes" helper:"additionalAttributes,elementtype:string,optional"`
 
-	Subject          types.String `tfsdk:"subject" helper:",computed"`
+	Subject          types.String `tfsdk:"subject" helper:",computed,optional"`
 	ExpirationTime   types.String `tfsdk:"expiration_time" helper:"expirationTime,computed,nowrite"`
 	CreationTime     types.Int64  `tfsdk:"creation_time" helper:"creationTime,computed,nowrite"`
 	SignAlgorithm    types.String `tfsdk:"sign_algorithm" helper:"signAlgorithm,computed,nowrite"`
@@ -33,7 +33,7 @@ type stCertificateModel struct {
 	KeyAlgorithm     types.String `tfsdk:"key_algorithm" helper:"keyAlgorithm,computed,nowrite"`
 	Issuer           types.String `tfsdk:"issuer" helper:"issuer,computed,nowrite"`
 	SerialNumber     types.String `tfsdk:"serial_number" helper:"serialNumber,computed,nowrite"`
-	ValidityPeriod   types.Int64  `tfsdk:"validity_period" helper:"validityPeriod,computed,nowrite"`
+	ValidityPeriod   types.Int64  `tfsdk:"validity_period" helper:"validityPeriod,computed,optional"`
 	Fingerprint      types.String `tfsdk:"fingerprint" helper:"fingerprint,computed,nowrite"`
 	ValidationStatus types.String `tfsdk:"validation_status" helper:"validationStatus,computed,nowrite"`
 	Version          types.Int64  `tfsdk:"version" helper:"version,computed,nowrite"`

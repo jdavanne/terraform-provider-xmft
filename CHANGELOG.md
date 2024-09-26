@@ -1,5 +1,10 @@
 
 
+# 0.0.13
+
+FIXES:
+- fix: certificate for login ssh : add subject, and validity_period
+
 # 0.0.12
 
 FIXES:
